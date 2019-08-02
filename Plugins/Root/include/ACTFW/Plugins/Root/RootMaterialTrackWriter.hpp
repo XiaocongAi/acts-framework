@@ -56,6 +56,8 @@ namespace Root {
 
       /// Re-calculate total values from individual steps (for cross-checks)
       bool recalculateTotals = false;
+      /// Write aut pre and post step (for G4), otherwise central step position
+      bool prePostStep = false;
     };
 
     /// Constructor with
@@ -103,9 +105,15 @@ namespace Root {
     float m_tX0;    ///< thickness in X0/L0
     float m_tL0;    ///< thickness in X0/L0
 
+    std::vector<float> m_step_sx;      ///< step x (start) position (optional)
+    std::vector<float> m_step_sy;      ///< step y (start) position (optional)
+    std::vector<float> m_step_sz;      ///< step z (start) position (optional)
     std::vector<float> m_step_x;       ///< step x position
     std::vector<float> m_step_y;       ///< step y position
     std::vector<float> m_step_z;       ///< step z position
+    std::vector<float> m_step_ex;      ///< step x (end) position (optional)
+    std::vector<float> m_step_ey;      ///< step y (end) position (optional)
+    std::vector<float> m_step_ez;      ///< step z (end) position (optional)
     std::vector<float> m_step_length;  ///< step length
     std::vector<float> m_step_X0;      ///< step material x0
     std::vector<float> m_step_L0;      ///< step material l0

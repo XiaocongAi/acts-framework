@@ -87,6 +87,7 @@ main(int argc, char* argv[])
     FW::Root::RootMaterialTrackWriter::Config matTrackWriterRootConfig;
     matTrackWriterRootConfig.recalculateTotals = true;
     matTrackWriterRootConfig.collection        = matCollection;
+    matTrackWriterRootConfig.prePostStep = true;
     matTrackWriterRootConfig.filePath
         = FW::joinPaths(outputDir, matCollection + ".root");
     auto matTrackWriterRoot

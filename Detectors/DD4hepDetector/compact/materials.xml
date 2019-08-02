@@ -35,6 +35,14 @@
     <fraction n="1" ref="H" />
   </material>
 
+  <material Z="4" name="Beryllium" state="solid">
+        <MEE unit="eV" value="63.7"/>
+        <D unit="g/cm3" value="1.848"/>
+        <atom unit="g/mole" value="9.01218"/>
+        <fraction n="1" ref="Be"/>
+    </material>
+
+
   <material name="Epoxy">
     <D type="density" value="1.3" unit="g/cm3"/>
     <composite n="44" ref="H"/>

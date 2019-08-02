@@ -129,9 +129,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
           }
           // Place Module Box Volumes in layer adding a tilt in phi
           PlacedVolume placedmodule = layerVolume.placeVolume(
-              modVolume,
-              Transform3D(RotationY(0.5 * M_PI) * RotationX(-phi - phiTilt),
-                          trans));
+              modVolume, Transform3D(RotationX(-phi - phiTilt), trans));
           placedmodule.addPhysVolID("module", moduleNumber);
           // assign module DetElement to the placed module volume
           moduleDetector.setPlacement(placedmodule);

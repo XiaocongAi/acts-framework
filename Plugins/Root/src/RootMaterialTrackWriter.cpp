@@ -66,6 +66,15 @@ FW::Root::RootMaterialTrackWriter::RootMaterialTrackWriter(
   m_outputTree->Branch("mat_A", &m_step_A);
   m_outputTree->Branch("mat_Z", &m_step_Z);
   m_outputTree->Branch("mat_rho", &m_step_rho);
+
+  if (m_cfg.prePostStep) {
+    m_outputTree->Branch("mat_sx", &m_step_sx);
+    m_outputTree->Branch("mat_sy", &m_step_sy);
+    m_outputTree->Branch("mat_sz", &m_step_sz);
+    m_outputTree->Branch("mat_ex", &m_step_ex);
+    m_outputTree->Branch("mat_ey", &m_step_ey);
+    m_outputTree->Branch("mat_ez", &m_step_ez);
+  }
 }
 
 FW::Root::RootMaterialTrackWriter::~RootMaterialTrackWriter()
@@ -91,13 +100,19 @@ FW::Root::RootMaterialTrackWriter::writeT(
   // Exclusive access to the tree while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
-  // loop over the material tracks and write them out
+  // Loop over the material tracks and write them out
   for (auto& mtrack : materialTracks) {
 
-    // clearing the vector first
+    // Clearing the vector first
+    m_step_sx.clear();
+    m_step_sy.clear();
+    m_step_sz.clear();
     m_step_x.clear();
     m_step_y.clear();
     m_step_z.clear();
+    m_step_ex.clear();
+    m_step_ey.clear();
+    m_step_ez.clear();
     m_step_length.clear();
     m_step_X0.clear();
     m_step_L0.clear();
@@ -105,11 +120,17 @@ FW::Root::RootMaterialTrackWriter::writeT(
     m_step_Z.clear();
     m_step_rho.clear();
 
-    // reserve the vector then
+    // Reserve the vector then
     size_t mints = mtrack.second.materialInteractions.size();
+    m_step_sx.reserve(mints);
+    m_step_sy.reserve(mints);
+    m_step_sz.reserve(mints);
     m_step_x.reserve(mints);
     m_step_y.reserve(mints);
-    m_step_z.reserve(mints);
+    m_step_ez.reserve(mints);
+    m_step_ex.reserve(mints);
+    m_step_ey.reserve(mints);
+    m_step_ez.reserve(mints);
     m_step_length.reserve(mints);
     m_step_X0.reserve(mints);
     m_step_L0.reserve(mints);
@@ -138,10 +159,23 @@ FW::Root::RootMaterialTrackWriter::writeT(
 
     // an now loop over the material
     for (auto& mint : mtrack.second.materialInteractions) {
-      // the material step position information
+      // The material step position information
       m_step_x.push_back(mint.position.x());
       m_step_y.push_back(mint.position.y());
       m_step_z.push_back(mint.position.z());
+
+      if (m_cfg.prePostStep) {
+        Acts::Vector3D prePos
+            = mint.position - 0.5 * mint.pathCorrection * mint.direction;
+        Acts::Vector3D posPos
+            = mint.position + 0.5 * mint.pathCorrection * mint.direction;
+        m_step_sx.push_back(prePos.x());
+        m_step_sy.push_back(prePos.y());
+        m_step_sz.push_back(prePos.z());
+        m_step_ex.push_back(posPos.x());
+        m_step_ey.push_back(posPos.y());
+        m_step_ez.push_back(posPos.z());
+      }
       // the material information
       const auto& mprops = mint.materialProperties;
       m_step_length.push_back(mprops.thickness());
