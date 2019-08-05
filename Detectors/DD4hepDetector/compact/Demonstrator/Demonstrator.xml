@@ -119,32 +119,30 @@
     <readouts>
         <readout name="BarrelReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:3,layer:4,module:15,component:6,x:32:-16,y:-16</id>
+            <id>system:1,layer:1,support:4,module:8,component:8,x:4,y:4</id>
         </readout>
     </readouts>
         
     <detectors>
       <detector id="0" name="beampipe" type="DemonstratorBeamPipe" vis="blue">
+        <status id="0" />
             <description rmin="bp_rmin" rmax="bp_rmax" dz="bp_length" material="Beryllium"/>
       </detector>
-      <detector id="1" name="barrel" type="DemonstratorBarrel" vis="invisible">
+      <detector id="1" name="barrel" type="DemonstratorBarrel" vis="invisible" readout="BarrelReadout">
           <dimensions rmin="bv_rmin" rmax="bv_rmax" dz="bv_length"/>
           <layer id="0" rmin="bl0_rmin" rmax="bl0_rmax" dz="bl0_length" material="Air" vis="invisible">
             <module dx="bl0_m_dx" dy="bl0_m_dy" dz="bl0_m_dz" material="Air" vis="invisible"> 
               <parameters r="bl0_m_r" nphi="bl0_m_nphi" phi0="bl0_m_phi0" phi_tilt="bl0_m_phiTilt"/>
-              <component material="Silicon" dx="bl0_m_c0_dx" dy="bl0_m_c0_dy" dz="bl0_m_c0_dz" x_offset="bl0_m_c0_ox" y_offset="bl0_m_c0_oy" z_offset="bl0_m_c0_oz" vis="green" />
-              <component material="Kapton" dx="bl0_m_c1_dx" dy="bl0_m_c1_dy" dz="bl0_m_c1_dz" x_offset="bl0_m_c1_ox" y_offset="bl0_m_c1_oy" z_offset="bl0_m_c1_oz" vis="yellow" />
-              <component material="Al" dx="bl0_m_c2_dx" dy="bl0_m_c2_dy" dz="bl0_m_c2_dz" x_offset="bl0_m_c2_ox" y_offset="bl0_m_c2_oy" z_offset="bl0_m_c2_oz" vis="orange" />
-              <component material="Co" dx="bl0_m_c3_dx" dy="bl0_m_c3_dy" dz="bl0_m_c3_dz" x_offset="bl0_m_c3_ox" y_offset="bl0_m_c3_oy" z_offset="bl0_m_c3_oz" vis="blue" />
-              <component material="Kapton" dx="bl0_m_c4_dx" dy="bl0_m_c4_dy" dz="bl0_m_c4_dz" x_offset="bl0_m_c4_ox" y_offset="bl0_m_c4_oy" z_offset="bl0_m_c4_oz" vis="blue" />
+              <module_component sensitive="true" material="Silicon" dx="bl0_m_c0_dx" dy="bl0_m_c0_dy" dz="bl0_m_c0_dz" x_offset="bl0_m_c0_ox" y_offset="bl0_m_c0_oy" z_offset="bl0_m_c0_oz" vis="green" />
+              <module_component sensitive="false" material="Kapton" dx="bl0_m_c1_dx" dy="bl0_m_c1_dy" dz="bl0_m_c1_dz" x_offset="bl0_m_c1_ox" y_offset="bl0_m_c1_oy" z_offset="bl0_m_c1_oz" vis="yellow" />
+              <module_component sensitive="false" material="Al" dx="bl0_m_c2_dx" dy="bl0_m_c2_dy" dz="bl0_m_c2_dz" x_offset="bl0_m_c2_ox" y_offset="bl0_m_c2_oy" z_offset="bl0_m_c2_oz" vis="orange" />
+              <module_component sensitive="false" material="Co" dx="bl0_m_c3_dx" dy="bl0_m_c3_dy" dz="bl0_m_c3_dz" x_offset="bl0_m_c3_ox" y_offset="bl0_m_c3_oy" z_offset="bl0_m_c3_oz" vis="blue" />
+              <module_component sensitive="false" material="Kapton" dx="bl0_m_c4_dx" dy="bl0_m_c4_dy" dz="bl0_m_c4_dz" x_offset="bl0_m_c4_ox" y_offset="bl0_m_c4_oy" z_offset="bl0_m_c4_oz" vis="blue" />
               <tubs material="Ti" rmin="bl0_m_p_rmin" rmax="bl0_m_p_rmax" length="bl0_m_p_length" x_offset="bl0_m_p_ox" y_offset="bl0_m_p_oy" z_offset="bl0_m_p_oz"  vis="grey"/>
               <anchor material="CarbonFiber" x1="bl0_m_m_x1" x2="bl0_m_m_x2" length="bl0_m_m_length" dz="bl0_m_m_dz"  x_offset="bl0_m_m_ox" y_offset="bl0_m_m_oy" z_offset="bl0_m_m_oz"  vis="grey"/>
               <box material="Kapton" dx="bl0_m_cs_dx" dy="bl0_m_cs_dy" dz="bl0_m_cs_dz" alpha="bl0_m_cs_rot" x_offset="bl0_m_cs_ox" y_offset="bl0_m_cs_oy" z_offset="bl0_m_cs_oz" vis="blue"/>
             </module>
             <support rmin="bl0_s_rmin" rmax="bl0_s_rmax" dz="bl0_s_length" material="CarbonFiber" vis="grey"/>
-            <description>
-              
-            </description>  
           </layer>  
       </detector>
     </detectors>

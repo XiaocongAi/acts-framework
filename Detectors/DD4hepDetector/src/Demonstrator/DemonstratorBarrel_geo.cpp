@@ -38,14 +38,14 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
       barrelName, barrelShape, lcdd.air());  // air at the moment change later
   barrelVolume.setVisAttributes(lcdd, x_det.visStr());
 
-  unsigned int layerNum = 0;
-
   // Loop over the layers and build them
-  for (xml_coll_t j(xml, _U(layer)); j; ++j, ++layerNum) {
+  for (xml_coll_t j(xml, _U(layer)); j; ++j) {
+
     // Get the layer xml configuration
-    xml_comp_t x_layer = j;
-    double     rmin    = x_layer.rmin();
-    double     rmax    = x_layer.rmax();
+    xml_comp_t   x_layer  = j;
+    double       rmin     = x_layer.rmin();
+    double       rmax     = x_layer.rmax();
+    unsigned int layerNum = x_layer.id();
     // Create Volume for Layer
     string layerName = barrelName + _toString((int)layerNum, "layer%d");
     Volume layerVolume(layerName,
@@ -55,6 +55,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
     // Visualization
     layerVolume.setVisAttributes(lcdd, x_layer.visStr());
 
+    unsigned int supportNum = 0;
     // Place the support cylinder
     if (x_layer.hasChild(_U(support))) {
       xml_comp_t x_support = x_layer.child(_U(support));
@@ -67,6 +68,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
       supportVolume.setVisAttributes(lcdd, x_support.visStr());
       // Place the support structure
       PlacedVolume placedSupport = layerVolume.placeVolume(supportVolume);
+      placedSupport.addPhysVolID("support", supportNum++);
     }
 
     // Construct the volume
@@ -80,6 +82,9 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
           lcdd.material(x_module.materialStr()));
       // Visualization
       moduleVolume.setVisAttributes(lcdd, x_module.visStr());
+      if (x_module.isSensitive()) {
+        moduleVolume.setSensitiveDetector(sens);
+      }
 
       xml_comp_t   x_mod_placement = x_module.child(_U(parameters));
       unsigned int nphi            = x_mod_placement.nphi();
@@ -89,22 +94,34 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
       double       deltaPhi        = 2 * M_PI / nphi;
 
       // Place the components inside the module
-      unsigned int compNum = 0;
+      unsigned int compNum = 1;
 
-      for (xml_coll_t c(x_module, _U(component)); c; ++c, ++compNum) {
-        xml_comp_t x_comp = c;
+      std::vector<PlacedVolume> sensComponents;
+
+      for (xml_coll_t comp(x_module, _U(module_component)); comp;
+           ++comp, ++compNum) {
+        xml_comp_t x_comp = comp;
         // Component volume
         string componentName = _toString((int)compNum, "component%d");
         Volume componentVolume(
             componentName,
             Box(0.5 * x_comp.dx(), 0.5 * x_comp.dy(), 0.5 * x_comp.dz()),
             lcdd.material(x_comp.materialStr()));
+        if (x_comp.isSensitive()) {
+          componentVolume.setSensitiveDetector(sens);
+        }
+
         // Visualization
         componentVolume.setVisAttributes(lcdd, x_comp.visStr());
         // Place Module Box Volumes in layer
         PlacedVolume placedComponent = moduleVolume.placeVolume(
             componentVolume,
             Position(x_comp.x_offset(), x_comp.y_offset(), x_comp.z_offset()));
+        placedComponent.addPhysVolID("component", compNum);
+        // Remember the sensitive components of this module
+        if (x_comp.isSensitive()) {
+          sensComponents.push_back(placedComponent);
+        }
       }
 
       // Add cooling pipe
@@ -121,8 +138,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
                         Position(x_tubs.x_offset(),
                                  x_tubs.y_offset(),
                                  x_tubs.z_offset())));
-        // placedPipe.addPhysVolID("component", comp_num);
-        // comp_num++; //<- check if we need this
+        placedPipe.addPhysVolID("support", supportNum++);
       }
 
       // Add mount
@@ -142,8 +158,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
                                                    Position(x_trd.x_offset(),
                                                             x_trd.y_offset(),
                                                             x_trd.z_offset())));
-        // placedMount.addPhysVolID("component", comp_num);
-        // comp_num++; //<- check if we need this
+        placedMount.addPhysVolID("support", supportNum++);
       }
 
       // Add cable
@@ -162,24 +177,31 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
                                                    Position(x_cab.x_offset(),
                                                             x_cab.y_offset(),
                                                             x_cab.z_offset())));
+        placedCable.addPhysVolID("support", supportNum++);
       }
 
       // Place the modules
       for (int iphi = 0; iphi < nphi; ++iphi) {
 
-        double phi = phi0 + iphi * deltaPhi;
-
+        double   phi        = phi0 + iphi * deltaPhi;
         string   moduleName = layerName + _toString((int)iphi, "module%d");
         Position trans(r * cos(phi), r * sin(phi), 0.);
-        // create detector element
+        // Create detector element
         DetElement moduleElement(layerElement, moduleName, iphi);
+        // Place the sensitive inside here
+        unsigned int ccomp = 1;
+        for (auto& sensComp : sensComponents) {
+          DetElement componentElement(moduleElement, "component", ccomp++);
+          componentElement.setPlacement(sensComp);
+        }
 
         // Place Module Box Volumes in layer
         PlacedVolume placedModule = layerVolume.placeVolume(
             moduleVolume,
             Transform3D(RotationY(0.5 * M_PI) * RotationX(-phi - phiTilt),
                         trans));
-        placedModule.addPhysVolID("module", iphi);
+        placedModule.addPhysVolID("module", iphi + 1);
+
         // assign module DetElement to the placed module volume
         moduleElement.setPlacement(placedModule);
       }
@@ -187,11 +209,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
 
     // Configure the ACTS extension
     Acts::ActsExtension::Config layerConfig;
-    layerConfig.isLayer = true;
-    ///@todo re-enable material mapping
-    // layConfig.materialBins1         = 100;
-    // layConfig.materialBins2         = 100;
-    // layConfig.layerMaterialPosition = Acts::LayerMaterialPos::inner;
+    layerConfig.isLayer                 = true;
     Acts::ActsExtension* layerExtension = new Acts::ActsExtension(layerConfig);
     layerElement.addExtension<Acts::IActsExtension>(layerExtension);
     // Place layer volume
@@ -203,9 +221,10 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
 
   // Place Volume
   Volume       motherVolume = lcdd.pickMotherVolume(barrelDetector);
-  PlacedVolume placedTube   = motherVolume.placeVolume(barrelVolume);
-  placedTube.addPhysVolID("barrel", barrelDetector.id());
-  barrelDetector.setPlacement(placedTube);
+  PlacedVolume placedBarrel = motherVolume.placeVolume(barrelVolume);
+  // "system" is hard coded in the DD4Hep::VolumeManager
+  placedBarrel.addPhysVolID("system", barrelDetector.id());
+  barrelDetector.setPlacement(placedBarrel);
 
   return barrelDetector;
 }

@@ -1,6 +1,0 @@
-<detectors>
-  <!--Barrel-->
-  <detector id="100" name="Barrel" type="ACTS_DemonstratorBarrel" readout="BarrelReadout">
-  
-  </detector>
-</detectors>
