@@ -76,14 +76,11 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
 
       xml_comp_t x_module = x_layer.child(_U(module));
       // create the module volume and its corresponing component volumes first
-      Volume moduleVolume(
-          "module",
-          Box(0.5 * x_module.dx(), 0.5 * x_module.dy(), 0.5 * x_module.dz()),
-          lcdd.material(x_module.materialStr()));
+      Assembly moduleAssembly("module");
       // Visualization
-      moduleVolume.setVisAttributes(lcdd, x_module.visStr());
+      moduleAssembly.setVisAttributes(lcdd, x_module.visStr());
       if (x_module.isSensitive()) {
-        moduleVolume.setSensitiveDetector(sens);
+        moduleAssembly.setSensitiveDetector(sens);
       }
 
       xml_comp_t   x_mod_placement = x_module.child(_U(parameters));
@@ -114,7 +111,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
         // Visualization
         componentVolume.setVisAttributes(lcdd, x_comp.visStr());
         // Place Module Box Volumes in layer
-        PlacedVolume placedComponent = moduleVolume.placeVolume(
+        PlacedVolume placedComponent = moduleAssembly.placeVolume(
             componentVolume,
             Position(x_comp.x_offset(), x_comp.y_offset(), x_comp.z_offset()));
         placedComponent.addPhysVolID("component", compNum);
@@ -132,7 +129,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
                           lcdd.material(x_tubs.materialStr()));
         pipeVolume.setVisAttributes(lcdd, x_tubs.visStr());
         // Place the cooling pipe into the module
-        PlacedVolume placedPipe = moduleVolume.placeVolume(
+        PlacedVolume placedPipe = moduleAssembly.placeVolume(
             pipeVolume,
             Transform3D(RotationX(0.5 * M_PI) * RotationY(0.5 * M_PI),
                         Position(x_tubs.x_offset(),
@@ -152,12 +149,12 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
             "ModuleMount", mountShape, lcdd.material(x_trd.materialStr()));
 
         // Place the mount onto the module
-        PlacedVolume placedMount
-            = moduleVolume.placeVolume(mountVolume,
-                                       Transform3D(RotationZ(0.5 * M_PI),
-                                                   Position(x_trd.x_offset(),
-                                                            x_trd.y_offset(),
-                                                            x_trd.z_offset())));
+        PlacedVolume placedMount = moduleAssembly.placeVolume(
+            mountVolume,
+            Transform3D(RotationZ(0.5 * M_PI),
+                        Position(x_trd.x_offset(),
+                                 x_trd.y_offset(),
+                                 x_trd.z_offset())));
         placedMount.addPhysVolID("support", supportNum++);
       }
 
@@ -171,12 +168,12 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
         // Visualization
         cableVolume.setVisAttributes(lcdd, x_cab.visStr());
         // Place Module Box Volumes in layer
-        PlacedVolume placedCable
-            = moduleVolume.placeVolume(cableVolume,
-                                       Transform3D(RotationX(x_cab.alpha()),
-                                                   Position(x_cab.x_offset(),
-                                                            x_cab.y_offset(),
-                                                            x_cab.z_offset())));
+        PlacedVolume placedCable = moduleAssembly.placeVolume(
+            cableVolume,
+            Transform3D(RotationX(x_cab.alpha()),
+                        Position(x_cab.x_offset(),
+                                 x_cab.y_offset(),
+                                 x_cab.z_offset())));
         placedCable.addPhysVolID("support", supportNum++);
       }
 
@@ -197,12 +194,12 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
 
         // Place Module Box Volumes in layer
         PlacedVolume placedModule = layerVolume.placeVolume(
-            moduleVolume,
+            moduleAssembly,
             Transform3D(RotationY(0.5 * M_PI) * RotationX(-phi - phiTilt),
                         trans));
         placedModule.addPhysVolID("module", iphi + 1);
 
-        // assign module DetElement to the placed module volume
+        // Assign module DetElement to the placed module volume
         moduleElement.setPlacement(placedModule);
       }
     }

@@ -65,7 +65,6 @@ main(int argc, char* argv[])
   // Geant4 JOB:
   // --------------------------------------------------------------------------------
   // set up the writer for
-
   // ---------------------------------------------------------------------------------
 
   // set up the algorithm writing out the material map
@@ -85,9 +84,9 @@ main(int argc, char* argv[])
   if (vm["output-root"].template as<bool>()) {
     // Write the propagation steps as ROOT TTree
     FW::Root::RootMaterialTrackWriter::Config matTrackWriterRootConfig;
+    matTrackWriterRootConfig.prePostStep       = true;
     matTrackWriterRootConfig.recalculateTotals = true;
     matTrackWriterRootConfig.collection        = matCollection;
-    matTrackWriterRootConfig.prePostStep = true;
     matTrackWriterRootConfig.filePath
         = FW::joinPaths(outputDir, matCollection + ".root");
     auto matTrackWriterRoot

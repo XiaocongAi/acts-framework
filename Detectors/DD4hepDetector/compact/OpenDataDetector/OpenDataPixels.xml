@@ -1,0 +1,40 @@
+<detectors>
+    <!--EndcapN-->
+    <!--detector id="101" name="PixelEndcapN" type="ODDPixelEndcap" readout="PixelEndcapReadout" vis="invisible">
+        <dimensions name="PixelEndcapShape" rmin="pix_env_rmin" rmax="pix_env_rmax" dz="pix_e_dz" z="pix_e_nz"/>
+    </detector-->
+    <!--Barrel-->
+    <detector id="100" name="PixelBarrel" type="ODDPixelBarrel" readout="PixelBarrelReadout" vis="invisible">
+        <dimensions name="PixelBarrelShape" rmin="pix_env_rmin" rmax="pix_env_rmax" dz="pix_b_dz" z="0.*mm"/>
+        <module name="PixelBarrelModule" vis="invisible">
+          <module_component name="Sensor" dx="16.8*mm" dy="72.*mm" dz="0.125*mm" x_offset="0." y_offset="0." z_offset="-1.8*mm" material="Silicon" vis="green" sensitive="true"/>
+          <module_component name="Board" dx="16*mm" dy="70*mm" dz="0.25*mm" x_offset="0." y_offset="0." z_offset="-1.6*mm" material="Kapton" vis="blue" sensitive="false"/>
+          <module_component name="Connector" dx="3*mm" dy="60*mm" dz="0.1*mm" x_offset="-8.*mm" y_offset="0." z_offset="-1.4*mm" material="Al" vis="red" sensitive="false"/>
+        </module>
+        <stave name="PixelBarrelStave" nmodules="14" gap="1.*mm" vis="invisible">
+          <subtraction name="PixelBarrelStaveFoam" material="CarbonFoam" x_offset="0.*mm" y_offset="0.*mm" z_offset="0.5*mm" vis="grey">
+             <trd name="FoamStructure" x1="6.*mm" x2="1.*mm" thickness="2.*mm" dz="15.*mm"/>
+             <tubs name="FoamCutout" rmin="0." rmax="1.2*mm"  z_offset="0.*mm" dz="20.*mm"/>
+         </subtraction>
+         <tube name="CoolingPipe" rmin="1.0*mm" rmax="1.1*mm" dz="20.*mm"  x_offset="0.*mm" y_offset="0.*mm" z_offset="0.5*mm" material="Ti" vis="orange" />
+         <eltube name="CableBundle" rmin="0.0*mm" rmax="0.25*mm" dz="50.*mm"  x_offset="-10.*mm" y_offset="0.*mm" z_offset="1.*mm" material="Cu" vis="orange" />
+        </stave>           
+        <layer id="0" name="PixelLayer0" rmin="28.*mm" r="34.*mm" rmax="44.*mm" dz="1020.*mm" nphi="16" phi_tilt="0.12" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="38.*mm" rmax="39.5*mm" dz="500.*mm" material="CarbonFiber" vis="grey" />
+        </layer>
+        <layer id="1" name="PixelLayer1" rmin="56.*mm" r="72.*mm" rmax="82.*mm" dz="1020.*mm"  nphi="32" phi_tilt="0.12" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="76.*mm" rmax="77.5*mm" dz="500.*mm" material="CarbonFiber" vis="grey" />          
+        </layer>
+        <layer id="2" name="PixelLayer2" rmin="100.*mm" r="116.*mm" rmax="126.*mm" dz="1020.*mm" nphi="52" phi_tilt="0.12" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="120.*mm" rmax="121.5*mm" dz="500.*mm" material="CarbonFiber" vis="grey" />
+        </layer>
+        <layer id="3" name="PixelLayer3" rmin="160.*mm" r="172.*mm" rmax="182.*mm" dz="1020.*mm" nphi="78" phi_tilt="0.12" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="176.*mm" rmax="177.5*mm" dz="500.*mm" material="CarbonFiber" vis="grey" />
+        </layer>           
+    </detector>
+    <!--EndcapP-->
+    <!--detector id="102" name="PixelEndcapP" type="ODDPixelEndcap" readout="PixelEndcapReadout" vis="invisible">
+        <dimensions name="PixelEndcapShape" rmin="pix_env_rmin" rmax="pix_env_rmax" dz="pix_e_dz" z="pix_e_pz"/>
+    </detector-->
+</detectors>
+

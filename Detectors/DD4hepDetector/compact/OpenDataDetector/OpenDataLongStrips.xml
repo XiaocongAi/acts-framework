@@ -1,0 +1,15 @@
+<detectors>
+    <!--EndcapN-->
+    <detector id="301" name="LongStripEndcapN" type="ODDStripEndcap" readout="LongStripEndcapReadout" vis="invisible">
+        <dimensions name="LongStripEndcapShape" rmin="ls_env_rmin" rmax="ls_env_rmax" dz="ls_e_dz" z="ls_e_nz"/>
+    </detector>
+    <!--Barrel-->
+    <detector id="300" name="LongStripBarrel" type="ODDStripBarrel" readout="LongStripBarrelReadout" vis="invisible">
+        <dimensions name="LongStripBarrelShape" rmin="ls_env_rmin" rmax="ls_env_rmax" dz="ls_b_dz" z="0.*mm"/>
+    </detector>
+    <!--EndcapP-->
+    <detector id="302" name="LongStripEndcapP" type="ODDStripEndcap" readout="LongStripEndcapReadout" vis="invisible">
+        <dimensions name="LongStripEndcapShape" rmin="ls_env_rmin" rmax="ls_env_rmax" dz="ls_e_dz" z="ls_e_pz"/>
+    </detector>
+</detectors>
+
