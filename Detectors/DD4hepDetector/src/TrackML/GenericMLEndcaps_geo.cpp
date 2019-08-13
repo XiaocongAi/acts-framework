@@ -164,7 +164,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
             else if (!((iphi + 1) % 4))
               zPos -= subStaggerZ;
           }
-          // the podition of the module
+          // the position of the module
           Position trans(radius * cos(phi), radius * sin(phi), zPos);
           // Create the module DetElement
           DetElement moduleDetector(lay_det,

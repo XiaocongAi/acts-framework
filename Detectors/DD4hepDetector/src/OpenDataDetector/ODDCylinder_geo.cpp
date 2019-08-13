@@ -13,7 +13,7 @@ using namespace std;
 using namespace dd4hep;
 
 static Ref_t
-create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
+create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
 {
 
   xml_det_t x_det   = xml;
@@ -39,11 +39,11 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
   Tube       beamPipeShape(
       shapeName, x_det_tubs.rmin(), x_det_tubs.rmax(), x_det_tubs.dz());
   Volume tube_vol(
-      detName, beamPipeShape, lcdd.material(x_det_tubs.materialStr()));
-  tube_vol.setVisAttributes(lcdd, x_det.visStr());
+      detName, beamPipeShape, oddd.material(x_det_tubs.materialStr()));
+  tube_vol.setVisAttributes(oddd, x_det.visStr());
 
   // Place it in the mother
-  Volume       mother_vol = lcdd.pickMotherVolume(beamPipeElement);
+  Volume       mother_vol = oddd.pickMotherVolume(beamPipeElement);
   PlacedVolume placedTube = mother_vol.placeVolume(tube_vol);
   placedTube.addPhysVolID("BeamPipeVolume", beamPipeElement.id());
   beamPipeElement.setPlacement(placedTube);

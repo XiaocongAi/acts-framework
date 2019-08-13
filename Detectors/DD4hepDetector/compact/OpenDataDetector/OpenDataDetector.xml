@@ -21,37 +21,37 @@
         <constant name="world_y" value="world_size"/>
         <constant name="world_z" value="world_size"/>
         <!--Dimensions of the beam pipe -->
-        <constant name="bp_rmin" value="25.6*mm"/>
-        <constant name="bp_rmax" value="26.4*mm"/>
-        <constant name="bp_length" value="2.*m"/>
+        <constant name="bp_rmin" value="23.6*mm"/>
+        <constant name="bp_rmax" value="24.4*mm"/>
+        <constant name="bp_length" value="4.*m"/>
         <!--Dimensions of the Pixel volume & sub volumes -->
         <constant name="pix_env_rmin" value="30.*mm"/>
         <constant name="pix_env_rmax" value="190.*mm"/>
-        <constant name="pix_env_dz" value="3.2*m"/>  
+        <constant name="pix_env_dz" value="1.6*m"/>  
         <constant name="pix_b_z"  value="0.*m"/>                
-        <constant name="pix_b_dz" value="0.5*m"/> 
-        <constant name="pix_e_nz" value="-1.*m"/>                
-        <constant name="pix_e_pz" value="1.*m"/>                
-        <constant name="pix_e_dz" value="0.5*m"/> 
+        <constant name="pix_b_dz" value="0.575*m"/> 
+        <constant name="pix_e_nz" value="-1.280*m"/>                
+        <constant name="pix_e_pz" value="1.280*m"/>                
+        <constant name="pix_e_dz" value="0.8*m"/> 
         <!--Dimensions of the Pixel Support tube -->
         <constant name="pst_rmin" value="200.*mm"/>
-        <constant name="pst_rmax" value="201.*mm"/>
+        <constant name="pst_rmax" value="202.*mm"/>
         <constant name="pst_length" value="4.*m"/>        
         <!--Dimensions of the Short Strips volume & sub volumes -->
-        <constant name="ss_env_rmin" value="202.*mm"/>
-        <constant name="ss_env_rmax" value="400.*mm"/>
-        <constant name="ss_env_dz" value="4.*m"/>  
+        <constant name="ss_env_rmin" value="204.*mm"/>
+        <constant name="ss_env_rmax" value="700.*mm"/>
+        <constant name="ss_env_dz" value="2.5*m"/>  
         <constant name="ss_b_z"  value="0.*m"/>                
-        <constant name="ss_b_dz" value="1*m"/> 
+        <constant name="ss_b_dz" value="1.2*m"/> 
         <constant name="ss_e_nz" value="-1.5*m"/>                
         <constant name="ss_e_pz" value="1.5*m"/>                
         <constant name="ss_e_dz" value="0.5*m"/>  
         <!--Dimensions of the Long Strips volume & sub volumes -->
-        <constant name="ls_env_rmin" value="402.*mm"/>
+        <constant name="ls_env_rmin" value="720.*mm"/>
         <constant name="ls_env_rmax" value="1050.*mm"/>
-        <constant name="ls_env_dz" value="4.*m"/>  
+        <constant name="ls_env_dz" value="2.5*m"/>  
         <constant name="ls_b_z"  value="0.*m"/>                
-        <constant name="ls_b_dz" value="1*m"/> 
+        <constant name="ls_b_dz" value="1.2*m"/> 
         <constant name="ls_e_nz" value="-1.5*m"/>                
         <constant name="ls_e_pz" value="1.5*m"/>                
         <constant name="ls_e_dz" value="0.5*m"/>                                       
@@ -71,33 +71,33 @@
     <readouts>
         <readout name="PixelBarrelReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,barrelendcap:2,layer:4,stave:8,module:4,sensor:2,x:4,y:4</id>
+            <id>system:4,layer:4,stave:8,module:4,sensor:2,x:4,y:4</id>
         </readout>
         <readout name="PixelEndcapReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,barrelendcap:2,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,ring:2,module:8,sensor:4,x:4,y:4</id>
         </readout>
         <readout name="ShortStripBarrelReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,barrelendcap:2,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,stave:8,module:8,sensor:4,x:4,y:4</id>
         </readout>
         <readout name="ShortStripEndcapReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,barrelendcap:2,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
         </readout>
         <readout name="LongStripBarrelReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,barrelendcap:2,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,stave:8,module:8,sensor:4,x:4,y:4</id>
         </readout>
         <readout name="LongStripEndcapReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,barrelendcap:2,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
         </readout>
     </readouts>
         
     <include ref="OpenDataPixels.xml"/>
-    <!--include ref="OpenDataShortStrips.xml"/-->
-    <!--include ref="OpenDataLongStrips.xml"/-->
+    <include ref="OpenDataShortStrips.xml"/>
+    <include ref="OpenDataLongStrips.xml"/>
         
     <detectors>
       <detector id="0" name="BeamPipe" type="ODDCylinder" vis="orange">
@@ -106,14 +106,14 @@
       </detector>
       <detector id="1" name="Pixels" type="DD4hep_SubdetectorAssembly" vis="invisible">
           <shape name="PixelVolume" type="Tube" rmin="pix_env_rmin" rmax="pix_env_rmax" dz="pix_env_dz" material="Air"/>
-          <!-- composite name="PixelEndcapN"/ -->
+          <composite name="PixelEndcapN"/>
           <composite name="PixelBarrel"/>
-          <!-- composite name="PixelEndcapP"/ --> 
+          <composite name="PixelEndcapP"/> 
       </detector>
       <detector id="2" name="PixelSupportTube" type="ODDCylinder" beampipe="false" vis="invisible">
             <tubs name="PixelSupportCylinder" rmin="pst_rmin" rmax="pst_rmax" dz="bp_length" material="CarbonFiber"/>
       </detector>
-      <!--detector id="3" name="ShortStrips" type="DD4hep_SubdetectorAssembly" vis="invisible">
+      <detector id="3" name="ShortStrips" type="DD4hep_SubdetectorAssembly" vis="invisible">
           <shape name="ShortStripVolume" type="Tube" rmin="ss_env_rmin" rmax="ss_env_rmax" dz="ss_env_dz" material="Air"/>
           <composite name="ShortStripEndcapN"/>
           <composite name="ShortStripBarrel"/>
@@ -124,6 +124,6 @@
           <composite name="LongStripEndcapN"/>
           <composite name="LongStripBarrel"/>
           <composite name="LongStripEndcapP"/> 
-      </detector-->
+      </detector>
     </detectors>
 </lccdd>

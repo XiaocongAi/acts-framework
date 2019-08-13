@@ -6,9 +6,37 @@
     <!--Barrel-->
     <detector id="200" name="ShortStripBarrel" type="ODDStripBarrel" readout="ShortStripBarrelReadout" vis="invisible">
         <dimensions name="ShortStripBarrelShape" rmin="ss_env_rmin" rmax="ss_env_rmax" dz="ss_b_dz" z="0.*mm"/>
+        <module name="ShortStripBarrelModule" vis="invisible">
+          <module_component name="Foam" alpha="0." dx="45.*mm" dy="108*mm" dz="4*mm" x_offset="0." y_offset="0." z_offset="-2.8*mm" material="CarbonFoam" vis="grey" sensitive="false">
+            <subtraction name="CoolingLine" rmin="0.*mm" rmax="1.8*mm" x_offset="0.*mm" y_offset="0.*mm" z_offset="0.*mm"/> 
+            <tube name="CoolingPipe" rmin="1.5*mm" rmax="1.7*mm" x_offset="0.*mm" y_offset="0.*mm" z_offset="0.*mm" material="Ti" vis="orange"/>
+          </module_component>
+          <module_component name="Connector" alpha="0." dx="10.*mm" dy="108.*mm" dz="0.25*mm" x_offset="-18.*mm" y_offset="0." z_offset="-0.5*mm" material="Al" vis="red" sensitive="false"/>
+          <module_component name="Board" alpha="0." dx="48.*mm" dy="108*mm" dz="0.25*mm" x_offset="0." y_offset="0." z_offset="-0.25*mm" material="Kapton" vis="blue" sensitive="false"/>
+          <module_component name="Sensor" alpha="0." dx="48.*mm" dy="108.*mm" dz="0.2*mm" x_offset="0." y_offset="0." z_offset="0.*mm" material="Silicon" vis="green" sensitive="true"/>
+        </module>
+        <stave name="ShortStripBarrelStave" nmodules="21" gap="0.5*mm" vis="invisible">
+          <eltube name="CableBundle" rmin="0.5*mm" rmax="1.5*mm" r="245.*mm" x_offset="12.*mm" y_offset="0.*mm" z_offset="-9.*mm" material="Cu" vis="orange"/>
+        </stave>
+        <layer id="0" name="ShortStripLayer0" rmin="240.*mm" r="260.*mm" rmax="280.*mm" outer_z="20.*mm" nphi="40" phi_tilt="-0.15" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="248.*mm" rmax="250.*mm" dz="1000.*mm" z_offset="0.*mm" material="CarbonFiber" vis="grey"/>
+        </layer>
+        <layer id="1" name="ShortStripLayer1" rmin="340.*mm" r="360.*mm" rmax="380.*mm" outer_z="20.*mm"  nphi="56" phi_tilt="-0.15" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="344.*mm" rmax="346.*mm" dz="1000.*mm" z_offset="0.*mm" material="CarbonFiber" vis="grey" />          
+        </layer>
+        <layer id="2" name="ShortStripLayer2" rmin="480.*mm" r="500.*mm" rmax="520.*mm" outer_z="20.*mm" nphi="78" phi_tilt="-0.15" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="484.*mm" rmax="486.*mm" dz="1000.*mm" z_offset="0.*mm" material="CarbonFiber" vis="grey" />
+        </layer>
+        <layer id="3" name="ShortStripLayer3" rmin="640.*mm" r="660.*mm" rmax="680.*mm" outer_z="20.*mm" nphi="102" phi_tilt="-0.15" phi0="0." vis="invisible">
+          <support name="SupportCylinder" rmin="644.*mm" rmax="646.*mm" dz="1000.*mm" z_offset="0.*mm" material="CarbonFiber" vis="grey" />
+        </layer>          
     </detector>
     <!--EndcapP-->
     <detector id="202" name="ShortStripEndcapP" type="ODDStripEndcap" readout="ShortStripEndcapReadout" vis="invisible">
         <dimensions name="ShortStripEndcapShape" rmin="ss_env_rmin" rmax="ss_env_rmax" dz="ss_e_dz" z="ss_e_pz"/>
     </detector>
 </detectors>
+
+
+<!-- nmodules=21 -->
+<!-- nPhi=40 -->
