@@ -9,6 +9,7 @@
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 #include "ODDModuleHelper.hpp"
+#include "ODDServiceHelper.hpp"
 
 using namespace std;
 using namespace dd4hep;
@@ -101,6 +102,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     staveElementTemplate.add(moduleElement);
   }
 
+  // Remember the layer radii
+  std::vector<double> layerR;
+
   // Loop over the layers to build staves
   size_t layerNum = 0;
   for (xml_coll_t lay(xml, _U(layer)); lay; ++lay, ++layerNum) {
@@ -124,6 +128,7 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     double       phiTilt = x_layer.phi_tilt();
     double       phi0    = x_layer.phi0();
     double       r       = x_layer.r();
+    layerR.push_back(r);
 
     // Loop over the staves and place them
     for (unsigned int staveNum = 0; staveNum < nStaves; ++staveNum) {
@@ -160,6 +165,20 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
       // Place the support structure
       PlacedVolume placedSupport = layerVolume.placeVolume(
           supportVolume, Position(0., 0., x_support.z_offset()));
+    }
+
+    if (x_det.hasChild(_Unicode(services))) {
+      // Grab the services
+      xml_comp_t x_services = x_det.child(_Unicode(services));
+      if (x_services.hasChild(_Unicode(cable_routing))) {
+        xml_comp_t x_cable_routing = x_services.child(_Unicode(cable_routing));
+        buildBarrelRouting(oddd, barrelVolume, x_cable_routing, layerR);
+      }
+      if (x_services.hasChild(_Unicode(cooling_routing))) {
+        xml_comp_t x_cooling_routing
+            = x_services.child(_Unicode(cooling_routing));
+        buildBarrelRouting(oddd, barrelVolume, x_cooling_routing, layerR);
+      }
     }
 
     // Place the layer with appropriate Acts::Extension

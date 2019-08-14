@@ -12,13 +12,19 @@
         <support rmin="36.*mm" rmax="176.*mm" dz="2*mm" material="CarbonFiber" vis="grey">
         </support>
         <layer id="0" name="PixelEndcapN0" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-620.*mm" vis="invisible"/>
-        <layer id="1" name="PixelEndcapP1" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-720.*mm" vis="invisible"/>
-        <layer id="2" name="PixelEndcapP2" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-840.*mm" vis="invisible"/>
-        <layer id="3" name="PixelEndcapP3" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-980.*mm" vis="invisible"/>
-        <layer id="4" name="PixelEndcapP4" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-1120.*mm" vis="invisible"/>
-        <layer id="5" name="PixelEndcapP5" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-1320.*mm" vis="invisible"/>
-        <layer id="6" name="PixelEndcapP6" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-1520.*mm" vis="invisible"/>
-        <disk name="PixelEndplate" z_offset="-1550.*mm" rmin="40.*mm" rmax="178.*mm" dz="5*mm" material="CarbonFiber" vis="grey"/>
+        <layer id="1" name="PixelEndcapN1" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-720.*mm" vis="invisible"/>
+        <layer id="2" name="PixelEndcapN2" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-840.*mm" vis="invisible"/>
+        <layer id="3" name="PixelEndcapN3" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-980.*mm" vis="invisible"/>
+        <layer id="4" name="PixelEndcapN4" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-1120.*mm" vis="invisible"/>
+        <layer id="5" name="PixelEndcapN5" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-1320.*mm" vis="invisible"/>
+        <layer id="6" name="PixelEndcapN6" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="-1520.*mm" vis="invisible"/>
+        <disk name="PixelEndplate" z_offset="-1750.*mm" rmin="40.*mm" rmax="178.*mm" dz="5*mm" material="CarbonFiber" vis="grey"/>
+        <services>
+          <cable_routing nphi="8" phi0="0." number="8" r="188.*mm" rmin="0.*mm" rmax="0.2*mm" z_offset="550.*mm" gap="2.*mm" material="Cu" vis="orange">
+            <box dz="0.25*mm" material="CarbonFiber" vis="grey"/>
+          </cable_routing>
+          <cooling_routing nphi="8" phi0="0.3926" number="1" r="188.*mm" rmin="1.0*mm" rmax="1.1*mm" z_offset="550.*mm" gap="2.*mm" material="Ti" vis="orange"/>          
+        </services>  
     </detector>
     <!--Barrel-->
     <detector id="100" name="PixelBarrel" type="ODDPixelBarrel" readout="PixelBarrelReadout" vis="invisible">
@@ -47,7 +53,13 @@
         </layer>
         <layer id="3" name="PixelLayer3" rmin="160.*mm" r="172.*mm" rmax="182.*mm" outer_z="20.*mm" nphi="78" phi_tilt="0.12" phi0="0." vis="invisible">
           <support name="SupportCylinder" rmin="176.*mm" rmax="178.*mm" dz="500.*mm" material="CarbonFiber" vis="grey" />
-        </layer>           
+        </layer> 
+        <services>
+          <cable_routing nphi="8" phi0="0." number="8" rmin="0.*mm" rmax="0.2*mm" z_offset="550.*mm" gap="2.*mm" material="Cu" vis="orange">
+            <box dz="0.25*mm" material="CarbonFiber" vis="grey"/>
+          </cable_routing>
+          <cooling_routing nphi="8" phi0="0.3926" number="1" rmin="1.0*mm" rmax="1.1*mm" z_offset="550.*mm" gap="2.*mm" material="Ti" vis="orange"/>          
+        </services>          
     </detector>
     <!--EndcapP-->
     <detector id="102" name="PixelEndcapP" type="ODDPixelEndcap" readout="PixelEndcapReadout" vis="invisible">
@@ -68,7 +80,13 @@
         <layer id="4" name="PixelEndcapP4" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="1120.*mm" vis="invisible"/>
         <layer id="5" name="PixelEndcapP5" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="1320.*mm" vis="invisible"/>
         <layer id="6" name="PixelEndcapP6" rmin="28.*mm" rmax="186.*mm" dz="20.*mm" z_offset="1520.*mm" vis="invisible"/>
-        <disk name="PixelEndplate" z_offset="1550.*mm" rmin="40.*mm" rmax="178.*mm" dz="5*mm" material="CarbonFiber" vis="grey"/>
+        <disk name="PixelEndplate" z_offset="1750.*mm" rmin="40.*mm" rmax="178.*mm" dz="5*mm" material="CarbonFiber" vis="grey"/>
+        <services>
+          <cable_routing nphi="8" phi0="0." number="8" r="188.*mm" rmin="0.*mm" rmax="0.2*mm" z_offset="550.*mm" gap="2.*mm" material="Cu" vis="orange">
+            <box dz="0.25*mm" material="CarbonFiber" vis="grey"/>
+          </cable_routing>
+          <cooling_routing nphi="8" phi0="0.3926" number="1" r="188.*mm" rmin="1.0*mm" rmax="1.1*mm" z_offset="550.*mm" gap="2.*mm" material="Ti" vis="orange"/>          
+        </services>  
   </detector>
 </detectors>
 

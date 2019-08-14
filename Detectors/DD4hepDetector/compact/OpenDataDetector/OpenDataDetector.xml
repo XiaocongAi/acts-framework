@@ -27,34 +27,34 @@
         <!--Dimensions of the Pixel volume & sub volumes -->
         <constant name="pix_env_rmin" value="30.*mm"/>
         <constant name="pix_env_rmax" value="190.*mm"/>
-        <constant name="pix_env_dz" value="1.6*m"/>  
+        <constant name="pix_env_dz" value="2.4*m"/>  
         <constant name="pix_b_z"  value="0.*m"/>                
         <constant name="pix_b_dz" value="0.575*m"/> 
-        <constant name="pix_e_nz" value="-1.280*m"/>                
-        <constant name="pix_e_pz" value="1.280*m"/>                
-        <constant name="pix_e_dz" value="0.8*m"/> 
+        <constant name="pix_e_nz" value="-1.480*m"/>                
+        <constant name="pix_e_pz" value="1.480*m"/>                
+        <constant name="pix_e_dz" value="0.9*m"/> 
         <!--Dimensions of the Pixel Support tube -->
         <constant name="pst_rmin" value="200.*mm"/>
         <constant name="pst_rmax" value="202.*mm"/>
-        <constant name="pst_length" value="4.*m"/>        
+        <constant name="pst_length" value="3.*m"/>        
         <!--Dimensions of the Short Strips volume & sub volumes -->
         <constant name="ss_env_rmin" value="204.*mm"/>
-        <constant name="ss_env_rmax" value="700.*mm"/>
-        <constant name="ss_env_dz" value="2.5*m"/>  
+        <constant name="ss_env_rmax" value="720.*mm"/>
+        <constant name="ss_env_dz" value="3.1*m"/>  
         <constant name="ss_b_z"  value="0.*m"/>                
         <constant name="ss_b_dz" value="1.2*m"/> 
-        <constant name="ss_e_nz" value="-1.5*m"/>                
-        <constant name="ss_e_pz" value="1.5*m"/>                
-        <constant name="ss_e_dz" value="0.5*m"/>  
+        <constant name="ss_e_nz" value="-2.175*m"/>                
+        <constant name="ss_e_pz" value="2.175*m"/>                
+        <constant name="ss_e_dz" value="0.925*m"/>  
         <!--Dimensions of the Long Strips volume & sub volumes -->
         <constant name="ls_env_rmin" value="720.*mm"/>
-        <constant name="ls_env_rmax" value="1050.*mm"/>
-        <constant name="ls_env_dz" value="2.5*m"/>  
+        <constant name="ls_env_rmax" value="1150.*mm"/>
+        <constant name="ls_env_dz" value="3.1*m"/>  
         <constant name="ls_b_z"  value="0.*m"/>                
         <constant name="ls_b_dz" value="1.2*m"/> 
-        <constant name="ls_e_nz" value="-1.5*m"/>                
-        <constant name="ls_e_pz" value="1.5*m"/>                
-        <constant name="ls_e_dz" value="0.5*m"/>                                       
+        <constant name="ls_e_nz" value="-2.175*m"/>                
+        <constant name="ls_e_pz" value="2.175*m"/>                
+        <constant name="ls_e_dz" value="0.925*m"/>                                       
     </define>
         
     <display>
@@ -75,15 +75,15 @@
         </readout>
         <readout name="PixelEndcapReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,layer:4,ring:2,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,ring:2,module:8,sensor:2,x:4,y:4</id>
         </readout>
         <readout name="ShortStripBarrelReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,layer:4,stave:8,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,stave:8,module:8,sensor:2,x:4,y:4</id>
         </readout>
         <readout name="ShortStripEndcapReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,ring:2,module:8,sensor:2,x:4,y:4</id>
         </readout>
         <readout name="LongStripBarrelReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
@@ -91,7 +91,7 @@
         </readout>
         <readout name="LongStripEndcapReadout">
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
-            <id>system:4,layer:4,stave:4,module:8,sensor:4,x:4,y:4</id>
+            <id>system:4,layer:4,ring:4,module:8,sensor:4,x:4,y:4</id>
         </readout>
     </readouts>
         

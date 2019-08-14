@@ -9,6 +9,7 @@
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 #include "ODDModuleHelper.hpp"
+#include "ODDServiceHelper.hpp"
 
 using namespace std;
 using namespace dd4hep;
@@ -78,9 +79,10 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     for (unsigned int modNum = 0; modNum < nModules; ++modNum) {
       // The module name
       string moduleName = _toString((int)modNum, "module%d");
+      bool   odd        = bool(modNum % 2);
       // Position it
       double   phi = phi0 + modNum * phiStep;
-      double   z   = bool(modNum % 2) ? -zgap : zgap;
+      double   z   = odd ? -zgap : zgap;
       Position trans(r * cos(phi), r * sin(phi), z);
       // Place Module Box Volumes, flip if necessary
       double       flip         = x_det_dim.z() < 0. ? M_PI : 0.;
@@ -114,6 +116,8 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
 
   // Loop over the layers and place the disk
   size_t layNum = 0;
+  // Remember the layers for the service routing
+  std::vector<double> endcapZ;
   for (xml_coll_t lay(xml, _U(layer)); lay; ++lay, ++layNum) {
     // Get the layer
     xml_comp_t x_layer = lay;
@@ -138,8 +142,11 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     layerElement.add(diskElement);
 
     // Place Ring assembly into disk
-    PlacedVolume placedLayer = endcapVolume.placeVolume(
-        layerVolume, Position(0., 0., x_layer.z_offset() - x_det_dim.z()));
+    double zeff = x_layer.z_offset() - x_det_dim.z();
+    endcapZ.push_back(zeff);
+
+    PlacedVolume placedLayer
+        = endcapVolume.placeVolume(layerVolume, Position(0., 0., zeff));
     placedLayer.addPhysVolID("layer", layNum);
 
     // Place the layer with appropriate Acts::Extension
@@ -154,6 +161,7 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     endcapDetector.add(layerElement);
   }
 
+  // Close up the detector
   if (x_det.hasChild(_U(disk))) {
 
     // Endplate disk
@@ -165,9 +173,24 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
         "Endplate", endplateShape, oddd.material(x_endplate.materialStr()));
     endplateVolume.setVisAttributes(oddd, x_endplate.visStr());
 
-    PlacedVolume placedEndplate = endcapVolume.placeVolume(
-        endplateVolume,
-        Position(0., 0., x_endplate.z_offset() - x_det_dim.z()));
+    double zeff = x_endplate.z_offset() - x_det_dim.z();
+    endcapZ.push_back(zeff);
+    PlacedVolume placedEndplate
+        = endcapVolume.placeVolume(endplateVolume, Position(0., 0., zeff));
+  }
+
+  if (x_det.hasChild(_Unicode(services))) {
+    // Grab the services
+    xml_comp_t x_services = x_det.child(_Unicode(services));
+    if (x_services.hasChild(_Unicode(cable_routing))) {
+      xml_comp_t x_cable_routing = x_services.child(_Unicode(cable_routing));
+      buildEndcapRouting(oddd, endcapVolume, x_cable_routing, endcapZ);
+    }
+    if (x_services.hasChild(_Unicode(cooling_routing))) {
+      xml_comp_t x_cooling_routing
+          = x_services.child(_Unicode(cooling_routing));
+      buildEndcapRouting(oddd, endcapVolume, x_cooling_routing, endcapZ);
+    }
   }
 
   // "system" is hard coded in the DD4Hep::VolumeManager
