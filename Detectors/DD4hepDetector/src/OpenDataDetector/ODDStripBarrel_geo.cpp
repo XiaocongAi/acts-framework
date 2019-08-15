@@ -152,34 +152,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
       layerElement.add(staveElement);
     }
 
-    size_t supportNum = 0;
-    for (xml_coll_t sup(x_layer, _U(support)); sup; ++sup, ++supportNum) {
-      xml_comp_t x_support = sup;
-      // Create the volume of the support structure
-      string supportName = _toString((int)supportNum, "SupportCylinder%d");
-      Volume supportVolume(
-          supportName,
-          Tube(x_support.rmin(), x_support.rmax(), x_support.dz()),
-          oddd.material(x_support.materialStr()));
-      supportVolume.setVisAttributes(oddd, x_support.visStr());
-      // Place the support structure
-      PlacedVolume placedSupport = layerVolume.placeVolume(
-          supportVolume, Position(0., 0., x_support.z_offset()));
-    }
-
-    if (x_det.hasChild(_Unicode(services))) {
-      // Grab the services
-      xml_comp_t x_services = x_det.child(_Unicode(services));
-      if (x_services.hasChild(_Unicode(cable_routing))) {
-        xml_comp_t x_cable_routing = x_services.child(_Unicode(cable_routing));
-        buildBarrelRouting(oddd, barrelVolume, x_cable_routing, layerR);
-      }
-      if (x_services.hasChild(_Unicode(cooling_routing))) {
-        xml_comp_t x_cooling_routing
-            = x_services.child(_Unicode(cooling_routing));
-        buildBarrelRouting(oddd, barrelVolume, x_cooling_routing, layerR);
-      }
-    }
+    // Place the support cylinder
+    std::vector<double> dummyR;
+    buildSupportCylinder(oddd, barrelVolume, x_layer, dummyR);
 
     // Place the layer with appropriate Acts::Extension
     // Configure the ACTS extension
@@ -195,6 +170,24 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     layerElement.setPlacement(placedLayer);
 
   }  // loop over layers
+
+  // Place the support rails
+  buildSupportCylinder(oddd, barrelVolume, x_det, layerR);
+
+  // Route the services out on both sides
+  if (x_det.hasChild(_Unicode(services))) {
+    // Grab the services
+    xml_comp_t x_services = x_det.child(_Unicode(services));
+    if (x_services.hasChild(_Unicode(cable_routing))) {
+      xml_comp_t x_cable_routing = x_services.child(_Unicode(cable_routing));
+      buildBarrelRouting(oddd, barrelVolume, x_cable_routing, layerR);
+    }
+    if (x_services.hasChild(_Unicode(cooling_routing))) {
+      xml_comp_t x_cooling_routing
+          = x_services.child(_Unicode(cooling_routing));
+      buildBarrelRouting(oddd, barrelVolume, x_cooling_routing, layerR);
+    }
+  }
 
   // Place Volume
   Volume       motherVolume = oddd.pickMotherVolume(barrelDetector);

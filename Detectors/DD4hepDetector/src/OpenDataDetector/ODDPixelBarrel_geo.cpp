@@ -203,18 +203,8 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
       layerElement.add(staveElement);
     }
 
-    // Place the support cylinder
-    if (x_layer.hasChild(_U(support))) {
-      xml_comp_t x_support = x_layer.child(_U(support));
-      // Create the volume of the support structure
-      Volume supportVolume(
-          "SupportCylinder",
-          Tube(x_support.rmin(), x_support.rmax(), x_support.dz()),
-          oddd.material(x_support.materialStr()));
-      supportVolume.setVisAttributes(oddd, x_support.visStr());
-      // Place the support structure
-      PlacedVolume placedSupport = layerVolume.placeVolume(supportVolume);
-    }
+    // Place the support cylinder per layer
+    buildSupportCylinder(oddd, layerVolume, x_layer, layerR);
 
     // Cleanup the templates
     // dd4hep::detail::destroyHandle(staveElementTemplate);
@@ -233,6 +223,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     // Assign layer DetElement to layer volume
     layerElement.setPlacement(placedLayer);
   }
+
+  // Place the additional support cylinders per detector
+  buildSupportCylinder(oddd, barrelVolume, x_det, layerR);
 
   if (x_det.hasChild(_Unicode(services))) {
     // Grab the services

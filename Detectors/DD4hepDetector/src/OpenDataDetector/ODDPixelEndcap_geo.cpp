@@ -106,7 +106,7 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     diskElementTemplate.add(ringElement);
   }
 
-  xml_comp_t x_support = x_det.child(_U(support));
+  xml_comp_t x_support = x_det.child(_Unicode(ring_support));
   // The support shape
   Tube   supportShape(x_support.rmin(), x_support.rmax(), x_support.dz());
   Volume supportVolume(
@@ -192,6 +192,10 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
       buildEndcapRouting(oddd, endcapVolume, x_cooling_routing, endcapZ);
     }
   }
+
+  // Place the additional support cylinders per detector
+  std::vector<double> layerR;
+  buildSupportCylinder(oddd, endcapVolume, x_det, layerR);
 
   // "system" is hard coded in the DD4Hep::VolumeManager
   placedEndcap.addPhysVolID("system", endcapDetector.id());

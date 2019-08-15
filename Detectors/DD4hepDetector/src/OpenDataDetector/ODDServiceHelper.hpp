@@ -13,6 +13,14 @@
 using namespace std;
 using namespace dd4hep;
 
+/// Helper method to build service routing for the Barrel type
+///
+/// @tparam volume_t the Type of volume (Volume, Assembly)
+///
+/// @param odd the top level detector
+/// @param barrelVolume the volume to put the routing on
+/// @param x_routing the xml description of the routing
+/// @param layerR the layer radii to connect
 template <typename volume_t>
 void
 buildBarrelRouting(Detector&                  oddd,
@@ -79,10 +87,18 @@ buildBarrelRouting(Detector&                  oddd,
   }
 }
 
+/// Helper method to build service routing for the Endcap type
+///
+/// @tparam volume_t the Type of volume (Volume, Assembly)
+///
+/// @param odd the top level detector
+/// @param endcapVolume the volume to put the routing on
+/// @param x_routing the xml description of the routing
+/// @param endcapZ the layer z positions to connect
 template <typename volume_t>
 void
 buildEndcapRouting(Detector&                  oddd,
-                   volume_t&                  barrelVolume,
+                   volume_t&                  endcapVolume,
                    const xml_comp_t&          x_routing,
                    const std::vector<double>& endcapZ)
 {
@@ -135,9 +151,50 @@ buildEndcapRouting(Detector&                  oddd,
             cableVolume, Position(0., (-n * iec + 1 + 2 * icable) * rmax, 0.));
       }
       // Place the pipe in the stave
-      PlacedVolume placedCableBox = barrelVolume.placeVolume(
+      PlacedVolume placedCableBox = endcapVolume.placeVolume(
           cableboxAssembly,
           Transform3D(RotationZ(+phi), Position(xpos, ypos, zpos)));
+    }
+  }
+}
+
+/// Helper method to build a cyoindrical like passive structure
+///
+/// @tparam volume_t the Type of volume (Volume, Assembly)
+///
+/// @param odd the top level detector
+/// @param endcapVolume the volume to put the routing on
+/// @param x_mother_comp the xml description of teh mother component
+/// @param layerR the layer radii contaienr to add the new one
+template <typename volume_t>
+void
+buildSupportCylinder(Detector&            oddd,
+                     volume_t&            motherVolume,
+                     const xml_comp_t&    x_mother_comp,
+                     std::vector<double>& layerR)
+{
+  size_t supportNum = 0;
+  for (xml_coll_t sup(x_mother_comp, _U(support)); sup; ++sup, ++supportNum) {
+
+    xml_comp_t x_support = sup;
+    // Create the volume of the support structure
+    string supportName = _toString((int)supportNum, "SupportCylinder%d");
+
+    // Remember the layer radius if it is needed for operation
+    if (x_support.hasChild(_Unicode(connector))) {
+      layerR.push_back(0.5 * (x_support.rmin() + x_support.rmax()));
+    }
+    // If nz is not set to 0, build 2 symmetric ones
+    for (int side = -1; side < x_support.nsides(); side += 2) {
+      // Create the support volume
+      Volume supportVolume(
+          supportName,
+          Tube(x_support.rmin(), x_support.rmax(), x_support.dz()),
+          oddd.material(x_support.materialStr()));
+      supportVolume.setVisAttributes(oddd, x_support.visStr());
+      // Place the support structure
+      PlacedVolume placedSupport = motherVolume.placeVolume(
+          supportVolume, Position(0., 0., side * x_support.z_offset()));
     }
   }
 }
