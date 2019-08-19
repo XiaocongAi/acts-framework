@@ -26,7 +26,7 @@
         <constant name="bp_length" value="4.0*m"/>
         <!--Dimensions of the Pixel volume & sub volumes -->
         <constant name="pix_env_rmin" value="30.*mm"/>
-        <constant name="pix_env_rmax" value="190.*mm"/>
+        <constant name="pix_env_rmax" value="200.*mm"/>
         <constant name="pix_env_dz" value="2.4*m"/>  
         <constant name="pix_b_z"  value="0.*m"/>                
         <constant name="pix_b_dz" value="0.575*m"/> 
