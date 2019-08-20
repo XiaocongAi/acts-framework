@@ -198,3 +198,51 @@ buildSupportCylinder(Detector&            oddd,
     }
   }
 }
+
+/// Helper method to build a cyoindrical like passive structure
+///
+/// @tparam volume_t the Type of volume (Volume, Assembly)
+///
+/// @param odd the top level detector
+/// @param endcapVolume the volume to put the routing on
+/// @param x_mother_comp the xml description of teh mother component
+/// @param layerR the layer radii contaienr to add the new one
+template <typename volume_t>
+void
+buildCoolingRings(Detector&         oddd,
+                  volume_t&         motherVolume,
+                  const xml_comp_t& x_mother_comp)
+{
+  size_t cringNum = 0;
+  for (xml_coll_t cring(x_mother_comp, _Unicode(cooling_ring)); cring;
+       ++cring, ++cringNum) {
+
+    xml_comp_t x_cooling_ring = cring;
+
+    double r       = x_cooling_ring.r();
+    double nPhi    = x_cooling_ring.nphi();
+    double phiStep = 2. * M_PI / nPhi;
+    double zpos    = x_cooling_ring.z_offset();
+    double rmin    = x_cooling_ring.rmin();
+    double rmax    = x_cooling_ring.rmax();
+    double dz      = 2 * (r * M_PI / nPhi - x_cooling_ring.gap());
+
+    // Create the segments around the ring
+    for (unsigned int iphi = 0; iphi < nPhi; ++iphi) {
+      Volume coolingSegement(
+          "CoolingRingSegment",
+          Tube(x_cooling_ring.rmin(), x_cooling_ring.rmax(), dz),
+          oddd.material(x_cooling_ring.materialStr()));
+      coolingSegement.setVisAttributes(oddd, x_cooling_ring.visStr());
+
+      // position & orientation
+      double   phi = iphi * phiStep;
+      Position segementPos(r * cos(phi), r * sin(phi), zpos);
+      // Place the support structure
+      PlacedVolume placedSegment = motherVolume.placeVolume(
+          coolingSegement,
+          Transform3D(RotationY(0.5 * M_PI) * RotationX(0.5 * M_PI - phi),
+                      segementPos));
+    }
+  }
+}

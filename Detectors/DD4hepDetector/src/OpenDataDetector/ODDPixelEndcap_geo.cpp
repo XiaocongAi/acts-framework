@@ -117,6 +117,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   supportVolume.setVisAttributes(oddd, x_support.visStr());
   diskAssembly.placeVolume(supportVolume);
 
+  // Cooling rings
+  buildCoolingRings(oddd, diskAssembly, x_det);
+
   // Loop over the layers and place the disk
   size_t layNum = 0;
   // Remember the layers for the service routing

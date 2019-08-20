@@ -115,6 +115,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
             supportVolume, Position(0., 0., x_support.z_offset()));
       }
 
+      // Cooling rings
+      buildCoolingRings(oddd, ringAssembly, x_ring);
+
       PlacedVolume placedRing = diskAssembly.placeVolume(
           ringAssembly, Position(0., 0., x_ring.z_offset()));
 

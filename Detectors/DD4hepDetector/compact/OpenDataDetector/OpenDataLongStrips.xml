@@ -16,6 +16,7 @@
                    
           <support name="SupportRing0" rmin="720.*mm" rmax="735.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
           <support name="SupportRing1" rmin="900.*mm" rmax="920.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
+          <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="922.*mm" gap="23.0*mm" nphi="64" z_offset="0.*mm" material="Ti" vis="orange"/>
         </ring>
     
         <ring name="Ring1" r="990.*mm" nphi="52" reflect="true" phi0="0." gap="8.*mm" z_offset="-20.*mm"> 
@@ -30,6 +31,7 @@
               <module_component name="Sensor" alpha="0.04" x1="54.4*mm" x2="78.8*mm" length="80.8*mm" thickness="0.25*mm" x_offset="0.*mm" y_offset="-2.5*mm" z_offset="0.*mm" material="Silicon" vis="Silicon" sensitive="true"/>
           </module> 
           <support name="SupportRing1" rmin="1070.*mm" rmax="1090.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
+          <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="1092.*mm" gap="24.*mm" nphi="72" z_offset="0.*mm" material="Ti" vis="orange"/>
         </ring>
         <layer id="0" name="LongStripEndcapN0" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1270.*mm" vis="invisible"/>
         <layer id="1" name="LongStripEndcapN2" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1550.*mm" vis="invisible"/>
@@ -102,6 +104,7 @@
           </module>                   
           <support name="SupportRing0" rmin="720.*mm" rmax="735.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
           <support name="SupportRing1" rmin="900.*mm" rmax="920.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
+          <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="922.*mm" gap="23.0*mm" nphi="64" z_offset="0.*mm" material="Ti" vis="orange"/>
         </ring>
     
         <ring name="Ring1" r="990.*mm" nphi="52" reflect="true" phi0="0." gap="8.*mm" z_offset="20.*mm"> 
@@ -116,6 +119,7 @@
               <module_component name="Sensor" alpha="0.04" x1="54.4*mm" x2="78.8*mm" length="80.8*mm" thickness="0.25*mm" x_offset="0.*mm" y_offset="-2.5*mm" z_offset="0.*mm" material="Silicon" vis="Silicon" sensitive="true"/>
           </module> 
           <support name="SupportRing1" rmin="1070.*mm" rmax="1090.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
+          <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="1092.*mm" gap="24.*mm" nphi="72" z_offset="0.*mm" material="Ti" vis="orange"/>
         </ring>
         <layer id="0" name="LongStripEndcapP0" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1270.*mm" vis="invisible"/>
         <layer id="1" name="LongStripEndcapP2" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1550.*mm" vis="invisible"/>
