@@ -10,7 +10,6 @@
 #include "DD4hep/DetFactoryHelper.h"
 
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
 
 using dd4hep::DetElement;
 using dd4hep::PlacedVolume;
@@ -40,10 +39,9 @@ createTkLayoutTrackerEndcap(dd4hep::Detector&         lcdd,
   DetElement  worldDetElement(detName, xmlDet.id());
   DetElement  posEcapDetElement(worldDetElement, "posEndcap", 0);
 
-  Acts::ActsExtension::Config actsEcapConfig;
-  actsEcapConfig.isEndcap         = true;
-  Acts::ActsExtension* ecapDetExt = new Acts::ActsExtension(actsEcapConfig);
-  posEcapDetElement.addExtension<Acts::IActsExtension>(ecapDetExt);
+  Acts::ActsExtension* ecapDetExt = new Acts::ActsExtension();
+  ecapDetExt->addType("endcap", "detector");
+  posEcapDetElement.addExtension<Acts::ActsExtension>(ecapDetExt);
 
   dd4hep::Assembly envelopeVolume("endcapEnvelope");
   envelopeVolume.setVisAttributes(lcdd.invisible());
@@ -77,14 +75,12 @@ createTkLayoutTrackerEndcap(dd4hep::Detector&         lcdd,
       discVolumeVec.emplace_back("disc", discShape, lcdd.air());
       discDetElementVec.emplace_back(
           posEcapDetElement, "disc" + std::to_string(discCounter), discCounter);
-      Acts::ActsExtension::Config layConfig;
       // the local coordinate systems of modules in dd4hep and acts differ
       // see http://acts.web.cern.ch/ACTS/latest/doc/group__DD4hepPlugins.html
-      layConfig.axes = "XZY";  // correct translation of local x axis in dd4hep
-                               // to local x axis in acts
-      layConfig.isLayer             = true;
-      Acts::ActsExtension* detlayer = new Acts::ActsExtension(layConfig);
-      discDetElementVec.back().addExtension<Acts::IActsExtension>(detlayer);
+      Acts::ActsExtension* detlayer = new Acts::ActsExtension();
+      detlayer->addType("sensitive disk", "layer");
+      detlayer->addType("axes", "definitions", "XZY");
+      discDetElementVec.back().addExtension<Acts::ActsExtension>(detlayer);
       // iterate over rings
       for (dd4hep::xml::Collection_t xRingColl(xCurrentRings, _U(ring));
            (nullptr != xRingColl);
@@ -194,9 +190,8 @@ createTkLayoutTrackerEndcap(dd4hep::Detector&         lcdd,
                                           compCounter);
 
               // add extension to hand over material
-              Acts::ActsExtension* moduleExtension
-                  = new Acts::ActsExtension(compMaterials, digiModule);
-              moduleDetElement.addExtension<Acts::IActsExtension>(
+              Acts::ActsExtension* moduleExtension = new Acts::ActsExtension();
+              moduleDetElement.addExtension<Acts::ActsExtension>(
                   moduleExtension);
 
               moduleDetElement.setPlacement(placedComponentVolume);

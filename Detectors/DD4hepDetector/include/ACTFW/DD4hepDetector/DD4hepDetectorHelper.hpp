@@ -53,7 +53,7 @@
 ///   ...
 ///       Acts::ActsExtension* moduleExtension
 ///       = new Acts::ActsExtension(digiModule);
-///   moduleDetElement.addExtension<Acts::IActsExtension>(moduleExtension);
+///   moduleDetElement.addExtension<Acts::ActsExtension>(moduleExtension);
 /// }
 /// @endcode
 ///
@@ -83,7 +83,7 @@
 ///  layConfig.layerMaterialPosition = Acts::LayerMaterialPos::inner
 ///  Acts::ActsExtension* layerExtension = new
 ///  Acts::ActsExtension(layConfig);
-///  layer_detElement.addExtension<Acts::IActsExtension>(layerExtension);
+///  layer_detElement.addExtension<Acts::ActsExtension>(layerExtension);
 ///  @endcode
 ///
 /// In case several sensitive detector modules have the same segmentation an

@@ -102,12 +102,10 @@ assembleTrapezoidalModule(Detector&          oddd,
       sensorElement.setPlacement(placedComponent);
 
       // Add the sensor extension
-      Acts::ActsExtension::Config axisConfig;
-      axisConfig.axes = "XYZ";
-      Acts::ActsExtension* sensorExtension
-          = new Acts::ActsExtension(axisConfig);
+      Acts::ActsExtension* sensorExtension = new Acts::ActsExtension();
+      sensorExtension->addType("axes", "definitions", "XZY");
       // Set the extension
-      sensorElement.addExtension<Acts::IActsExtension>(sensorExtension);
+      sensorElement.addExtension<Acts::ActsExtension>(sensorExtension);
     }
   }
 
@@ -208,10 +206,10 @@ assembleRectangularModule(Detector&          oddd,
       sensorElement.setPlacement(placedComponent);
 
       // Add the sensor extension
-      // std::shared_ptr<const Acts::DigitizationModule> digiModule = nullptr;
-      // Acts::ActsExtension* sensorExtension = new
-      // Acts::ActsExtension(digiModule);
-      // sensorElement.addExtension<Acts::IActsExtension>(sensorExtension);
+      Acts::ActsExtension* sensorExtension = new Acts::ActsExtension();
+      sensorExtension->addType("axes", "definitions", "XYZ");
+      // Set the extension
+      sensorElement.addExtension<Acts::ActsExtension>(sensorExtension);
     }
   }
 

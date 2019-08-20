@@ -22,10 +22,9 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
   // Make DetElement
   DetElement beamPipeElement(det_name, x_det.id());
   // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBeampipe           = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  beamPipeElement.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* actExtension = new Acts::ActsExtension();
+  actExtension->addType("beampipe", "layer");
+  beamPipeElement.addExtension<Acts::ActsExtension>(actExtension);
 
   // Make Volume
   xml_comp_t x_det_def = x_det.child(_U(description));

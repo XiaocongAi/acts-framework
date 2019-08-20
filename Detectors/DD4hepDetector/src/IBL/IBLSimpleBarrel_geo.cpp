@@ -7,7 +7,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 
 using namespace std;
@@ -26,10 +25,9 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
   // Make DetElement
   DetElement cylinderVolume(det_name, x_det.id());
   // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBarrel             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  cylinderVolume.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* barrelExtension = new Acts::ActsExtension();
+  barrelExtension->addType("barrel", "detector");
+  cylinderVolume.addExtension<Acts::ActsExtension>(barrelExtension);
   // make Volume
   dd4hep::xml::Dimension x_det_dim(x_det.dimensions());
   Tube   tube_shape(x_det_dim.rmin(), x_det_dim.rmax(), x_det_dim.dz());
@@ -192,16 +190,11 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
     }
 
     // set granularity of layer material mapping and where material should be
-    // mapped
-    // hand over modules to ACTS
-    Acts::ActsExtension::Config layConfig;
-    layConfig.isLayer = true;
-    ///@todo re-enable material mapping
-    // layConfig.materialBins1         = 100;
-    // layConfig.materialBins2         = 100;
-    // layConfig.layerMaterialPosition = Acts::LayerMaterialPos::inner;
-    Acts::ActsExtension* detlayer = new Acts::ActsExtension(layConfig);
-    lay_det.addExtension<Acts::IActsExtension>(detlayer);
+    // mapped hand over modules to ACTS
+
+    Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
+    layerExtension->addType("sensitive cylinder", "layer");
+    lay_det.addExtension<Acts::ActsExtension>(layerExtension);
     // Place layer volume
     PlacedVolume placedLayer = tube_vol.placeVolume(layer_vol);
     placedLayer.addPhysVolID("layer", layer_num);

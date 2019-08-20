@@ -9,8 +9,6 @@
 #include "../DetUtils.h"
 
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
-
 #include "DD4hep/DetFactoryHelper.h"
 
 using dd4hep::DetElement;
@@ -35,13 +33,12 @@ createTkLayoutTrackerBarrel(dd4hep::Detector&         lcdd,
 
   // definition of top volume
   // has min/max dimensions of tracker for visualization etc.
-  std::string                 detectorName = xmlDet.nameStr();
-  DetElement                  topDetElement(detectorName, xmlDet.id());
-  Acts::ActsExtension::Config barrelConfig;
-  barrelConfig.isBarrel = true;
+  std::string detectorName = xmlDet.nameStr();
+  DetElement  topDetElement(detectorName, xmlDet.id());
   // detElement owns extension
-  Acts::ActsExtension* detWorldExt = new Acts::ActsExtension(barrelConfig);
-  topDetElement.addExtension<Acts::IActsExtension>(detWorldExt);
+  Acts::ActsExtension* detWorldExt = new Acts::ActsExtension();
+  detWorldExt->addType("barrel", "detector");
+  topDetElement.addExtension<Acts::ActsExtension>(detWorldExt);
   dd4hep::Tube topVolumeShape(dimensions.rmin(),
                               dimensions.rmax(),
                               (dimensions.zmax() - dimensions.zmin()) * 0.5);
@@ -73,15 +70,13 @@ createTkLayoutTrackerBarrel(dd4hep::Detector&         lcdd,
     placedLayerVolume.addPhysVolID("layer", layerCounter);
     DetElement lay_det(
         topDetElement, "layer" + std::to_string(layerCounter), layerCounter);
-    Acts::ActsExtension::Config layConfig;
-    layConfig.isLayer = true;
     // the local coordinate systems of modules in dd4hep and acts differ
     // see http://acts.web.cern.ch/ACTS/latest/doc/group__DD4hepPlugins.html
-    layConfig.axes = "XzY";  // correct translation of local x axis in dd4hep to
-                             // local x axis in acts
     // detElement owns extension
-    Acts::ActsExtension* layerExtension = new Acts::ActsExtension(layConfig);
-    lay_det.addExtension<Acts::IActsExtension>(layerExtension);
+    Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
+    layerExtension->addType("sensitive cylinder", "layer");
+    layerExtension->addType("axes", "definitions", "XzY");
+    lay_det.addExtension<Acts::ActsExtension>(layerExtension);
     lay_det.setPlacement(placedLayerVolume);
     dd4hep::xml::Component xModuleComponentsOdd
         = xModulePropertiesOdd.child("components");
@@ -161,9 +156,8 @@ createTkLayoutTrackerBarrel(dd4hep::Detector&         lcdd,
                                "module" + std::to_string(moduleCounter),
                                moduleCounter);
             // add extension to hand over material
-            Acts::ActsExtension* moduleExtension
-                = new Acts::ActsExtension(compMaterials, digiModule);
-            mod_det.addExtension<Acts::IActsExtension>(moduleExtension);
+            Acts::ActsExtension* moduleExtension = new Acts::ActsExtension();
+            mod_det.addExtension<Acts::ActsExtension>(moduleExtension);
 
             mod_det.setPlacement(placedModuleVolume);
             ++moduleCounter;

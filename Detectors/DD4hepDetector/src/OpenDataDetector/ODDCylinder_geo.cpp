@@ -23,14 +23,13 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   DetElement cylinderElement(detName, x_det.id());
 
   // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  bool                        isBeamPipe = x_det.hasChild(_U(beampipe));
-  volConfig.isPassiveCylinder            = true;
+  Acts::ActsExtension* pcExtension = new Acts::ActsExtension();
+  bool                 isBeamPipe  = x_det.hasChild(_U(beampipe));
+  pcExtension->addType("passive cylinder", "layer");
   if (isBeamPipe) {
-    volConfig.isBeampipe = true;
+    pcExtension->addType("beampipe", "layer");
   }
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  cylinderElement.addExtension<Acts::IActsExtension>(detvolume);
+  cylinderElement.addExtension<Acts::ActsExtension>(pcExtension);
 
   // Make Volume
   xml_comp_t x_det_tubs = x_det.child(_U(tubs));

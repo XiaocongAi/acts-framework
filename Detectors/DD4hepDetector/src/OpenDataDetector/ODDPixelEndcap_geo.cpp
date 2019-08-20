@@ -25,10 +25,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   DetElement endcapDetector(detName, x_det.id());
 
   // Add Extension to DetElement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isEndcap             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  endcapDetector.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* endcapExtension = new Acts::ActsExtension();
+  endcapExtension->addType("endcap", "detector");
+  endcapDetector.addExtension<Acts::ActsExtension>(endcapExtension);
 
   // Make Volume
   dd4hep::xml::Dimension x_det_dim(x_det.dimensions());
@@ -157,10 +156,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
 
     // Place the layer with appropriate Acts::Extension
     // Configure the ACTS extension
-    Acts::ActsExtension::Config layerConfig;
-    layerConfig.isLayer                 = true;
-    Acts::ActsExtension* layerExtension = new Acts::ActsExtension(layerConfig);
-    layerElement.addExtension<Acts::IActsExtension>(layerExtension);
+    Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
+    layerExtension->addType("sensitive disk", "layer");
+    layerElement.addExtension<Acts::ActsExtension>(layerExtension);
 
     // Finish up the DetElement tree
     layerElement.setPlacement(placedLayer);

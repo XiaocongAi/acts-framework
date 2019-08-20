@@ -25,10 +25,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   DetElement barrelDetector(detName, x_det.id());
 
   // Add Extension to DetElement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBarrel             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  barrelDetector.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* barrelExtension = new Acts::ActsExtension();
+  barrelExtension->addType("barrel", "detector");
+  barrelDetector.addExtension<Acts::ActsExtension>(barrelExtension);
 
   // Make Volume
   dd4hep::xml::Dimension x_det_dim(x_det.dimensions());
@@ -62,7 +61,6 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   for (unsigned int moduleNum = 0; moduleNum < nModules; ++moduleNum) {
 
     double positionY = -ymin + moduleNum * ystep;
-
     // Place the cable bundle, one per stave
     if (x_stave.hasChild(_U(eltube))) {
       // Retrieve cable parameters
@@ -158,10 +156,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
 
     // Place the layer with appropriate Acts::Extension
     // Configure the ACTS extension
-    Acts::ActsExtension::Config layerConfig;
-    layerConfig.isLayer                 = true;
-    Acts::ActsExtension* layerExtension = new Acts::ActsExtension(layerConfig);
-    layerElement.addExtension<Acts::IActsExtension>(layerExtension);
+    Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
+    layerExtension->addType("sensitive cylinder", "layer");
+    layerElement.addExtension<Acts::ActsExtension>(layerExtension);
 
     PlacedVolume placedLayer = barrelVolume.placeVolume(layerVolume);
     placedLayer.addPhysVolID("layer", layerNum);
