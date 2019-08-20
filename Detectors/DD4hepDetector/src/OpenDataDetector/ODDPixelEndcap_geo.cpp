@@ -85,7 +85,10 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
       double   z   = odd ? -zgap : zgap;
       Position trans(r * cos(phi), r * sin(phi), z);
       // Place Module Box Volumes, flip if necessary
-      double       flip         = x_det_dim.z() < 0. ? M_PI : 0.;
+      double flip = x_det_dim.z() < 0. ? M_PI : 0.;
+      if (ringNum != 0) {
+        flip += M_PI;
+      }
       PlacedVolume placedModule = ringAssembly.placeVolume(
           module.first,
           Transform3D(RotationZ(phi + 1.5 * M_PI) * RotationY(flip), trans));

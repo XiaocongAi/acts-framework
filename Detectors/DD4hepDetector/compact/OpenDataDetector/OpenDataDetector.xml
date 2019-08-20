@@ -101,21 +101,21 @@
     </readouts>
         
     <include ref="OpenDataPixels.xml"/>
-    <include ref="OpenDataShortStrips.xml"/>
-    <include ref="OpenDataLongStrips.xml"/>
+    <!--include ref="OpenDataShortStrips.xml"/>
+    <include ref="OpenDataLongStrips.xml"/-->
         
     <detectors>
-      <detector id="0" name="BeamPipe" type="ODDCylinder" vis="Beryllium">
+      <!--detector id="0" name="BeamPipe" type="ODDCylinder" vis="Beryllium">
             <beampipe/>
             <tubs name="BeamPipeCylinder" rmin="bp_rmin" rmax="bp_rmax" dz="bp_length" material="Beryllium"/>
-      </detector>
+      </detector-->
       <detector id="1" name="Pixels" type="DD4hep_SubdetectorAssembly" vis="invisible">
           <shape name="PixelVolume" type="Tube" rmin="pix_env_rmin" rmax="pix_env_rmax" dz="pix_env_dz" material="Air"/>
-          <composite name="PixelEndcapN"/>
+          <!--composite name="PixelEndcapN"/-->
           <composite name="PixelBarrel"/>
-          <composite name="PixelEndcapP"/> 
+          <!--composite name="PixelEndcapP"/--> 
       </detector>
-      <detector id="2" name="PixelSupportTube" type="ODDCylinder" beampipe="false" vis="CarbonFiber">
+      <!--detector id="2" name="PixelSupportTube" type="ODDCylinder" beampipe="false" vis="CarbonFiber">
             <tubs name="PixelSupportCylinder" rmin="pst_rmin" rmax="pst_rmax" dz="pst_length" material="CarbonFiber"/>
       </detector>
       <detector id="3" name="ShortStrips" type="DD4hep_SubdetectorAssembly" vis="invisible">
@@ -129,6 +129,6 @@
           <composite name="LongStripEndcapN"/>
           <composite name="LongStripBarrel"/>
           <composite name="LongStripEndcapP"/> 
-      </detector>
+      </detector-->
     </detectors>
 </lccdd>
