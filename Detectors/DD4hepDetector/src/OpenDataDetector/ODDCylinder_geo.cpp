@@ -20,36 +20,34 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   string    detName = x_det.nameStr();
 
   // Make DetElement
-  DetElement beamPipeElement(detName, x_det.id());
+  DetElement cylinderElement(detName, x_det.id());
 
   // add Extension to Detlement for the RecoGeometry
   Acts::ActsExtension::Config volConfig;
   bool                        isBeamPipe = x_det.hasChild(_U(beampipe));
+  volConfig.isPassiveCylinder            = true;
   if (isBeamPipe) {
     volConfig.isBeampipe = true;
-  } else {
-    volConfig.isBarrel = true;
   }
   Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  beamPipeElement.addExtension<Acts::IActsExtension>(detvolume);
+  cylinderElement.addExtension<Acts::IActsExtension>(detvolume);
 
   // Make Volume
   xml_comp_t x_det_tubs = x_det.child(_U(tubs));
   string     shapeName  = x_det_tubs.nameStr();
-  Tube       beamPipeShape(
+  Tube       tubeShape(
       shapeName, x_det_tubs.rmin(), x_det_tubs.rmax(), x_det_tubs.dz());
-  Volume tube_vol(
-      detName, beamPipeShape, oddd.material(x_det_tubs.materialStr()));
+  Volume tube_vol(detName, tubeShape, oddd.material(x_det_tubs.materialStr()));
   tube_vol.setVisAttributes(oddd, x_det.visStr());
 
   // Place it in the mother
-  Volume       mother_vol = oddd.pickMotherVolume(beamPipeElement);
+  Volume       mother_vol = oddd.pickMotherVolume(cylinderElement);
   PlacedVolume placedTube = mother_vol.placeVolume(tube_vol);
-  placedTube.addPhysVolID("BeamPipeVolume", beamPipeElement.id());
-  beamPipeElement.setPlacement(placedTube);
+  placedTube.addPhysVolID(detName, cylinderElement.id());
+  cylinderElement.setPlacement(placedTube);
 
-  // And return it
-  return beamPipeElement;
+  // And return the element for further parsing
+  return cylinderElement;
 }
 
 DECLARE_DETELEMENT(ODDCylinder, create_element)

@@ -100,6 +100,9 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
         ringElement.add(moduleElement);
       }
 
+      // Now add the ring detector Element to the disk
+      diskElementTemplate.add(ringElement);
+
       size_t supportNum = 0;
       for (xml_coll_t sup(x_ring, _U(support)); sup; ++sup, ++supportNum) {
         xml_comp_t x_support = sup;
