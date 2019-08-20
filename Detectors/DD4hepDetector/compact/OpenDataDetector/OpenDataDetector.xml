@@ -54,7 +54,11 @@
         <constant name="ls_b_dz" value="1.2*m"/> 
         <constant name="ls_e_nz" value="-2.175*m"/>                
         <constant name="ls_e_pz" value="2.175*m"/>                
-        <constant name="ls_e_dz" value="0.925*m"/>                                       
+        <constant name="ls_e_dz" value="0.925*m"/>   
+        <!--Dimensions of the Solenoid -->
+        <constant name="sol_rmin" value="1220.*mm"/>
+        <constant name="sol_rmax" value="1280.*mm"/>
+        <constant name="sol_hlength" value="2.85*m"/>                                            
     </define>
         
     <display>
@@ -128,6 +132,9 @@
           <composite name="LongStripEndcapN"/>
           <composite name="LongStripBarrel"/>
           <composite name="LongStripEndcapP"/> 
+      </detector>
+      <detector id="5" name="Solenoid" type="ODDCylinder" beampipe="false" vis="grey">
+            <tubs name="Solenoid" rmin="sol_rmin" rmax="sol_rmax" dz="sol_hlength" material="CarbonFiber"/>
       </detector>
     </detectors>
 </lccdd>
