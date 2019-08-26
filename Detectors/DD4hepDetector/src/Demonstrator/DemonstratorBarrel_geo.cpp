@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 Acts project team
+// Copyright (C) 2019 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,8 +45,8 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
     double       rmax     = x_layer.rmax();
     unsigned int layerNum = x_layer.id();
     // Create Volume for Layer
-    string layerName = barrelName + _toString((int)layerNum, "layer%d");
-    Volume layerVolume(layerName,
+    string     layerName = barrelName + _toString((int)layerNum, "layer%d");
+    Volume     layerVolume(layerName,
                        Tube(rmin, rmax, x_layer.dz()),
                        lcdd.material(x_layer.materialStr()));
     DetElement layerElement(barrelDetector, layerName, layerNum);
@@ -77,9 +77,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
       Assembly moduleAssembly("module");
       // Visualization
       moduleAssembly.setVisAttributes(lcdd, x_module.visStr());
-      if (x_module.isSensitive()) {
-        moduleAssembly.setSensitiveDetector(sens);
-      }
+      if (x_module.isSensitive()) { moduleAssembly.setSensitiveDetector(sens); }
 
       xml_comp_t   x_mod_placement = x_module.child(_U(parameters));
       unsigned int nphi            = x_mod_placement.nphi();
@@ -114,9 +112,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
             Position(x_comp.x_offset(), x_comp.y_offset(), x_comp.z_offset()));
         placedComponent.addPhysVolID("component", compNum);
         // Remember the sensitive components of this module
-        if (x_comp.isSensitive()) {
-          sensComponents.push_back(placedComponent);
-        }
+        if (x_comp.isSensitive()) { sensComponents.push_back(placedComponent); }
       }
 
       // Add cooling pipe

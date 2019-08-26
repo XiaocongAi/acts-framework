@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 Acts project team
+// Copyright (C) 2019 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,9 +26,7 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
   Acts::ActsExtension* pcExtension = new Acts::ActsExtension();
   bool                 isBeamPipe  = x_det.hasChild(_U(beampipe));
   pcExtension->addType("passive cylinder", "layer");
-  if (isBeamPipe) {
-    pcExtension->addType("beampipe", "layer");
-  }
+  if (isBeamPipe) { pcExtension->addType("beampipe", "layer"); }
   cylinderElement.addExtension<Acts::ActsExtension>(pcExtension);
 
   // Make Volume

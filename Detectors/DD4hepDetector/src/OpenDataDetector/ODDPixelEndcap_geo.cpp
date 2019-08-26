@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 Acts project team
+// Copyright (C) 2019 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -85,9 +85,7 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
       Position trans(r * cos(phi), r * sin(phi), z);
       // Place Module Box Volumes, flip if necessary
       double flip = x_det_dim.z() < 0. ? M_PI : 0.;
-      if (ringNum != 0) {
-        flip += M_PI;
-      }
+      if (ringNum != 0) { flip += M_PI; }
       PlacedVolume placedModule = ringAssembly.placeVolume(
           module.first,
           Transform3D(RotationZ(phi + 1.5 * M_PI) * RotationY(flip), trans));

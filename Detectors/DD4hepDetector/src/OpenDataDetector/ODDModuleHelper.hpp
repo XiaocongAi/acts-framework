@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 Acts project team
+// Copyright (C) 2019 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -179,9 +179,9 @@ assembleRectangularModule(Detector&          oddd,
     componentVolume.setVisAttributes(oddd, x_comp.visStr());
 
     // Calculate the module dimension
-    double cylength
-        = 2. * abs(std::copysign(0.5 * x_comp.dy(), x_comp.y_offset())
-                   + x_comp.y_offset());
+    double cylength = 2.
+        * abs(std::copysign(0.5 * x_comp.dy(), x_comp.y_offset())
+              + x_comp.y_offset());
     ylength = cylength > ylength ? cylength : ylength;
 
     // Visualization
