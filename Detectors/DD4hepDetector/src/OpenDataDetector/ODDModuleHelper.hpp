@@ -13,10 +13,16 @@
 using namespace std;
 using namespace dd4hep;
 
-namespace Acts {
-class DigitizationModule;
-}
-
+/// This method assemples a trapezoidal module for the
+/// strip detectors
+///
+/// @param odd is the top level detector
+/// @param sens is the top level sensitive detector container
+/// @param x_module is the xml component describing the module
+///
+/// It excpects `module_component` xml childs
+///
+// @return a pair for a template module assembly and detector element
 static std::pair<Assembly, DetElement>
 assembleTrapezoidalModule(Detector&          oddd,
                           SensitiveDetector& sens,
@@ -58,7 +64,7 @@ assembleTrapezoidalModule(Detector&          oddd,
       xml_comp_t x_sub = x_comp.child(_U(subtraction));
       Tube       tubeCutout(x_sub.rmin(), x_sub.rmax(), 1.1 * x_comp.length());
 
-      // Create the substraction
+      // Create the subtraction
       componentVolume = Volume(
           compName,
           SubtractionSolid(
@@ -71,7 +77,7 @@ assembleTrapezoidalModule(Detector&          oddd,
       if (x_comp.hasChild(_U(tube))) {
         xml_comp_t x_pipe = x_comp.child(_U(tube));
         Tube       coolingPipe(x_pipe.rmin(), x_pipe.rmax(), x_comp.length());
-        // Create the substraction
+        // Create the subtraction
         Volume pipeVolume(
             "CoolingPipe", coolingPipe, oddd.material(x_pipe.materialStr()));
         pipeVolume.setVisAttributes(oddd, x_pipe.visStr());
@@ -113,6 +119,18 @@ assembleTrapezoidalModule(Detector&          oddd,
   return std::pair<Assembly, DetElement>(moduleAssembly, moduleElement);
 }
 
+/// This method assemples a rectangular module for the
+/// pixel and strip detectors
+///
+/// @param odd is the top level detector
+/// @param sens is the top level sensitive detector container
+/// @param x_module is the xml component describing the module
+/// @param ylength[in,out] is the maximal length in y of all components
+///        to be used for stave building
+///
+/// It excpects `module_component` xml childs
+///
+// @return a pair for a template module assembly and detector element
 static std::pair<Assembly, DetElement>
 assembleRectangularModule(Detector&          oddd,
                           SensitiveDetector& sens,
@@ -148,7 +166,7 @@ assembleRectangularModule(Detector&          oddd,
       xml_comp_t x_sub = x_comp.child(_U(subtraction));
       Tube       tubeCutout(x_sub.rmin(), x_sub.rmax(), x_comp.dy());
 
-      // Create the substraction
+      // Create the subtraction
       componentVolume
           = Volume(componentName,
                    SubtractionSolid(boxShape,
@@ -163,7 +181,7 @@ assembleRectangularModule(Detector&          oddd,
       if (x_comp.hasChild(_U(tube))) {
         xml_comp_t x_pipe = x_comp.child(_U(tube));
         Tube       coolingPipe(x_pipe.rmin(), x_pipe.rmax(), 0.5 * x_comp.dy());
-        // Create the substraction
+        // Create the subtraction
         Volume pipeVolume(
             "CoolingPipe", coolingPipe, oddd.material(x_pipe.materialStr()));
         pipeVolume.setVisAttributes(oddd, x_pipe.visStr());

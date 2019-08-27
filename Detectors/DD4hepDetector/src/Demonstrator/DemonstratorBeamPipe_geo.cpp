@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2017 CERN for the benefit of the Acts project
+// Copyright (C) 2019 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
   Volume tube_vol(det_name, tube_shape, lcdd.material(x_det_def.materialStr()));
   tube_vol.setVisAttributes(lcdd, x_det.visStr());
 
-  // Place it int the mother
+  // Place it in the mother
   Volume       mother_vol = lcdd.pickMotherVolume(beamPipeElement);
   PlacedVolume placedTube = mother_vol.placeVolume(tube_vol);
   placedTube.addPhysVolID("BeamTube", beamPipeElement.id());

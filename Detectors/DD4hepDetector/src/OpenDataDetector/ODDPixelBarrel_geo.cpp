@@ -39,7 +39,7 @@ completeStaveStructure(Detector&   oddd,
 
     Tube foamCutout(x_tubs.rmin(), x_tubs.rmax(), staveHlength + x_tubs.dz());
 
-    // Create the substraction
+    // Create the subtraction
     Volume foamVolume("CarbonFoam",
                       SubtractionSolid(foamShape,
                                        foamCutout,
@@ -52,7 +52,7 @@ completeStaveStructure(Detector&   oddd,
         Position(x_sub.x_offset(), x_sub.y_offset(), x_sub.z_offset()));
 
     Tube coolingPipe(x_pipe.rmin(), x_pipe.rmax(), staveHlength + x_pipe.dz());
-    // Create the substraction
+    // Create the subtraction
     Volume pipeVolume(
         "CoolingPipe", coolingPipe, oddd.material(x_pipe.materialStr()));
     pipeVolume.setVisAttributes(oddd, x_pipe.visStr());

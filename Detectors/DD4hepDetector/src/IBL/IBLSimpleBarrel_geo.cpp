@@ -109,7 +109,7 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
                              x_trd.length(),
                              x_trd.thickness());
         Tube      tubs_shape(x_tubs.rmin(), x_tubs.rmax(), x_tubs.dz());
-        // create the substraction
+        // create the subtraction
         Volume sub_vol("subtraction_components",
                        SubtractionSolid(trap_shape,
                                         tubs_shape,
