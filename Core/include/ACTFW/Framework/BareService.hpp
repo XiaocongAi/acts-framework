@@ -30,7 +30,7 @@ namespace FW {
 class BareService : public IService
 {
 public:
-  BareService(std::string name,
+  BareService(std::string          name,
               Acts::Logging::Level level = Acts::Logging::INFO);
 
   /// The service name.
