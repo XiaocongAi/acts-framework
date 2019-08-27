@@ -7,11 +7,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 #include "XML/XMLElements.h"
 
 namespace det {
+
 /**
 Factory for a shape from multiple cylinders. Meant for material approximations.
 Expected xml structure:
@@ -23,6 +23,7 @@ Expected xml structure:
 </detector>
 @author: Joschka Lingemann
 */
+
 static dd4hep::Ref_t
 createSimpleLayeredCylinder(dd4hep::Detector&         lcdd,
                             dd4hep::xml::Handle_t     xmlElement,
@@ -33,10 +34,9 @@ createSimpleLayeredCylinder(dd4hep::Detector&         lcdd,
   std::string        name = xmlDet.nameStr();
   dd4hep::DetElement detElement(name, xmlDet.id());
   // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBarrel             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  detElement.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* detvolume = new Acts::ActsExtension();
+  detvolume->addType("barrel", "detector");
+  detElement.addExtension<Acts::ActsExtension>(detvolume);
   // Create volume
   dd4hep::Volume experimentalHall = lcdd.pickMotherVolume(detElement);
   xml_comp_t     dimensions(xmlDet.dimensions());
@@ -66,10 +66,9 @@ createSimpleLayeredCylinder(dd4hep::Detector&         lcdd,
       layerVolume.setSensitiveDetector(sensDet);
     }
     // Set Acts Extension
-    Acts::ActsExtension::Config layConfig;
-    layConfig.isLayer             = true;
-    Acts::ActsExtension* detlayer = new Acts::ActsExtension(layConfig);
-    lay_det.addExtension<Acts::IActsExtension>(detlayer);
+    Acts::ActsExtension* detlayer = new Acts::ActsExtension();
+    detlayer->addType("passive cylinder", "layer");
+    lay_det.addExtension<Acts::ActsExtension>(detlayer);
 
     // place the layer into the mother volume with a possible translation
     dd4hep::Position     transLayer(0., 0., layerDet.z_offset());

@@ -8,7 +8,6 @@
 
 #include "ACTFW/DD4hepDetector/DD4hepDetectorHelper.hpp"
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 
 using namespace std;
@@ -26,11 +25,10 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
   string    det_name = x_det.nameStr();
   // Make DetElement
   DetElement cylinderVolume(det_name, x_det.id());
-  // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBarrel             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  cylinderVolume.addExtension<Acts::IActsExtension>(detvolume);
+  // Add Extension to DetElement for the RecoGeometry
+  Acts::ActsExtension* barrelExtension = new Acts::ActsExtension();
+  barrelExtension->addType("barrel", "detector");
+  cylinderVolume.addExtension<Acts::ActsExtension>(barrelExtension);
   // make Volume
   dd4hep::xml::Dimension x_det_dim(x_det.dimensions());
   Tube   tube_shape(x_det_dim.rmin(), x_det_dim.rmax(), x_det_dim.dz());
@@ -95,12 +93,9 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
           // Set Sensitive Volmes sensitive
           if (x_module.isSensitive()) {
             mod_vol.setSensitiveDetector(sens);
-
-            // create and attach the extension with the shared digitzation
-            // module
-            Acts::ActsExtension* moduleExtension
-                = new Acts::ActsExtension(digiModule);
-            mod_det.addExtension<Acts::IActsExtension>(moduleExtension);
+            // Create and attach the extension for DD4Hep/Acts conversion
+            Acts::ActsExtension* moduleExtension = new Acts::ActsExtension();
+            mod_det.addExtension<Acts::ActsExtension>(moduleExtension);
           }
           // Place Module Box Volumes in layer
           PlacedVolume placedmodule = layer_vol.placeVolume(
@@ -114,18 +109,13 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
         }
       }
     }
-    // set granularity of layer material mapping and where material should be
-    // mapped
-    // hand over modules to ACTS
-    Acts::ActsExtension::Config layConfig;
-    layConfig.isLayer = true;
-    layConfig.axes    = "YxZ";
-    /// @todo re-enable material mapping
-    //  layConfig.materialBins1         = 100;
-    //  layConfig.materialBins2         = 100;
-    //  layConfig.layerMaterialPosition = Acts::LayerMaterialPos::outer;
-    Acts::ActsExtension* detlayer = new Acts::ActsExtension(layConfig);
-    lay_det.addExtension<Acts::IActsExtension>(detlayer);
+
+    // Place the layer with appropriate Acts::Extension
+    // Configure the ACTS extension
+    Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
+    layerExtension->addType("active cylinder", "layer");
+    layerExtension->addType("axes", "definitions", "YxZ");
+    lay_det.addExtension<Acts::ActsExtension>(layerExtension);
     // Place layer volume
     PlacedVolume placedLayer = tube_vol.placeVolume(layer_vol);
     placedLayer.addPhysVolID("layer", layer_num);

@@ -30,7 +30,6 @@ using namespace dd4hep;
 // using namespace DDSurfaces;
 
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
 #include "Acts/Utilities/Units.hpp"
 
 static Ref_t
@@ -47,10 +46,9 @@ create_element(Detector& lcdd, xml_h e, SensitiveDetector sens)
   DetElement tracker(name, x_det.id());
 
   // add Extension to Detlement for the RecoGeometry of ACTS
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBarrel             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  tracker.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* detvolume = new Acts::ActsExtension();
+  detvolume->addType("barrel", "detector");
+  tracker.addExtension<Acts::ActsExtension>(detvolume);
 
   PlacedVolume pv;
 
@@ -90,13 +88,11 @@ create_element(Detector& lcdd, xml_h e, SensitiveDetector sens)
     DetElement layerDE(tracker, _toString(layer_id, "layer_%d"), x_det.id());
 
     // add Extension for translation to ACTS TrackingGeometry
-    Acts::ActsExtension::Config layConfig;
-    layConfig.isLayer             = true;
-    layConfig.axes                = "zyx";
-    layConfig.envelopeR           = 10. * Acts::units::_mm;
-    layConfig.envelopeZ           = 10. * Acts::units::_mm;
-    Acts::ActsExtension* detlayer = new Acts::ActsExtension(layConfig);
-    layerDE.addExtension<Acts::IActsExtension>(detlayer);
+    Acts::ActsExtension* detlayer = new Acts::ActsExtension("zyx");
+    detlayer->addValue(10. * Acts::units::_mm, "r", "envelope");
+    detlayer->addValue(10. * Acts::units::_mm, "z", "envelope");
+    detlayer->addType("sensitive plane", "layer");
+    layerDE.addExtension<Acts::ActsExtension>(detlayer);
 
     pv = assembly.placeVolume(layer_assembly);
 

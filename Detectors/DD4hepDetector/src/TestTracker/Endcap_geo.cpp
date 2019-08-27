@@ -8,7 +8,6 @@
 
 #include "ACTFW/DD4hepDetector/DD4hepDetectorHelper.hpp"
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
-#include "Acts/Plugins/DD4hep/IActsExtension.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 
 using namespace std;
@@ -28,10 +27,8 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
   // Make DetElement
   DetElement cylinderVolume(det_name, x_det.id());
   // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isEndcap             = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  cylinderVolume.addExtension<Acts::IActsExtension>(detvolume);
+  Acts::ActsExtension* detvolume = new Acts::ActsExtension();
+  cylinderVolume.addExtension<Acts::ActsExtension>(detvolume);
   // make Volume
   dd4hep::xml::Dimension x_det_dim(x_det.dimensions());
   Tube   tube_shape(x_det_dim.rmin(), x_det_dim.rmax(), x_det_dim.dz());
@@ -143,22 +140,18 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
           // Set Sensitive Volumes sensitive
           if (x_module.isSensitive()) {
             mod_vol.setSensitiveDetector(sens);
-            // create and attach the extension with the shared digitzation
-            // module
-            Acts::ActsExtension* moduleExtension
-                = new Acts::ActsExtension(digiModule);
-            mod_det.addExtension<Acts::IActsExtension>(moduleExtension);
+            // Create and attach the extension for DD4Hep/Acts conversion
+            Acts::ActsExtension* moduleExtension = new Acts::ActsExtension();
+            mod_det.addExtension<Acts::ActsExtension>(moduleExtension);
           }
 
           int comp_num = 0;
           for (auto& sensComp : sensComponents) {
             // Create DetElement
             DetElement comp_det(mod_det, "component", comp_num);
-            // create and attach the extension with the shared digitzation
-            // module
-            Acts::ActsExtension* moduleExtension
-                = new Acts::ActsExtension(digiComponent);
-            comp_det.addExtension<Acts::IActsExtension>(moduleExtension);
+            // Create and attach the extension
+            Acts::ActsExtension* moduleExtension = new Acts::ActsExtension();
+            comp_det.addExtension<Acts::ActsExtension>(moduleExtension);
             comp_det.setPlacement(sensComp);
             comp_num++;
           }
@@ -179,18 +172,13 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
         ++module_num_num;
       }
     }
-    // set granularity of layer material mapping and where material should be
-    // mapped
-    // hand over modules to ACTS
-    Acts::ActsExtension::Config layConfig;
-    layConfig.isLayer = true;
-    layConfig.axes    = "XZy";
-    ///@todo re-enable material mapping
-    // layConfig.materialBins1         = 50;
-    // layConfig.materialBins2         = 50;
-    // layConfig.layerMaterialPosition = Acts::LayerMaterialPos::inner;
-    Acts::ActsExtension* detlayer = new Acts::ActsExtension(layConfig);
-    lay_det.addExtension<Acts::IActsExtension>(detlayer);
+
+    // Place the layer with appropriate Acts::Extension
+    // Configure the ACTS extension
+    Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
+    layerExtension->addType("sensitive disk", "layer");
+    lay_det.addExtension<Acts::ActsExtension>(layerExtension);
+
     // Placed Layer Volume
     Position     layer_pos(0., 0., x_layer.z());
     PlacedVolume placedLayer = tube_vol.placeVolume(layer_vol, layer_pos);

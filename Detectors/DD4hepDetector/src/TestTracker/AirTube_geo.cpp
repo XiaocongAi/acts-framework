@@ -31,11 +31,10 @@ create_element(Detector& lcdd, xml_h e, SensitiveDetector /* sens */)
   std::string name  = x_det.nameStr();
 
   DetElement airTube(name, x_det.id());
-  // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBeampipe           = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  airTube.addExtension<Acts::IActsExtension>(detvolume);
+  // Extension to Detlement for the RecoGeometry
+  Acts::ActsExtension* airTubeExtension = new Acts::ActsExtension();
+  airTubeExtension->addType("beampipe", "layer");
+  airTube.addExtension<Acts::ActsExtension>(airTubeExtension);
 
   PlacedVolume pv;
 
@@ -54,18 +53,6 @@ create_element(Detector& lcdd, xml_h e, SensitiveDetector /* sens */)
 
   Volume tube_vol(
       name + "_inner_cylinder_air", tubeSolid, lcdd.material("Air"));
-
-  /*  Vector3D ocyl(inner_r + 0.5 * tube_thick, 0., 0.);
-
-    VolCylinder cylSurf(tube_vol,
-                        SurfaceType(SurfaceType::Helper),
-                        0.5 * tube_thick,
-                        0.5 * tube_thick,
-                        ocyl);
-
-    volSurfaceList(airTube)->push_back(cylSurf);*/
-
-  //--------------------------------------
 
   Volume mother = lcdd.pickMotherVolume(airTube);
 

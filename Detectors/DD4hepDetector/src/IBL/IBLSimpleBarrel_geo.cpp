@@ -160,7 +160,6 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
             component_det.setPlacement(sensComp);
             comp_num++;
           }
-
           // Place Module Box Volumes in layer
           PlacedVolume placedmodule = layer_vol.placeVolume(
               mod_vol,

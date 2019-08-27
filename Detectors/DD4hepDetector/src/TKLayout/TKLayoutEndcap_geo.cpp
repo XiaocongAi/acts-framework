@@ -82,6 +82,9 @@ create_element(Detector& lcdd, xml_h xml, SensitiveDetector sens)
           // Create the module DetElement
           DetElement mod_det(
               lay_det, module_name, repeat * module_num_num + module_num);
+          // Create and attach the extension for DD4Hep/Acts conversion
+          Acts::ActsExtension* moduleExtension = new Acts::ActsExtension();
+          mod_det.addExtension<Acts::ActsExtension>(moduleExtension);
           // Set Sensitive Volmes sensitive
           if (x_module.isSensitive()) { mod_vol.setSensitiveDetector(sens); }
           // Place Module Box Volumes in layer

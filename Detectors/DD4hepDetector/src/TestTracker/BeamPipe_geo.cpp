@@ -19,23 +19,25 @@ create_element(Detector& lcdd, xml_h e, SensitiveDetector sens)
   string    det_name = x_det.nameStr();
   // Make DetElement
   DetElement beamtube(det_name, x_det.id());
-  // add Extension to Detlement for the RecoGeometry
-  Acts::ActsExtension::Config volConfig;
-  volConfig.isBeampipe           = true;
-  Acts::ActsExtension* detvolume = new Acts::ActsExtension(volConfig);
-  beamtube.addExtension<Acts::IActsExtension>(detvolume);
+  // Add Extension to Detlement for the RecoGeometry
+  Acts::ActsExtension* beamPipeExtension = new Acts::ActsExtension();
+  beamPipeExtension->addType("beampipe", "layer");
+  beamtube.addExtension<Acts::ActsExtension>(beamPipeExtension);
 
+  // Create the shape and volume
   dd4hep::xml::Dimension x_det_dim(x_det.dimensions());
   Tube   tube_shape(x_det_dim.rmin(), x_det_dim.rmax(), x_det_dim.z());
   Volume tube_vol(
       det_name, tube_shape, lcdd.air());  // air at the moment change later
   tube_vol.setVisAttributes(lcdd, x_det_dim.visStr());
+
   // Place Volume
   Volume       mother_vol = lcdd.pickMotherVolume(beamtube);
   PlacedVolume placedTube = mother_vol.placeVolume(tube_vol);
   placedTube.addPhysVolID("tube", beamtube.id());
   beamtube.setPlacement(placedTube);
 
+  // Return the detector element
   return beamtube;
 }
 
