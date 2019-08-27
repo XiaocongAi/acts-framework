@@ -132,7 +132,7 @@
           <dimensions rmin="bv_rmin" rmax="bv_rmax" dz="bv_length"/>
           <layer id="0" rmin="bl0_rmin" rmax="bl0_rmax" dz="bl0_length" material="Air" vis="invisible">
             <module dx="bl0_m_dx" dy="bl0_m_dy" dz="bl0_m_dz" material="Air" vis="invisible"> 
-              <parameters r="bl0_m_r" nphi="bl0_m_nphi" phi0="bl0_m_phi0" phi_tilt="bl0_m_phiTilt"/>
+              <placements r="bl0_m_r" nphi="bl0_m_nphi" phi0="bl0_m_phi0" phi_tilt="bl0_m_phiTilt"/>
               <module_component sensitive="true" material="Silicon" dx="bl0_m_c0_dx" dy="bl0_m_c0_dy" dz="bl0_m_c0_dz" x_offset="bl0_m_c0_ox" y_offset="bl0_m_c0_oy" z_offset="bl0_m_c0_oz" vis="green" />
               <module_component sensitive="false" material="Kapton" dx="bl0_m_c1_dx" dy="bl0_m_c1_dy" dz="bl0_m_c1_dz" x_offset="bl0_m_c1_ox" y_offset="bl0_m_c1_oy" z_offset="bl0_m_c1_oz" vis="yellow" />
               <module_component sensitive="false" material="Al" dx="bl0_m_c2_dx" dy="bl0_m_c2_dy" dz="bl0_m_c2_dz" x_offset="bl0_m_c2_ox" y_offset="bl0_m_c2_oy" z_offset="bl0_m_c2_oz" vis="orange" />
