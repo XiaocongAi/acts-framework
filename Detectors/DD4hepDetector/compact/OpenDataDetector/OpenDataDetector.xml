@@ -56,8 +56,8 @@
         <constant name="ls_e_pz" value="2.175*m"/>                
         <constant name="ls_e_dz" value="0.925*m"/>   
         <!--Dimensions of the Solenoid -->
-        <constant name="sol_rmin" value="1220.*mm"/>
-        <constant name="sol_rmax" value="1280.*mm"/>
+        <constant name="sol_rmin" value="1140.*mm"/>
+        <constant name="sol_rmax" value="1200.*mm"/>
         <constant name="sol_hlength" value="2.85*m"/>                                            
     </define>
         

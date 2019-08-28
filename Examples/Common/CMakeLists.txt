@@ -18,5 +18,3 @@ if(USE_PYTHIA8)
 endif()
 
 install(TARGETS ACTFWExamplesCommon LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-  
