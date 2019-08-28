@@ -102,8 +102,7 @@
             <segmentation type="CartesianGridXY" grid_size_x="0.05*mm" grid_size_y="0.05*mm"/>
             <id>system:4,layer:4,ring:4,module:8,sensor:4,x:4,y:4</id>
         </readout>
-    </readouts>
-        
+    </readouts>       
     <include ref="OpenDataPixels.xml"/>
     <include ref="OpenDataShortStrips.xml"/>
     <include ref="OpenDataLongStrips.xml"/>        

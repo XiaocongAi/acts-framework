@@ -179,6 +179,18 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     endcapZ.push_back(zeff);
     PlacedVolume placedEndplate
         = endcapVolume.placeVolume(endplateVolume, Position(0., 0., zeff));
+
+    DetElement endplateElement("Endplate", 0);
+
+    // Place the layer with appropriate Acts::Extension
+    // Configure the ACTS extension
+    Acts::ActsExtension* endplateExtension = new Acts::ActsExtension();
+    endplateExtension->addType("passive disk", "layer");
+    endplateElement.addExtension<Acts::ActsExtension>(endplateExtension);
+
+    // Finish up the DetElement tree
+    endplateElement.setPlacement(placedEndplate);
+    endcapDetector.add(endplateElement);
   }
 
   if (x_det.hasChild(_Unicode(services))) {
