@@ -33,7 +33,7 @@
           <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="662.*mm" gap="19.5*mm" nphi="56" z_offset="0.*mm" material="Ti" vis="orange"/>
           <support name="SupportRing1" rmin="670.*mm" rmax="710.*mm" dz="2.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
         </ring> 
-        <layer id="0" name="ShortStripEndcapN0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1270.*mm" vis="invisible"/>
+        <layer id="0" name="ShortStripEndcapN0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1280.*mm" vis="invisible"/>
         <layer id="1" name="ShortStripEndcapN2" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1550.*mm" vis="invisible"/>
         <layer id="2" name="ShortStripEndcapN3" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1850.*mm" vis="invisible"/>
         <layer id="2" name="ShortStripEndcapN4" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2200.*mm" vis="invisible"/>
@@ -121,7 +121,7 @@
           <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="662.*mm" gap="19.5*mm" nphi="56" z_offset="0.*mm" material="Ti" vis="orange"/>
           <support name="SupportRing1" rmin="670.*mm" rmax="710.*mm" dz="2.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
         </ring> 
-        <layer id="0" name="ShortStripEndcapP0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1270.*mm" vis="invisible"/>
+        <layer id="0" name="ShortStripEndcapP0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1280.*mm" vis="invisible"/>
         <layer id="1" name="ShortStripEndcapP2" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1550.*mm" vis="invisible"/>
         <layer id="2" name="ShortStripEndcapP3" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1850.*mm" vis="invisible"/>
         <layer id="2" name="ShortStripEndcapP4" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2200.*mm" vis="invisible"/>
