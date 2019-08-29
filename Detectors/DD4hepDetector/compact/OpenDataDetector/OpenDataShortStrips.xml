@@ -33,12 +33,24 @@
           <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="662.*mm" gap="19.5*mm" nphi="56" z_offset="0.*mm" material="Ti" vis="orange"/>
           <support name="SupportRing1" rmin="670.*mm" rmax="710.*mm" dz="2.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
         </ring> 
-        <layer id="0" name="ShortStripEndcapN0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1280.*mm" vis="invisible"/>
-        <layer id="1" name="ShortStripEndcapN2" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1550.*mm" vis="invisible"/>
-        <layer id="2" name="ShortStripEndcapN3" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1850.*mm" vis="invisible"/>
-        <layer id="2" name="ShortStripEndcapN4" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2200.*mm" vis="invisible"/>
-        <layer id="3" name="ShortStripEndcapN5" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2550.*mm" vis="invisible"/>
-        <layer id="4" name="ShortStripEndcapN6" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2950.*mm" vis="invisible"/>
+        <layer id="0" name="ShortStripEndcapN0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1280.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="1" name="ShortStripEndcapN2" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="ShortStripEndcapN3" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-1850.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="ShortStripEndcapN4" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2200.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="3" name="ShortStripEndcapN5" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="4" name="ShortStripEndcapN6" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="-2950.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
         <services>
           <cable_routing name="InnerCables" nphi="12" phi0="0." number="6" r="215.*mm" rmin="0.*mm" rmax="0.75*mm" z_offset="1150.*mm" gap="10.*mm" material="Cu" vis="orange">
             <box dz="1.*mm" material="CarbonFiber" vis="CarbonFiber"/>
@@ -67,15 +79,19 @@
         </stave>
         <layer id="0" name="ShortStripLayer0" rmin="240.*mm" r="260.*mm" rmax="280.*mm" outer_z="20.*mm" nphi="40" phi_tilt="-0.15" phi0="0." vis="invisible">
           <support name="SupportCylinder" rmin="248.*mm" rmax="250.*mm" dz="1000.*mm" z_offset="0.*mm" nsides="1" material="CarbonFiber" vis="CarbonFiber"/>
+          <layer_material inner="true" representing="false" outer="false" binsPhi="1" binsZ="100"/>
         </layer>
         <layer id="1" name="ShortStripLayer1" rmin="340.*mm" r="360.*mm" rmax="380.*mm" outer_z="20.*mm"  nphi="56" phi_tilt="-0.15" phi0="0." vis="invisible">
-          <support name="SupportCylinder" rmin="344.*mm" rmax="346.*mm" dz="1000.*mm" z_offset="0.*mm" nsides="1" material="CarbonFiber" vis="CarbonFiber" />          
+          <support name="SupportCylinder" rmin="344.*mm" rmax="346.*mm" dz="1000.*mm" z_offset="0.*mm" nsides="1" material="CarbonFiber" vis="CarbonFiber" />   
+          <layer_material inner="true" representing="false" outer="false" binsPhi="1" binsZ="100"/>                 
         </layer>
         <layer id="2" name="ShortStripLayer2" rmin="480.*mm" r="500.*mm" rmax="520.*mm" outer_z="20.*mm" nphi="78" phi_tilt="-0.15" phi0="0." vis="invisible">
           <support name="SupportCylinder" rmin="484.*mm" rmax="486.*mm" dz="1000.*mm" z_offset="0.*mm" nsides="1" material="CarbonFiber" vis="CarbonFiber" />
+          <layer_material inner="true" representing="false" outer="false" binsPhi="1" binsZ="100"/>
         </layer>
         <layer id="3" name="ShortStripLayer3" rmin="640.*mm" r="660.*mm" rmax="680.*mm" outer_z="20.*mm" nphi="102" phi_tilt="-0.15" phi0="0." vis="invisible">
           <support name="SupportCylinder" rmin="644.*mm" rmax="646.*mm" dz="1000.*mm" z_offset="0.*mm" nsides="1" material="CarbonFiber" vis="CarbonFiber" />
+          <layer_material inner="true" representing="false" outer="false" binsPhi="1" binsZ="100"/>
         </layer> 
         <support name="SupportRails" rmin="695.*mm" rmax="715.*mm" dz="20.*mm" z_offset="1150.*mm" nsides="2" material="CarbonFiber" vis="CarbonFiber">
           <connector/>
@@ -121,12 +137,24 @@
           <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="662.*mm" gap="19.5*mm" nphi="56" z_offset="0.*mm" material="Ti" vis="orange"/>
           <support name="SupportRing1" rmin="670.*mm" rmax="710.*mm" dz="2.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
         </ring> 
-        <layer id="0" name="ShortStripEndcapP0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1280.*mm" vis="invisible"/>
-        <layer id="1" name="ShortStripEndcapP2" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1550.*mm" vis="invisible"/>
-        <layer id="2" name="ShortStripEndcapP3" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1850.*mm" vis="invisible"/>
-        <layer id="2" name="ShortStripEndcapP4" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2200.*mm" vis="invisible"/>
-        <layer id="3" name="ShortStripEndcapP5" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2550.*mm" vis="invisible"/>
-        <layer id="4" name="ShortStripEndcapP6" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2950.*mm" vis="invisible"/>
+        <layer id="0" name="ShortStripEndcapP0" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1280.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="1" name="ShortStripEndcapP2" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="ShortStripEndcapP3" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="1850.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="ShortStripEndcapP4" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2200.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="3" name="ShortStripEndcapP5" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="4" name="ShortStripEndcapP6" rmin="210.*mm" rmax="715.*mm" dz="50.*mm" z_offset="2950.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
         <services>
           <cable_routing name="InnerCables" nphi="12" phi0="0." number="6" r="215.*mm" rmin="0.*mm" rmax="0.75*mm" z_offset="1150.*mm" gap="10.*mm" material="Cu" vis="orange">
             <box dz="1.*mm" material="CarbonFiber" vis="CarbonFiber"/>

@@ -33,12 +33,24 @@
           <support name="SupportRing1" rmin="1070.*mm" rmax="1090.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
           <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="1092.*mm" gap="24.*mm" nphi="72" z_offset="0.*mm" material="Ti" vis="orange"/>
         </ring>
-        <layer id="0" name="LongStripEndcapN0" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1280.*mm" vis="invisible"/>
-        <layer id="1" name="LongStripEndcapN2" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1550.*mm" vis="invisible"/>
-        <layer id="2" name="LongStripEndcapN3" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1850.*mm" vis="invisible"/>
-        <layer id="2" name="LongStripEndcapN4" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-2200.*mm" vis="invisible"/>
-        <layer id="3" name="LongStripEndcapN5" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-2550.*mm" vis="invisible"/>
-        <layer id="4" name="LongStripEndcapN6" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-2950.*mm" vis="invisible"/>
+        <layer id="0" name="LongStripEndcapN0" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1280.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="1" name="LongStripEndcapN2" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="LongStripEndcapN3" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-1850.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="LongStripEndcapN4" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-2200.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="3" name="LongStripEndcapN5" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-2550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="4" name="LongStripEndcapN6" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="-2950.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
         <services>
          <cable_routing name="OuterCables" nphi="30" phi0="0." number="10" r="1095*mm" rmin="0.*mm" rmax="0.75*mm" dz="0.1*mm" z_offset="1150.*mm" gap="25.*mm" material="Cu" vis="orange">
             <box dz="1.*mm" material="CarbonFiber" vis="CarbonFiber"/>
@@ -73,10 +85,12 @@
         <layer id="0" name="LongStripLayer0" rmin="790.*mm" r="820.*mm" rmax="840.*mm" outer_z="20.*mm" nphi="60" phi_tilt="-0.15" phi0="0." vis="invisible">
           <support name="InnerSupportRings" rmin="795.*mm" rmax="810.*mm" dz="50.*mm" z_offset="300.*mm"  nsides="2" material="CarbonFiber" vis="CarbonFiber"/>
           <support name="OuterSupportRings" rmin="795.*mm" rmax="810.*mm" dz="50.*mm" z_offset="1000.*mm"  nsides="2" material="CarbonFiber" vis="CarbonFiber"/>
+          <layer_material inner="true" representing="false" outer="false" binsPhi="1" binsZ="100"/>
         </layer>
         <layer id="1" name="LongStripLayer1" rmin="990.*mm" r="1020.*mm" rmax="1040.*mm" outer_z="20.*mm"  nphi="80" phi_tilt="-0.15" phi0="0." vis="invisible">
           <support name="InnerSupportRings" rmin="995.*mm" rmax="1010.*mm" dz="50.*mm" z_offset="300.*mm" nsides="2" material="CarbonFiber" vis="CarbonFiber"/>
           <support name="OuterSupportRings" rmin="995.*mm" rmax="1010.*mm" dz="50.*mm" z_offset="1000.*mm" nsides="2" material="CarbonFiber" vis="CarbonFiber"/>
+          <layer_material inner="true" representing="false" outer="false" binsPhi="1" binsZ="100"/>
         </layer>
         <support name="SupportRails" rmin="1075.*mm" rmax="1090.*mm" dz="25.*mm" z_offset="1150.*mm" nsides="2" material="CarbonFiber" vis="CarbonFiber">
           <connector/>
@@ -121,12 +135,24 @@
           <support name="SupportRing1" rmin="1070.*mm" rmax="1090.*mm" dz="4.*mm" z_offset="0.*mm" material="CarbonFiber" vis="CarbonFiber"/>
           <cooling_ring rmin="1.4*mm" rmax="1.6*mm" r="1092.*mm" gap="24.*mm" nphi="72" z_offset="0.*mm" material="Ti" vis="orange"/>
         </ring>
-        <layer id="0" name="LongStripEndcapP0" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1280.*mm" vis="invisible"/>
-        <layer id="1" name="LongStripEndcapP2" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1550.*mm" vis="invisible"/>
-        <layer id="2" name="LongStripEndcapP3" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1850.*mm" vis="invisible"/>
-        <layer id="2" name="LongStripEndcapP4" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="2200.*mm" vis="invisible"/>
-        <layer id="3" name="LongStripEndcapP5" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="2550.*mm" vis="invisible"/>
-        <layer id="4" name="LongStripEndcapP6" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="2950.*mm" vis="invisible"/>
+        <layer id="0" name="LongStripEndcapP0" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1280.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="1" name="LongStripEndcapP2" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="LongStripEndcapP3" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="1850.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="2" name="LongStripEndcapP4" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="2200.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="3" name="LongStripEndcapP5" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="2550.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
+        <layer id="4" name="LongStripEndcapP6" rmin="720.*mm" rmax="1095.*mm" dz="100.*mm" z_offset="2950.*mm" vis="invisible">
+          <layer_material inner="false" representing="true" outer="false" binsPhi="1" binsR="25"/>
+        </layer>
         <services>
          <cable_routing name="OuterCables" nphi="30" phi0="0." number="10" r="1095*mm" rmin="0.*mm" rmax="0.75*mm" dz="0.1*mm" z_offset="1150.*mm" gap="25.*mm" material="Cu" vis="orange">
             <box dz="1.*mm" material="CarbonFiber" vis="CarbonFiber"/>

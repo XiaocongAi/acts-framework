@@ -109,6 +109,7 @@ assembleTrapezoidalModule(Detector&          oddd,
 
       // Add the sensor extension
       Acts::ActsExtension* sensorExtension = new Acts::ActsExtension();
+      sensorExtension->addType("sensor", "detector");
       sensorExtension->addType("axes", "definitions", "XZY");
       // Set the extension
       sensorElement.addExtension<Acts::ActsExtension>(sensorExtension);
@@ -225,6 +226,7 @@ assembleRectangularModule(Detector&          oddd,
 
       // Add the sensor extension
       Acts::ActsExtension* sensorExtension = new Acts::ActsExtension();
+      sensorExtension->addType("sensor", "detector");
       sensorExtension->addType("axes", "definitions", "XYZ");
       // Set the extension
       sensorElement.addExtension<Acts::ActsExtension>(sensorExtension);

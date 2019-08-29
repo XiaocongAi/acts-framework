@@ -7,6 +7,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #include "Acts/Plugins/DD4hep/ActsExtension.hpp"
+#include "Acts/Plugins/DD4hep/ConvertDD4hepMaterial.hpp"
 #include "DD4hep/DetFactoryHelper.h"
 #include "ODDModuleHelper.hpp"
 #include "ODDServiceHelper.hpp"
@@ -165,7 +166,7 @@ create_element(Detector& oddd, xml_h xml, SensitiveDetector sens)
     Acts::ActsExtension* layerExtension = new Acts::ActsExtension();
     layerExtension->addType("sensitive disk", "layer");
     layerElement.addExtension<Acts::ActsExtension>(layerExtension);
-
+    Acts::xml2DiscProtoMaterial(x_layer, *layerExtension);
     // Finish up the DetElement tree
     layerElement.setPlacement(placedLayer);
     endcapDetector.add(layerElement);
