@@ -210,6 +210,8 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
 
   if (m_outputFile == nullptr) return ProcessCode::SUCCESS;
 
+  auto& gctx = ctx.geoContext;
+
   // Read truth particles from input collection
   const auto& simulatedEvent = ctx.eventStore.get<std::vector<Data::SimVertex>>(
       m_cfg.simulatedEventCollection);
@@ -233,12 +235,23 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
 
   // Loop over the trajectories
   int iTraj = 0;
-  for (auto& traj : trajectories) {
+  for (auto& [trackTip, mj] : trajectories) {
     /// collect the information
     m_trajNr = iTraj;
     // retrieve the truth particle barcode for this track state
-    auto truthHitAtFirstState = (*traj[0].measurement.uncalibrated).truthHit();
-    m_t_barcode               = truthHitAtFirstState.particle.barcode();
+    // this is actually the last, will reset with preceding ones
+    auto truthHitAtFirstState
+        = mj.getTrackState(trackTip).uncalibrated().truthHit();
+
+    // collect first track state and number of trackstates
+    m_nStates = 0;
+
+    mj.visitBackwards(trackTip, [&](const auto& state) {
+      m_nStates++;
+      auto truthHitAtFirstState = state;
+    });
+
+    m_t_barcode = truthHitAtFirstState.particle.barcode();
     // find the truth particle via the barcode
     if (particles.find(m_t_barcode) != particles.end()) {
       ACTS_DEBUG("Find the truth particle with barcode = " << m_t_barcode);
@@ -263,19 +276,17 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
     }
 
     // get the trackState info
-    m_nStates    = traj.size();
     m_nPredicted = 0;
     m_nFiltered  = 0;
     m_nSmoothed  = 0;
-    for (auto& state : traj) {
-
+    mj.visitBackwards(trackTip, [&](const auto& state) {
       // get the geometry ID
       auto geoID = state.referenceSurface().geoID();
       m_volumeID.push_back(geoID.volume());
       m_layerID.push_back(geoID.layer());
       m_moduleID.push_back(geoID.sensitive());
 
-      auto meas = std::get<Measurement>(**state.measurement.uncalibrated);
+      auto meas = std::get<Measurement>(*state.uncalibrated());
 
       // get local position
       Acts::Vector2D local(meas.parameters()[Acts::ParDef::eLOC_0],
@@ -298,7 +309,7 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
       m_z_hit.push_back(global.z());
 
       // get the truth hit corresponding to this trackState
-      auto truthHit = (*state.measurement.uncalibrated).truthHit();
+      auto truthHit = state.uncalibrated().truthHit();
       // get local truth position
       Acts::Vector2D truthlocal;
       truthHit.surface->globalToLocal(
@@ -331,11 +342,15 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
 
       // get the predicted parameter
       bool predicted = false;
-      if (state.parameter.predicted) {
+      if (state.hasPredicted()) {
         predicted = true;
         m_nPredicted++;
-        auto parameter  = *state.parameter.predicted;
-        auto covariance = *parameter.covariance();
+        Acts::BoundParameters parameter(
+            gctx,
+            state.predictedCovariance(),
+            state.predicted(),
+            state.referenceSurface().getSharedPtr());
+        auto covariance = state.predictedCovariance();
         // local hit residual info
         auto H        = meas.projector();
         auto resCov   = cov + H * covariance * H.transpose();
@@ -436,11 +451,15 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
 
       // get the filtered parameter
       bool filtered = false;
-      if (state.parameter.filtered) {
+      if (state.hasFiltered()) {
         filtered = true;
         m_nFiltered++;
-        auto parameter  = *state.parameter.filtered;
-        auto covariance = *parameter.covariance();
+        Acts::BoundParameters parameter(
+            gctx,
+            state.filteredCovariance(),
+            state.filtered(),
+            state.referenceSurface().getSharedPtr());
+        auto covariance = state.filteredCovariance();
         // filtered parameter info
         m_eLOC0_flt.push_back(parameter.parameters()[Acts::ParDef::eLOC_0]);
         m_eLOC1_flt.push_back(parameter.parameters()[Acts::ParDef::eLOC_1]);
@@ -523,11 +542,15 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
 
       // get the smoothed parameter
       bool smoothed = false;
-      if (state.parameter.smoothed) {
+      if (state.hasSmoothed()) {
         smoothed = true;
         m_nSmoothed++;
-        auto parameter  = *state.parameter.smoothed;
-        auto covariance = *state.parameter.smoothed->covariance();
+        Acts::BoundParameters parameter(
+            gctx,
+            state.smoothedCovariance(),
+            state.smoothed(),
+            state.referenceSurface().getSharedPtr());
+        auto covariance = state.smoothedCovariance();
         // smoothed parameter info
         m_eLOC0_smt.push_back(parameter.parameters()[Acts::ParDef::eLOC_0]);
         m_eLOC1_smt.push_back(parameter.parameters()[Acts::ParDef::eLOC_1]);
@@ -612,8 +635,7 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
       m_prt.push_back(predicted);
       m_flt.push_back(filtered);
       m_smt.push_back(smoothed);
-
-    }  // all states
+    });  // all states
 
     // fill the variables for one track to tree
     m_outputTree->Fill();

@@ -16,6 +16,7 @@
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/Utilities/Helpers.hpp"
 #include "Acts/EventData/Measurement.hpp"
+#include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/EventData/TrackState.hpp"
 #include "Acts/Geometry/GeometryID.hpp"
@@ -33,8 +34,6 @@ class EffPlotTool
   using Identifier  = Data::SimSourceLink;
   using Measurement = Acts::
       Measurement<Identifier, Acts::ParDef::eLOC_0, Acts::ParDef::eLOC_1>;
-  using Trajectory
-      = std::vector<Acts::TrackState<Identifier, Acts::BoundParameters>>;
 
 public:
   /// @brief The nested configuration struct
@@ -72,9 +71,10 @@ public:
   /// @param trajectory a vector of trackStates
   /// @param truthParticle the truth Particle
   void
-  fill(EffPlotCache&            effPlotCache,
-       const Trajectory&        trajectory,
-       const Data::SimParticle& truthParticle) const;
+  fill(EffPlotCache&                            effPlotCache,
+       const Acts::MultiTrajectory<Identifier>& trajectory,
+       size_t                                   trackTip,
+       const Data::SimParticle&                 truthParticle) const;
 
   /// @brief write the efficiency plots to file
   /// @param effPlotCache cache object for efficiency plots

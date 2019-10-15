@@ -16,6 +16,7 @@
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/Utilities/Helpers.hpp"
 #include "Acts/EventData/Measurement.hpp"
+#include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/EventData/TrackState.hpp"
 #include "Acts/Geometry/GeometryID.hpp"
@@ -35,8 +36,6 @@ class ResPlotTool
   using Identifier  = Data::SimSourceLink;
   using Measurement = Acts::
       Measurement<Identifier, Acts::ParDef::eLOC_0, Acts::ParDef::eLOC_1>;
-  using Trajectory
-      = std::vector<Acts::TrackState<Identifier, Acts::BoundParameters>>;
   using ParVector_t = typename Acts::BoundParameters::ParVector_t;
 
 public:
@@ -119,9 +118,10 @@ public:
   /// @param track a vector of trackState for the moment
   /// @param truth a vector of truthHit
   void
-  fill(ResPlotCache&                resPlotCache,
-       const Acts::GeometryContext& gctx,
-       const Trajectory&            trajectory) const;
+  fill(ResPlotCache&                            resPlotCache,
+       const Acts::GeometryContext&             gctx,
+       const Acts::MultiTrajectory<Identifier>& trajectory,
+       size_t                                   trackTip) const;
 
   /// @brief extract the details of the residual/pull plots and fill details
   /// into separate histograms
