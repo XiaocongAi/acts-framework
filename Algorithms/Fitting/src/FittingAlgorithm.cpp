@@ -57,7 +57,8 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& context) const
                                     << "' from event store.");
 
   // Prepare the output data
-  std::vector<std::vector<TrackState>> fittedTracks;
+  std::vector<std::pair<size_t, Acts::MultiTrajectory<Data::SimSourceLink>>>
+      fittedTracks;
 
   // Prepare the measurements for KalmanFitter
   ACTS_DEBUG("Prepare the measurements and then tracks");
@@ -204,9 +205,10 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& context) const
       ACTS_WARNING("No fittedParameter!");
 
     // get the fitted states
-    if (!fittedResult.fittedStates.empty()) {
+    if (fittedResult.processedStates != 0) {
       ACTS_DEBUG("Get the fitted states.");
-      fittedTracks.push_back(fittedResult.fittedStates);
+      fittedTracks.push_back(
+          std::make_pair(fittedResult.trackTip, fittedResult.fittedStates));
     }
 
     // Make sure the fitting is deterministic

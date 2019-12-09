@@ -418,11 +418,11 @@ FW::Json::JsonGeometryConverter::surfaceMaterialToJson(
     if (mp) {
       /// Return the thickness in mm
       return {
-          mp.averageX0(),
-          mp.averageL0(),
-          mp.averageZ(),
-          mp.averageA(),
-          mp.averageRho(),
+          mp.material().X0(),
+          mp.material().L0(),
+          mp.material().Z(),
+          mp.material().Ar(),
+          mp.material().massDensity(),
           mp.thickness(),
       };
     }

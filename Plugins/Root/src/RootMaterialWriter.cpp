@@ -194,9 +194,9 @@ FW::Root::RootMaterialWriter::write(
           t->SetBinContent(b0 + 1, b1 + 1, mat.thickness());
           x0->SetBinContent(b0 + 1, b1 + 1, mat.material().X0());
           l0->SetBinContent(b0 + 1, b1 + 1, mat.material().L0());
-          A->SetBinContent(b0 + 1, b1 + 1, mat.material().A());
+          A->SetBinContent(b0 + 1, b1 + 1, mat.material().Ar());
           Z->SetBinContent(b0 + 1, b1 + 1, mat.material().Z());
-          rho->SetBinContent(b0 + 1, b1 + 1, mat.material().rho());
+          rho->SetBinContent(b0 + 1, b1 + 1, mat.material().massDensity());
         }
       }
     }

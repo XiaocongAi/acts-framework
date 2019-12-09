@@ -95,7 +95,7 @@ namespace Options {
         po::value<double>()->default_value(3_m),
         "Maximum step size for the propagation [in mm].")(
         "prop-pt-loopers",
-        po::value<double>()->default_value(300_MeV),
+        po::value<double>()->default_value(1_GeV),
         "Transverse momentum below which loops are being detected [in GeV].");
   }
 

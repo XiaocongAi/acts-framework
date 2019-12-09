@@ -124,11 +124,11 @@ fullMaterial(std::string inFile,
     for (auto& step : steps) {
       //  std::cout << "t" << step.material().thickness() << std::endl;
       float t = step.material().thickness();
-      float r = step.material().averageRho();
+      float r = step.material().material().massDensity();
       thickness += step.material().thickness();
       rho += r * t;
-      A += step.material().averageA() * r * t;
-      Z += step.material().averageZ() * r * t;
+      A += step.material().material().Ar() * r * t;
+      Z += step.material().material().Z() * r * t;
       tInX0 += (t != 0. && step.material().x0() != 0.)
           ? t / step.material().x0()
           : 0.;

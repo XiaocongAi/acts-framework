@@ -33,7 +33,8 @@ namespace Root {
   using Measurement = Acts::
       Measurement<Identifier, Acts::ParDef::eLOC_0, Acts::ParDef::eLOC_1>;
   using TrackState       = Acts::TrackState<Identifier, Acts::BoundParameters>;
-  using TrajectoryVector = std::vector<std::vector<TrackState>>;
+  using TrajectoryVector = std::vector<
+      std::pair<size_t, Acts::MultiTrajectory<Data::SimSourceLink>>>;
 
   /// @class RootPerformanceWriter
   ///

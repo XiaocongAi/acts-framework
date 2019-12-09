@@ -168,7 +168,9 @@ PropagationAlgorithm<propagator_t>::execute(
     // parameters
     Acts::BoundVector pars;
     pars << d0, z0, phi, theta, qop, t;
-    // some screen output
+
+    ACTS_VERBOSE("Start Parameters (d0, z0, pt) = ");
+    ACTS_VERBOSE("  (" << d0 << ", " << z0 << ", " << pt << ")");
 
     Acts::Vector3D sPosition(0., 0., 0.);
     Acts::Vector3D sMomentum(0., 0., 0.);

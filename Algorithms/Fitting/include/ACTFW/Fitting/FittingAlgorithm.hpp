@@ -17,6 +17,7 @@
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/Framework/BareAlgorithm.hpp"
 #include "ACTFW/Framework/ProcessCode.hpp"
+#include "Acts/EventData/MultiTrajectory.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
 #include "Acts/EventData/TrackState.hpp"
 #include "Acts/Fitter/KalmanFitter.hpp"
@@ -30,10 +31,9 @@ class FittingAlgorithm : public BareAlgorithm
 {
 public:
   // A few initialisations and definitionas
-  using Identifier = Data::SimSourceLink;
-  using TrackState = Acts::TrackState<Identifier, Acts::BoundParameters>;
-  using ResultType
-      = Acts::KalmanFitterResult<Identifier, Acts::BoundParameters>;
+  using Identifier      = Data::SimSourceLink;
+  using TrackState      = Acts::TrackState<Identifier, Acts::BoundParameters>;
+  using ResultType      = Acts::KalmanFitterResult<Identifier>;
   using StartParameters = Acts::CurvilinearParameters;
 
   /// Nested configuration struct

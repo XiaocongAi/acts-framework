@@ -199,17 +199,18 @@ FW::ResPlotTool::write(const ResPlotTool::ResPlotCache& resPlotCache) const
 }
 
 void
-FW::ResPlotTool::fill(ResPlotTool::ResPlotCache&   resPlotCache,
-                      const Acts::GeometryContext& gctx,
-                      const Trajectory&            trajectory) const
+FW::ResPlotTool::fill(ResPlotTool::ResPlotCache&               resPlotCache,
+                      const Acts::GeometryContext&             gctx,
+                      const Acts::MultiTrajectory<Identifier>& trajectory,
+                      size_t                                   trackTip) const
 {
   // get the distribution of residual/pull
-  for (auto& state : trajectory) {
+  trajectory.visitBackwards(trackTip, [&](const auto& state) {
     ParVector_t truthParameter;
     float       truthEta, truthR, truthZ;
     auto        geoID = state.referenceSurface().geoID();
 
-    auto truthHit = (*state.measurement.uncalibrated).truthHit();
+    auto truthHit = state.uncalibrated().truthHit();
     // get local truth position
     Acts::Vector2D truthlocal;
     truthHit.surface->globalToLocal(
@@ -226,10 +227,13 @@ FW::ResPlotTool::fill(ResPlotTool::ResPlotCache&   resPlotCache,
     truthZ   = truthHit.position.z();
 
     // get the track paramter and error of track parameter at a trackState
-    if (state.parameter.smoothed) {
-      auto smoothed       = *state.parameter.smoothed;
-      auto trackParameter = smoothed.parameters();
-      auto covariance     = *smoothed.covariance();
+    if (state.hasSmoothed()) {
+      auto trackParameter = state.smoothed();
+      auto covariance     = state.smoothedCovariance();
+      Acts::BoundParameters(gctx,
+                            covariance,
+                            trackParameter,
+                            state.referenceSurface().getSharedPtr());
       // fill the histograms for residual and pull
       for (unsigned int parID = 0; parID < Acts::BoundParsDim; parID++) {
         std::string parName  = m_cfg.paramNames.at(parID);
@@ -257,7 +261,7 @@ FW::ResPlotTool::fill(ResPlotTool::ResPlotCache&   resPlotCache,
         }
       }
     }
-  }  // all states
+  });  // all states
 }
 
 // get the mean and width of residual/pull in each eta bin and fill them into

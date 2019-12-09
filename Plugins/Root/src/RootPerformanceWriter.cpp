@@ -102,10 +102,16 @@ FW::Root::RootPerformanceWriter::writeT(const AlgorithmContext& ctx,
   }
 
   // Loop over the trajectories
-  for (auto& traj : trajectories) {
+  for (auto& [trackTip, traj] : trajectories) {
     // retrieve the truth particle barcode for this track state
-    auto truthHitAtFirstState = (*traj[0].measurement.uncalibrated).truthHit();
-    auto barcode              = truthHitAtFirstState.particle.barcode();
+    auto truthHitAtFirstState
+        = traj.getTrackState(trackTip).uncalibrated().truthHit();
+
+    traj.visitBackwards(trackTip, [&](const auto& state) {
+      auto truthHitAtFirstState = state;
+    });
+
+    auto barcode = truthHitAtFirstState.particle.barcode();
     // find the truth Particle for this trajectory
     Data::SimParticle truthParticle;
     if (particles.find(barcode) != particles.end()) {
@@ -116,8 +122,8 @@ FW::Root::RootPerformanceWriter::writeT(const AlgorithmContext& ctx,
     }
 
     // fill the plots
-    m_resPlotTool->fill(m_resPlotCache, ctx.geoContext, traj);
-    m_effPlotTool->fill(m_effPlotCache, traj, truthParticle);
+    m_resPlotTool->fill(m_resPlotCache, ctx.geoContext, traj, trackTip);
+    m_effPlotTool->fill(m_effPlotCache, traj, trackTip, truthParticle);
 
   }  // all trajectories
 
