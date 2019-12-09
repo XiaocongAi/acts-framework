@@ -90,6 +90,7 @@ FW::TrackFitterPerformanceWriter::writeT(
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
   for (const auto& traj : trajectories) {
+    if (not traj.size() > 0) { continue; }
     // retrieve the truth particle barcode for this track state
     // TODO use majority particle instead to support reconstructed, non-truth
     // trajectories

@@ -204,8 +204,8 @@ FW::Root::RootTrajectoryWriter::endRun()
 }
 
 FW::ProcessCode
-FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
-                                       const TrajectoryVector& trajectories)
+FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
+                                       const TrajectoryContainer& trajectories)
 {
 
   if (m_outputFile == nullptr) return ProcessCode::SUCCESS;
@@ -234,6 +234,7 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext& ctx,
   // Loop over the trajectories
   int iTraj = 0;
   for (auto& traj : trajectories) {
+    if (not traj.size() > 0) { continue; }
     /// collect the information
     m_trajNr = iTraj;
     // retrieve the truth particle barcode for this track state

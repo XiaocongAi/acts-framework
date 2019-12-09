@@ -14,10 +14,10 @@
 #include "ACTFW/EventData/SimParticle.hpp"
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/EventData/SimVertex.hpp"
+#include "ACTFW/EventData/Track.hpp"
 #include "ACTFW/Framework/WriterT.hpp"
 #include "Acts/EventData/Measurement.hpp"
 #include "Acts/EventData/TrackParameters.hpp"
-#include "Acts/EventData/TrackState.hpp"
 #include "Acts/Geometry/GeometryID.hpp"
 #include "Acts/Utilities/ParameterDefinitions.hpp"
 
@@ -30,8 +30,6 @@ namespace Root {
   using Identifier  = Data::SimSourceLink;
   using Measurement = Acts::
       Measurement<Identifier, Acts::ParDef::eLOC_0, Acts::ParDef::eLOC_1>;
-  using TrackState       = Acts::TrackState<Identifier, Acts::BoundParameters>;
-  using TrajectoryVector = std::vector<std::vector<TrackState>>;
 
   /// @class RootTrajectoryWriter
   ///
@@ -47,7 +45,7 @@ namespace Root {
   /// this is done by setting the Config::rootFile pointer to an existing file
   ///
   /// Safe to use from multiple writer threads - uses a std::mutex lock.
-  class RootTrajectoryWriter final : public WriterT<TrajectoryVector>
+  class RootTrajectoryWriter final : public WriterT<TrajectoryContainer>
   {
   public:
     /// @brief The nested configuration struct
@@ -80,8 +78,8 @@ namespace Root {
     /// @param [in] ctx is the algorithm context for event information
     /// @param [in] trajectories are what to be written out
     ProcessCode
-    writeT(const AlgorithmContext& ctx,
-           const TrajectoryVector& trajectories) final override;
+    writeT(const AlgorithmContext&    ctx,
+           const TrajectoryContainer& trajectories) final override;
 
   private:
     Config     m_cfg;         ///< The config class
