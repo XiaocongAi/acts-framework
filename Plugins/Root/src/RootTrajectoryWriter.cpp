@@ -11,6 +11,7 @@
 #include <TTree.h>
 #include <ios>
 #include <stdexcept>
+#include "ACTFW/Utilities/Paths.hpp"
 #include "Acts/Utilities/Helpers.hpp"
 
 using Acts::VectorHelpers::eta;
@@ -21,28 +22,32 @@ using Acts::VectorHelpers::theta;
 FW::Root::RootTrajectoryWriter::RootTrajectoryWriter(
     const FW::Root::RootTrajectoryWriter::Config& cfg,
     Acts::Logging::Level                          level)
-  : WriterT(cfg.trackCollection, "RootTrajectoryWriter", level)
+  : WriterT(cfg.inputTrajectories, "RootTrajectoryWriter", level)
   , m_cfg(cfg)
   , m_outputFile(cfg.rootFile)
 {
   // An input collection name and tree name must be specified
-  if (m_cfg.trackCollection.empty()) {
+  if (m_cfg.inputTrajectories.empty()) {
     throw std::invalid_argument("Missing input trajectory collection");
-  } else if (m_cfg.simulatedEventCollection.empty()) {
+  } else if (m_cfg.inputParticles.empty()) {
     throw std::invalid_argument("Missing input particle collection");
-  } else if (m_cfg.treeName.empty()) {
+  } else if (cfg.outputFilename.empty()) {
+    throw std::invalid_argument("Missing output filename");
+  } else if (m_cfg.outputTreename.empty()) {
     throw std::invalid_argument("Missing tree name");
   }
 
   // Setup ROOT I/O
   if (m_outputFile == nullptr) {
-    m_outputFile = TFile::Open(m_cfg.filePath.c_str(), m_cfg.fileMode.c_str());
+    auto path    = joinPaths(m_cfg.outputDir, m_cfg.outputFilename);
+    m_outputFile = TFile::Open(path.c_str(), m_cfg.fileMode.c_str());
     if (m_outputFile == nullptr) {
-      throw std::ios_base::failure("Could not open '" + m_cfg.filePath);
+      throw std::ios_base::failure("Could not open '" + path);
     }
   }
   m_outputFile->cd();
-  m_outputTree = new TTree(m_cfg.treeName.c_str(), m_cfg.treeName.c_str());
+  m_outputTree
+      = new TTree(m_cfg.outputTreename.c_str(), m_cfg.outputTreename.c_str());
   if (m_outputTree == nullptr)
     throw std::bad_alloc();
   else {
@@ -197,8 +202,9 @@ FW::Root::RootTrajectoryWriter::endRun()
   if (m_outputFile) {
     m_outputFile->cd();
     m_outputTree->Write();
-    ACTS_INFO("Write trajectories to tree '" << m_cfg.treeName << "' in '"
-                                             << m_cfg.filePath << "'");
+    ACTS_INFO("Write trajectories to tree '"
+              << m_cfg.outputTreename << "' in '"
+              << joinPaths(m_cfg.outputDir, m_cfg.outputFilename) << "'");
   }
   return ProcessCode::SUCCESS;
 }
@@ -210,20 +216,9 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
 
   if (m_outputFile == nullptr) return ProcessCode::SUCCESS;
 
-  // Read truth particles from input collection
-  const auto& simulatedEvent = ctx.eventStore.get<std::vector<Data::SimVertex>>(
-      m_cfg.simulatedEventCollection);
-  ACTS_DEBUG("Read collection '" << m_cfg.simulatedEventCollection << "' with "
-                                 << simulatedEvent.size() << " vertices");
-
-  // Get the map of truth particle
-  ACTS_DEBUG("Get the truth particles.");
-  std::map<barcode_type, Data::SimParticle> particles;
-  for (auto& vertex : simulatedEvent) {
-    for (auto& particle : vertex.outgoing) {
-      particles.insert(std::make_pair(particle.barcode(), particle));
-    }
-  }
+  // read truth particles from input collection
+  const auto& particles
+      = ctx.eventStore.get<SimParticles>(m_cfg.inputParticles);
 
   // Exclusive access to the tree while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
@@ -233,17 +228,18 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
 
   // Loop over the trajectories
   int iTraj = 0;
-  for (auto& traj : trajectories) {
-    if (not traj.size() > 0) { continue; }
+  for (const auto& traj : trajectories) {
+    if (traj.empty()) { continue; }
     /// collect the information
     m_trajNr = iTraj;
     // retrieve the truth particle barcode for this track state
     auto truthHitAtFirstState = (*traj[0].measurement.uncalibrated).truthHit();
     m_t_barcode               = truthHitAtFirstState.particle.barcode();
     // find the truth particle via the barcode
-    if (particles.find(m_t_barcode) != particles.end()) {
+    auto ip = particles.find(m_t_barcode);
+    if (ip != particles.end()) {
+      const auto& particle = *ip;
       ACTS_DEBUG("Find the truth particle with barcode = " << m_t_barcode);
-      auto particle = particles.find(m_t_barcode)->second;
       // get the truth particle info at vertex
       Acts::Vector3D truthPos = particle.position();
       Acts::Vector3D truthMom = particle.momentum();
@@ -268,7 +264,7 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
     m_nPredicted = 0;
     m_nFiltered  = 0;
     m_nSmoothed  = 0;
-    for (auto& state : traj) {
+    for (const auto& state : traj) {
 
       // get the geometry ID
       auto geoID = state.referenceSurface().geoID();

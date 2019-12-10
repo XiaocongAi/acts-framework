@@ -24,6 +24,7 @@
 #include "ACTFW/Plugins/Csv/CsvOptionsReader.hpp"
 #include "ACTFW/Plugins/Csv/CsvParticleReader.hpp"
 #include "ACTFW/Plugins/Csv/CsvPlanarClusterReader.hpp"
+#include "ACTFW/Plugins/Root/RootTrajectoryWriter.hpp"
 #include "ACTFW/TruthTracking/ParticleSmearing.hpp"
 #include "ACTFW/TruthTracking/TruthTrackFinder.hpp"
 #include "ACTFW/Utilities/Options.hpp"
@@ -137,6 +138,15 @@ main(int argc, char* argv[])
       trackingGeometry, magneticField, logLevel);
   sequencer.addAlgorithm(std::make_shared<FittingAlgorithm>(fitCfg, logLevel));
 
+  // write tracks from fitting
+  Root::RootTrajectoryWriter::Config trackWriterCfg;
+  trackWriterCfg.inputParticles    = particleReaderCfg.outputParticles;
+  trackWriterCfg.inputTrajectories = fitCfg.outputTrajectories;
+  trackWriterCfg.outputDir         = outputDir;
+  trackWriterCfg.outputFilename    = "tracks.root";
+  trackWriterCfg.outputTreename    = "tracks";
+  sequencer.addWriter(
+      std::make_shared<Root::RootTrajectoryWriter>(trackWriterCfg, logLevel));
   // write reconstruction performance data
   TrackFinderPerformanceWriter::Config perFindCfg;
   perFindCfg.inputParticles       = particleReaderCfg.outputParticles;

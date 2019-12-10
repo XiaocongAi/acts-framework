@@ -51,12 +51,14 @@ namespace Root {
     /// @brief The nested configuration struct
     struct Config
     {
-      std::string trackCollection;           ///< trajectory collection to write
-      std::string simulatedEventCollection;  ///< truth particle collection
-      std::string filePath;                  ///< path of the output file
-      std::string fileMode = "RECREATE";     ///< file access mode
-      std::string treeName = "trajectories";  ///< name of the output tree
-      TFile*      rootFile = nullptr;         ///< common root file
+      std::string inputParticles;  ///< input truth particles collection.
+      std::string
+                  inputTrajectories;  ///< input (fitted) trajectories collection
+      std::string outputDir;          ///< output directory
+      std::string outputFilename = "tracks.root";  ///< output filename
+      std::string outputTreename = "tracks";       ///< name of the output tree
+      std::string fileMode       = "RECREATE";     ///< file access mode
+      TFile*      rootFile       = nullptr;        ///< common root file
     };
 
     /// Constructor
