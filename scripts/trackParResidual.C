@@ -220,7 +220,7 @@ trackParResidual(const std::string& inFile,
   std::vector<bool>* filtered  = new std::vector<bool>;  ///< filtering status
   std::vector<bool>* smoothed  = new std::vector<bool>;  ///< smoothing status
 
-  int nStates;
+  int nStates, nMeasurements;
 
   tree->SetBranchAddress("eLOC0_prt", &LOC0_prt);
   tree->SetBranchAddress("eLOC1_prt", &LOC1_prt);
@@ -271,6 +271,7 @@ trackParResidual(const std::string& inFile,
   tree->SetBranchAddress("pull_eQOP_smt", &pull_QOP_smt);
 
   tree->SetBranchAddress("nStates", &nStates);
+  tree->SetBranchAddress("nMeasurements", &nMeasurements);
   tree->SetBranchAddress("volume_id", &volume_id);
   tree->SetBranchAddress("layer_id", &layer_id);
   tree->SetBranchAddress("module_id", &module_id);
@@ -281,8 +282,13 @@ trackParResidual(const std::string& inFile,
   Int_t entries = tree->GetEntries();
   for (int j = 0; j < entries; j++) {
     tree->GetEvent(j);
+  
+    // skip the tracks without measurements 
+    if (!nMeasurements) {
+    continue;
+    } 
 
-    for (int i = 0; i < nStates; i++) {
+    for (int i = 0; i < nMeasurements; i++) {
       if (predicted->at(i)) {
         res_prt[paramNames[0]]->Fill(res_LOC0_prt->at(i), 1);
         res_prt[paramNames[1]]->Fill(res_LOC1_prt->at(i), 1);

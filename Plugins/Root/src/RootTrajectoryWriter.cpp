@@ -81,6 +81,7 @@ FW::Root::RootTrajectoryWriter::RootTrajectoryWriter(
     m_outputTree->Branch("t_eQOP", &m_t_eQOP);
 
     m_outputTree->Branch("nStates", &m_nStates);
+    m_outputTree->Branch("nMeasurements", &m_nMeasurements);
     m_outputTree->Branch("volume_id", &m_volumeID);
     m_outputTree->Branch("layer_id", &m_layerID);
     m_outputTree->Branch("module_id", &m_moduleID);
@@ -233,20 +234,32 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
   for (const auto& [trackTip, mj] : trajectories) {
     /// collect the information
     m_trajNr = iTraj;
-    // retrieve the truth particle barcode for this track state
-    // this is actually the last, will reset with preceding ones
-    auto truthHitAtFirstState
-        = mj.getTrackState(trackTip).uncalibrated().truthHit();
 
-    // collect first track state and number of trackstates
+    // collect number of all trackstates
     m_nStates = 0;
 
+    // get the truth particle barcode for this trajectory
+    // this is only possible for trajectory with measurements
+    bool hasMeasurement = false;
     mj.visitBackwards(trackTip, [&](const auto& state) {
       m_nStates++;
-      auto truthHitAtFirstState = state;
+      // only the track state with measurement has truth hit
+      if (state.hasUncalibrated()) {
+        auto truthHit = state.uncalibrated().truthHit();
+        // retrieve the truth particle barcode for this track state
+        m_t_barcode    = truthHit.particle.barcode();
+        hasMeasurement = true;
+        return false;  // abort the execution after we get the barcode
+      }
+      return true;  // continue the execution
     });
 
-    m_t_barcode = truthHitAtFirstState.particle.barcode();
+    // no further process if no measurements at all
+    if (not hasMeasurement) {
+      continue;
+      ACTS_DEBUG("No measurements on this track!");
+    }
+
     // find the truth particle via the barcode
     auto ip = particles.find(m_t_barcode);
     if (ip != particles.end()) {
@@ -272,10 +285,17 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
     }
 
     // get the trackState info
-    m_nPredicted = 0;
-    m_nFiltered  = 0;
-    m_nSmoothed  = 0;
+    m_nMeasurements = 0;
+    m_nPredicted    = 0;
+    m_nFiltered     = 0;
+    m_nSmoothed     = 0;
     mj.visitBackwards(trackTip, [&](const auto& state) {
+      // we only fill the track states with measurement
+      if (not state.hasUncalibrated()) { return true; }
+
+      // count the number of states with measurement
+      m_nMeasurements++;
+
       // get the geometry ID
       auto geoID = state.referenceSurface().geoID();
       m_volumeID.push_back(geoID.volume());
@@ -631,6 +651,7 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
       m_prt.push_back(predicted);
       m_flt.push_back(filtered);
       m_smt.push_back(smoothed);
+      return true;
     });  // all states
 
     // fill the variables for one track to tree

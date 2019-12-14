@@ -107,7 +107,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     } else {
       ACTS_WARNING("Fit failed for track " << itrack << " with error"
                                            << result.error());
-      trajectories.push_back({});
+      //      trajectories.push_back({});
     }
   }
 

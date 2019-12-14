@@ -122,7 +122,8 @@ namespace Root {
     std::vector<float> m_t_eTHETA;  ///< truth parameter eTHETA
     std::vector<float> m_t_eQOP;    ///< truth parameter eQOP
 
-    int                m_nStates{0};  ///< number of states
+    int m_nStates{0};                 ///< number of all states
+    int m_nMeasurements{0};           ///< number of states with measurements
     std::vector<int>   m_volumeID;    ///< volume identifier
     std::vector<int>   m_layerID;     ///< layer identifier
     std::vector<int>   m_moduleID;    ///< surface identifier

@@ -84,3 +84,18 @@ FW::EffPlotTool::fill(EffPlotTool::EffPlotCache&               effPlotCache,
   PlotHelpers::fillEff(effPlotCache.trackeff_vs_eta, t_eta, status);
   PlotHelpers::fillEff(effPlotCache.trackeff_vs_phi, t_phi, status);
 }
+
+void
+FW::EffPlotTool::fill(EffPlotTool::EffPlotCache& effPlotCache,
+                      const Data::SimParticle&   truthParticle) const
+{
+  Acts::Vector3D truthMom = truthParticle.momentum();
+
+  double t_phi = phi(truthMom);
+  double t_eta = eta(truthMom);
+  double t_pT  = perp(truthMom);
+
+  PlotHelpers::fillEff(effPlotCache.trackeff_vs_pT, t_pT, false);
+  PlotHelpers::fillEff(effPlotCache.trackeff_vs_eta, t_eta, false);
+  PlotHelpers::fillEff(effPlotCache.trackeff_vs_phi, t_phi, false);
+}

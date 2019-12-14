@@ -206,6 +206,9 @@ FW::ResPlotTool::fill(ResPlotTool::ResPlotCache&               resPlotCache,
 {
   // get the distribution of residual/pull
   trajectory.visitBackwards(trackTip, [&](const auto& state) {
+    // we only fill the track states with measurement
+    if (not state.hasUncalibrated()) { return true; }
+
     ParVector_t truthParameter;
     float       truthEta, truthR, truthZ;
     auto        geoID = state.referenceSurface().geoID();
@@ -261,6 +264,7 @@ FW::ResPlotTool::fill(ResPlotTool::ResPlotCache&               resPlotCache,
         }
       }
     }
+    return true;
   });  // all states
 }
 
