@@ -129,6 +129,7 @@ main(int argc, char* argv[])
 
   // setup the fitter
   FittingAlgorithm::Config fitCfg;
+  fitCfg.inputParticles   = particleReaderCfg.outputParticles;
   fitCfg.inputSourceLinks = hitSmearingCfg.outputSourceLinks;
   fitCfg.inputProtoTracks = trackFinderCfg.outputProtoTracks;
   fitCfg.inputInitialTrackParameters
@@ -140,7 +141,6 @@ main(int argc, char* argv[])
 
   // write tracks from fitting
   Root::RootTrajectoryWriter::Config trackWriterCfg;
-  trackWriterCfg.inputParticles    = particleReaderCfg.outputParticles;
   trackWriterCfg.inputTrajectories = fitCfg.outputTrajectories;
   trackWriterCfg.outputDir         = outputDir;
   trackWriterCfg.outputFilename    = "tracks.root";
@@ -154,7 +154,6 @@ main(int argc, char* argv[])
   perFindCfg.inputProtoTracks     = trackFinderCfg.outputProtoTracks;
   perFindCfg.outputDir            = outputDir;
   TrackFitterPerformanceWriter::Config perFitCfg;
-  perFitCfg.inputParticles    = particleReaderCfg.outputParticles;
   perFitCfg.inputTrajectories = fitCfg.outputTrajectories;
   perFitCfg.outputDir         = outputDir;
   sequencer.addWriter(
