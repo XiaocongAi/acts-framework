@@ -114,12 +114,14 @@ namespace Root {
     std::vector<float>
         m_t_dy;  ///< Truth particle direction y at global hit position
     std::vector<float>
-                       m_t_dz;  ///< Truth particle direction z at global hit position
+        m_t_dz;  ///< Truth particle direction z at global hit position
+
     std::vector<float> m_t_eLOC0;   ///< truth parameter eLOC_0
     std::vector<float> m_t_eLOC1;   ///< truth parameter eLOC_1
     std::vector<float> m_t_ePHI;    ///< truth parameter ePHI
     std::vector<float> m_t_eTHETA;  ///< truth parameter eTHETA
     std::vector<float> m_t_eQOP;    ///< truth parameter eQOP
+    std::vector<float> m_t_eT;      ///< truth parameter eT
 
     int m_nStates{0};                 ///< number of all states
     int m_nMeasurements{0};           ///< number of states with measurements
@@ -138,6 +140,20 @@ namespace Root {
     std::vector<float> m_pull_x_hit;  ///< hit pull x
     std::vector<float> m_pull_y_hit;  ///< hit pull y
 
+    bool  m_hasFittedParams;       ///< if the track has fitted parameter
+    float m_eLOC0_fit{-99.};       ///< fitted parameter eLOC_0
+    float m_eLOC1_fit{-99.};       ///< fitted parameter eLOC_1
+    float m_ePHI_fit{-99.};        ///< fitted parameter ePHI
+    float m_eTHETA_fit{-99.};      ///< fitted parameter eTHETA
+    float m_eQOP_fit{-99.};        ///< fitted parameter eQOP
+    float m_eT_fit{-99.};          ///< fitted parameter eT
+    float m_err_eLOC0_fit{-99.};   ///< fitted parameter eLOC_-99.err
+    float m_err_eLOC1_fit{-99.};   ///< fitted parameter eLOC_1 err
+    float m_err_ePHI_fit{-99.};    ///< fitted parameter ePHI err
+    float m_err_eTHETA_fit{-99.};  ///< fitted parameter eTHETA err
+    float m_err_eQOP_fit{-99.};    ///< fitted parameter eQOP err
+    float m_err_eT_fit{-99.};      ///< fitted parameter eT err
+
     int m_nPredicted{0};       ///< number of states with predicted parameter
     std::vector<bool>  m_prt;  ///< predicted status
     std::vector<float> m_eLOC0_prt;      ///< predicted parameter eLOC0
@@ -145,22 +161,26 @@ namespace Root {
     std::vector<float> m_ePHI_prt;       ///< predicted parameter ePHI
     std::vector<float> m_eTHETA_prt;     ///< predicted parameter eTHETA
     std::vector<float> m_eQOP_prt;       ///< predicted parameter eQOP
+    std::vector<float> m_eT_prt;         ///< predicted parameter eT
     std::vector<float> m_res_eLOC0_prt;  ///< predicted parameter eLOC0 residual
     std::vector<float> m_res_eLOC1_prt;  ///< predicted parameter eLOC1 residual
     std::vector<float> m_res_ePHI_prt;   ///< predicted parameter ePHI residual
     std::vector<float>
                        m_res_eTHETA_prt;  ///< predicted parameter eTHETA residual
     std::vector<float> m_res_eQOP_prt;    ///< predicted parameter eQOP residual
+    std::vector<float> m_res_eT_prt;      ///< predicted parameter eT residual
     std::vector<float> m_err_eLOC0_prt;    ///< predicted parameter eLOC0 error
     std::vector<float> m_err_eLOC1_prt;    ///< predicted parameter eLOC1 error
     std::vector<float> m_err_ePHI_prt;     ///< predicted parameter ePHI error
     std::vector<float> m_err_eTHETA_prt;   ///< predicted parameter eTHETA error
     std::vector<float> m_err_eQOP_prt;     ///< predicted parameter eQOP error
+    std::vector<float> m_err_eT_prt;       ///< predicted parameter eT error
     std::vector<float> m_pull_eLOC0_prt;   ///< predicted parameter eLOC0 pull
     std::vector<float> m_pull_eLOC1_prt;   ///< predicted parameter eLOC1 pull
     std::vector<float> m_pull_ePHI_prt;    ///< predicted parameter ePHI pull
     std::vector<float> m_pull_eTHETA_prt;  ///< predicted parameter eTHETA pull
     std::vector<float> m_pull_eQOP_prt;    ///< predicted parameter eQOP pull
+    std::vector<float> m_pull_eT_prt;      ///< predicted parameter eT pull
     std::vector<float> m_x_prt;            ///< predicted global x
     std::vector<float> m_y_prt;            ///< predicted global y
     std::vector<float> m_z_prt;            ///< predicted global z
@@ -177,22 +197,26 @@ namespace Root {
     std::vector<float> m_ePHI_flt;       ///< filtered parameter ePHI
     std::vector<float> m_eTHETA_flt;     ///< filtered parameter eTHETA
     std::vector<float> m_eQOP_flt;       ///< filtered parameter eQOP
+    std::vector<float> m_eT_flt;         ///< filtered parameter eT
     std::vector<float> m_res_eLOC0_flt;  ///< filtered parameter eLOC0 residual
     std::vector<float> m_res_eLOC1_flt;  ///< filtered parameter eLOC1 residual
     std::vector<float> m_res_ePHI_flt;   ///< filtered parameter ePHI residual
     std::vector<float>
                        m_res_eTHETA_flt;  ///< filtered parameter eTHETA residual
     std::vector<float> m_res_eQOP_flt;    ///< filtered parameter eQOP residual
+    std::vector<float> m_res_eT_flt;      ///< filtered parameter eT residual
     std::vector<float> m_err_eLOC0_flt;   ///< filtered parameter eLOC0 error
     std::vector<float> m_err_eLOC1_flt;   ///< filtered parameter eLOC1 error
     std::vector<float> m_err_ePHI_flt;    ///< filtered parameter ePHI error
     std::vector<float> m_err_eTHETA_flt;   ///< filtered parameter eTHETA error
     std::vector<float> m_err_eQOP_flt;     ///< filtered parameter eQOP error
+    std::vector<float> m_err_eT_flt;       ///< filtered parameter eT error
     std::vector<float> m_pull_eLOC0_flt;   ///< filtered parameter eLOC0 pull
     std::vector<float> m_pull_eLOC1_flt;   ///< filtered parameter eLOC1 pull
     std::vector<float> m_pull_ePHI_flt;    ///< filtered parameter ePHI pull
     std::vector<float> m_pull_eTHETA_flt;  ///< filtered parameter eTHETA pull
     std::vector<float> m_pull_eQOP_flt;    ///< filtered parameter eQOP pull
+    std::vector<float> m_pull_eT_flt;      ///< filtered parameter eT pull
     std::vector<float> m_x_flt;            ///< filtered global x
     std::vector<float> m_y_flt;            ///< filtered global y
     std::vector<float> m_z_flt;            ///< filtered global z
@@ -209,22 +233,26 @@ namespace Root {
     std::vector<float> m_ePHI_smt;       ///< smoothed parameter ePHI
     std::vector<float> m_eTHETA_smt;     ///< smoothed parameter eTHETA
     std::vector<float> m_eQOP_smt;       ///< smoothed parameter eQOP
+    std::vector<float> m_eT_smt;         ///< smoothed parameter eT
     std::vector<float> m_res_eLOC0_smt;  ///< smoothed parameter eLOC0 residual
     std::vector<float> m_res_eLOC1_smt;  ///< smoothed parameter eLOC1 residual
     std::vector<float> m_res_ePHI_smt;   ///< smoothed parameter ePHI residual
     std::vector<float>
                        m_res_eTHETA_smt;  ///< smoothed parameter eTHETA residual
     std::vector<float> m_res_eQOP_smt;    ///< smoothed parameter eQOP residual
+    std::vector<float> m_res_eT_smt;      ///< smoothed parameter eT residual
     std::vector<float> m_err_eLOC0_smt;   ///< smoothed parameter eLOC0 error
     std::vector<float> m_err_eLOC1_smt;   ///< smoothed parameter eLOC1 error
     std::vector<float> m_err_ePHI_smt;    ///< smoothed parameter ePHI error
     std::vector<float> m_err_eTHETA_smt;   ///< smoothed parameter eTHETA error
     std::vector<float> m_err_eQOP_smt;     ///< smoothed parameter eQOP error
+    std::vector<float> m_err_eT_smt;       ///< smoothed parameter eT error
     std::vector<float> m_pull_eLOC0_smt;   ///< smoothed parameter eLOC0 pull
     std::vector<float> m_pull_eLOC1_smt;   ///< smoothed parameter eLOC1 pull
     std::vector<float> m_pull_ePHI_smt;    ///< smoothed parameter ePHI pull
     std::vector<float> m_pull_eTHETA_smt;  ///< smoothed parameter eTHETA pull
     std::vector<float> m_pull_eQOP_smt;    ///< smoothed parameter eQOP pull
+    std::vector<float> m_pull_eT_smt;      ///< smoothed parameter eT pull
     std::vector<float> m_x_smt;            ///< smoothed global x
     std::vector<float> m_y_smt;            ///< smoothed global y
     std::vector<float> m_z_smt;            ///< smoothed global z

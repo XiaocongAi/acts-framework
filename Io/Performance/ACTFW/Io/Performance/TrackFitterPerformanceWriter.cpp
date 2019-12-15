@@ -84,9 +84,6 @@ FW::TrackFitterPerformanceWriter::writeT(
 
   // loop over all trajectories
   for (const auto& traj : trajectories) {
-    // collect number of all trackstates
-    size_t nStates = traj.numStates();
-
     // collect number of trackstates with measurements
     size_t nMeasurements = traj.numMeasurements();
 
@@ -94,7 +91,7 @@ FW::TrackFitterPerformanceWriter::writeT(
     const auto& truthParticle = traj.truthParticle();
 
     // fill the efficiency plots
-    if (nStates > 0) {
+    if (traj.hasTrajectory()) {
       // when the trajectory is reconstructed
       m_effPlotTool.fill(m_effPlotCache, truthParticle, traj.trajectory());
     } else {
