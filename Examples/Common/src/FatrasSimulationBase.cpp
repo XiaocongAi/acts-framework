@@ -37,8 +37,13 @@
 #include "ACTFW/Plugins/Root/RootSimHitWriter.hpp"
 #include "ACTFW/Utilities/Paths.hpp"
 #include "Fatras/Kernel/Interactor.hpp"
+#include "Fatras/Kernel/Process.hpp"
 #include "Fatras/Kernel/SelectorList.hpp"
 #include "Fatras/Kernel/Simulator.hpp"
+#include "Fatras/Physics/EnergyLoss/BetheBloch.hpp"
+#include "Fatras/Physics/EnergyLoss/BetheHeitler.hpp"
+#include "Fatras/Physics/Scattering/Highland.hpp"
+#include "Fatras/Physics/Scattering/Scattering.hpp"
 #include "Fatras/Selectors/ChargeSelectors.hpp"
 #include "Fatras/Selectors/KinematicCasts.hpp"
 #include "Fatras/Selectors/SelectorHelpers.hpp"
@@ -104,6 +109,18 @@ struct SurfaceSelector
   }
 };
 
+/// The selector
+struct Selector
+{
+  /// call operator
+  template <typename detector_t, typename particle_t>
+  bool
+  operator()(const detector_t, const particle_t&) const
+  {
+    return true;
+  }
+};
+
 /// @brief Simulation setup for the FatrasAlgorithm
 ///
 /// @tparam bfield_t Type of the bfield for the simulation to be set up
@@ -146,8 +163,18 @@ setupSimulationAlgorithm(
   using ChargedSelector
       = Fatras::SelectorListAND<NonZeroCharge, PtMin, AbsEtaMax>;
   using NeutralSelector = Fatras::SelectorListAND<ZeroCharge, EMin, AbsEtaMax>;
-  // define interactor types
-  using PhysicsList       = Fatras::PhysicsList<>;
+
+  // Define interactor types
+  using All = Selector;
+  // Define the processes with selectors (no hadronic interaction yet??)
+  using BetheBlochProcess = Fatras::Process<Fatras::BetheBloch, All, All, All>;
+  using BetheHeitlerProcess
+      = Fatras::Process<Fatras::BetheHeitler, All, All, All>;
+  using ScatteringProcess
+      = Fatras::Process<Fatras::Scattering<Fatras::Highland>, All, All, All>;
+  using PhysicsList = Fatras::
+      PhysicsList<BetheBlochProcess, BetheHeitlerProcess, ScatteringProcess>;
+
   using ChargedInteractor = Fatras::Interactor<FW::RandomEngine,
                                                FW::Data::SimParticle,
                                                FW::Data::SimHit,
@@ -177,6 +204,16 @@ setupSimulationAlgorithm(
   Simulator simulator(std::move(chargedPropagator),
                       std::move(neutralPropagator));
   simulator.debug = vm["fatras-debug-output"].template as<bool>();
+  // set the switch for processes in physics list
+  simulator.chargedInteractor.physicsList.template get<BetheBlochProcess>()
+      .process.betheBloch
+      = vm["fatras-em-ionisation"].template as<bool>();
+  simulator.chargedInteractor.physicsList.template get<BetheHeitlerProcess>()
+      .process.betheHeitler
+      = vm["fatras-em-radiation"].template as<bool>();
+  simulator.chargedInteractor.physicsList.template get<ScatteringProcess>()
+      .process.scattering
+      = vm["fatras-em-scattering"].template as<bool>();
 
   // construct the simulation algorithm
   auto fatrasConfig = FW::Options::readFatrasConfig(vm, std::move(simulator));
