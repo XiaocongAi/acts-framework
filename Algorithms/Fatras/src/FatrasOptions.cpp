@@ -25,7 +25,7 @@ FW::Options::addFatrasOptions(FW::Options::Description& desc)
       value<bool>()->default_value(true),
       "Switch on ionisiation loss of charged particles")(
       "fatras-em-radiation",
-      value<bool>()->default_value(true),
+      value<bool>()->default_value(false),
       "Switch on radiation for charged particles")(
       "fatras-em-scattering",
       value<bool>()->default_value(true),
