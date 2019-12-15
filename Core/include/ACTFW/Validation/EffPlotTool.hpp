@@ -69,13 +69,13 @@ public:
   /// @brief fill efficiency plots when the corresponding trajectory is
   /// reconstructed
   /// @param effPlotCache cache object for efficiency plots
-  /// @param trajectory a vector of trackStates
   /// @param truthParticle the truth Particle
+  /// @param trajectory the fitted trajectory
   void
-  fill(EffPlotCache&                            effPlotCache,
-       const Acts::MultiTrajectory<Identifier>& trajectory,
-       size_t                                   trackTip,
-       const Data::SimParticle&                 truthParticle) const;
+  fill(EffPlotCache&            effPlotCache,
+       const Data::SimParticle& truthParticle,
+       const std::pair<size_t, Acts::MultiTrajectory<Identifier>>& trajectory)
+      const;
 
   /// @brief fill efficiency plots when the corresponding trajectory is not
   /// recontructed

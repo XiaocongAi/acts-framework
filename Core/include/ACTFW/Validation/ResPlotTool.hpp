@@ -118,10 +118,10 @@ public:
   /// @param track a vector of trackState for the moment
   /// @param truth a vector of truthHit
   void
-  fill(ResPlotCache&                            resPlotCache,
-       const Acts::GeometryContext&             gctx,
-       const Acts::MultiTrajectory<Identifier>& trajectory,
-       size_t                                   trackTip) const;
+  fill(ResPlotCache&                                               resPlotCache,
+       const Acts::GeometryContext&                                gctx,
+       const std::pair<size_t, Acts::MultiTrajectory<Identifier>>& trajectory)
+      const;
 
   /// @brief extract the details of the residual/pull plots and fill details
   /// into separate histograms

@@ -57,14 +57,16 @@ FW::EffPlotTool::write(const EffPlotTool::EffPlotCache& effPlotCache) const
 }
 
 void
-FW::EffPlotTool::fill(EffPlotTool::EffPlotCache&               effPlotCache,
-                      const Acts::MultiTrajectory<Identifier>& trajectory,
-                      size_t                                   trackTip,
-                      const Data::SimParticle& truthParticle) const
+FW::EffPlotTool::fill(
+    EffPlotTool::EffPlotCache&                                  effPlotCache,
+    const Data::SimParticle&                                    truthParticle,
+    const std::pair<size_t, Acts::MultiTrajectory<Identifier>>& trajectory)
+    const
 {
-  int    nSmoothed = 0;
-  size_t nTotal    = 0;
-  trajectory.visitBackwards(trackTip, [&](const auto& state) {
+  size_t nTotal              = 0;
+  size_t nSmoothed           = 0;
+  const auto& [trackTip, mj] = trajectory;
+  mj.visitBackwards(trackTip, [&](const auto& state) {
     nTotal++;
     if (state.hasSmoothed()) nSmoothed++;
   });

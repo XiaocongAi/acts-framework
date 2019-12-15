@@ -34,9 +34,6 @@ FW::TrackFitterPerformanceWriter::TrackFitterPerformanceWriter(
   if (m_cfg.inputTrajectories.empty()) {
     throw std::invalid_argument("Missing input trajectories collection");
   }
-  if (m_cfg.inputParticles.empty()) {
-    throw std::invalid_argument("Missing input particles collection");
-  }
   if (cfg.outputFilename.empty()) {
     throw std::invalid_argument("Missing output filename");
   }
@@ -82,59 +79,32 @@ FW::TrackFitterPerformanceWriter::writeT(
     const AlgorithmContext&    ctx,
     const TrajectoryContainer& trajectories)
 {
-  // read truth particles from input collection
-  const auto& particles
-      = ctx.eventStore.get<SimParticles>(m_cfg.inputParticles);
-
   // exclusive access to the tree while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
-  // store the reconstructed trajectories with truth info
-  std::map<barcode_type, std::pair<size_t, Trajectory>> reconTrajectories;
-  barcode_type                                          barcode{0};
-  bool                                                  hasMeasurement = false;
-  for (const auto& [trackTip, traj] : trajectories) {
-    // retrieve the truth particle barcode for this trajectory
-    traj.visitBackwards(trackTip, [&](const auto& state) {
-      // only the track state with measurement has truth hit
-      if (state.hasUncalibrated()) {
-        auto truthHit = state.uncalibrated().truthHit();
-        // retrieve the truth particle barcode for this track state
-        barcode        = truthHit.particle.barcode();
-        hasMeasurement = true;
-        return false;  // abort the execution after we get the barcode
-      }
-      return true;  // continue the execution
-    });
+  // loop over all trajectories
+  for (const auto& traj : trajectories) {
+    // collect number of all trackstates
+    size_t nStates = traj.numStates();
 
-    // no further process if no measurements at all
-    if (not hasMeasurement) {
-      continue;
-      ACTS_DEBUG("No measurements on this track!");
-    }
+    // collect number of trackstates with measurements
+    size_t nMeasurements = traj.numMeasurements();
 
-    // record this trajectory with its truth info
-    reconTrajectories.emplace(barcode, std::make_pair(trackTip, traj));
+    // get the truth particle
+    const auto& truthParticle = traj.truthParticle();
 
-    // fill the residual plots
-    m_resPlotTool.fill(m_resPlotCache, ctx.geoContext, traj, trackTip);
-  }
-
-  // Fill the efficiency plots
-  // @Todo: store the truth particle in the track collection even the fit fail
-  // to simplify the filling of efficiency
-  // The defintion of efficiency is W.R.T. all truth particles
-  for (const auto& particle : particles) {
-    auto barcode = particle.barcode();
-    auto ip      = reconTrajectories.find(barcode);
-    if (ip != reconTrajectories.end()) {
-      const auto& [trackTip, traj] = ip->second;
+    // fill the efficiency plots
+    if (nStates > 0) {
       // when the trajectory is reconstructed
-      m_effPlotTool.fill(m_effPlotCache, traj, trackTip, particle);
+      m_effPlotTool.fill(m_effPlotCache, truthParticle, traj.trajectory());
     } else {
       // when the trajectory is NOT reconstructed
-      m_effPlotTool.fill(m_effPlotCache, particle);
+      m_effPlotTool.fill(m_effPlotCache, truthParticle);
     }
+
+    // fill the residual plots
+    if (not(nMeasurements > 0)) { continue; }
+    m_resPlotTool.fill(m_resPlotCache, ctx.geoContext, traj.trajectory());
   }
 
   return ProcessCode::SUCCESS;
