@@ -16,6 +16,9 @@
 FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
   : FW::BareAlgorithm("FittingAlgorithm", level), m_cfg(std::move(cfg))
 {
+  if (m_cfg.inputParticles.empty()) {
+    throw std::invalid_argument("Missing input particles collection");
+  }
   if (m_cfg.inputSourceLinks.empty()) {
     throw std::invalid_argument("Missing input source links collection");
   }
@@ -36,6 +39,8 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 {
 
   // Read input data
+  const auto& particles
+      = ctx.eventStore.get<SimParticles>(m_cfg.inputParticles);
   const auto sourceLinks
       = ctx.eventStore.get<SimSourceLinkContainer>(m_cfg.inputSourceLinks);
   const auto protoTracks
@@ -60,18 +65,22 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     const auto& protoTrack    = protoTracks[itrack];
     const auto& initialParams = initialParameters[itrack];
 
-    // We can have empty tracks which must give empty fit results
+    // We can have empty tracks which will be skipped for fit
     if (protoTrack.empty()) {
-      trajectories.push_back({});
+      ACTS_WARNING("Empty track " << itrack << " found. Have to skip the fit!");
       continue;
     }
+
     // Clear & reserve the right size
     trackSourceLinks.clear();
     trackSourceLinks.reserve(protoTrack.size());
 
     // Fill the source links via their indices from the container
+    // and get the truth particle barcode
+    barcode_type barcode;
     for (auto hitIndex : protoTrack) {
       auto sourceLink = sourceLinks.nth(hitIndex);
+      barcode         = (*sourceLink).truthHit().particle.barcode();
       if (sourceLink == sourceLinks.end()) {
         ACTS_FATAL("Proto track " << itrack << " contains invalid hit index"
                                   << hitIndex);
@@ -79,6 +88,17 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
       }
       trackSourceLinks.push_back(*sourceLink);
     }
+
+    // Find the truth particle via the barcode
+    auto ip = particles.find(barcode);
+    if (ip == particles.end()) {
+      // No truth particle found. Not sure how this could happen.
+      // If so, skip the fit
+      ACTS_WARNING("No correspoinding truth particle for track "
+                   << itrack << ". Skip the fit!");
+      continue;
+    }
+    const auto& truthParticle = *ip;
 
     // Set the target surface
     const Acts::Surface* rSurface = &initialParams.referenceSurface();
@@ -92,22 +112,29 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     if (result.ok()) {
       // Get the fit output object
       const auto& fitOutput = result.value();
-      trajectories.push_back(
-          std::make_pair(fitOutput.trackTip, fitOutput.fittedStates));
-
-      // fitted parameters on the reference surface are only used for debug
-      // output for now. only the fit trajectory is actually stored.
-      // TODO store single track parameters in separate container.
       if (fitOutput.fittedParameters) {
         const auto& params = fitOutput.fittedParameters.get();
-        ACTS_DEBUG("Fitted paramemeters for track " << itrack);
-        ACTS_DEBUG("  position: " << params.position().transpose());
-        ACTS_DEBUG("  momentum: " << params.momentum().transpose());
+        ACTS_VERBOSE("Fitted paramemeters for track " << itrack);
+        ACTS_VERBOSE("  position: " << params.position().transpose());
+        ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
+        // Construct a truth fit track using truth particle, trajectory and
+        // track parameter
+        trajectories.emplace_back(truthParticle,
+                                  fitOutput.trackTip,
+                                  std::move(fitOutput.fittedStates),
+                                  std::move(params));
+      } else {
+        // Construct a truth fit track using truth particle and trajectory
+        trajectories.emplace_back(truthParticle,
+                                  fitOutput.trackTip,
+                                  std::move(fitOutput.fittedStates));
       }
     } else {
       ACTS_WARNING("Fit failed for track " << itrack << " with error"
                                            << result.error());
-      //      trajectories.push_back({});
+      // Fit failed, but still create a truth fit track using only truth
+      // particle
+      trajectories.emplace_back(truthParticle);
     }
   }
 

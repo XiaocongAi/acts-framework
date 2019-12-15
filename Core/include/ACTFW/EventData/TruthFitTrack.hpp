@@ -27,6 +27,8 @@ namespace TruthFitTrackStatus {
 /// @note A truth particle must be provided regardless of fitting status
 /// for investigation of track efficiency etc.
 ///
+/// @Todo Use a track proxy or helper to retrieve the detailed info, such as
+/// number of measurments, holes etc.
 struct TruthFitTrack
 {
 public:
