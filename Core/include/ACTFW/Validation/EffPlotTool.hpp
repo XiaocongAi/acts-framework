@@ -66,24 +66,15 @@ public:
   void
   book(EffPlotCache& effPlotCache) const;
 
-  /// @brief fill efficiency plots when the corresponding trajectory is
-  /// reconstructed
+  /// @brief fill efficiency plots
+  ///
   /// @param effPlotCache cache object for efficiency plots
   /// @param truthParticle the truth Particle
-  /// @param trajectory the fitted trajectory
+  /// @param status the reconstruction status
   void
   fill(EffPlotCache&            effPlotCache,
        const Data::SimParticle& truthParticle,
-       const std::pair<size_t, Acts::MultiTrajectory<Identifier>>& trajectory)
-      const;
-
-  /// @brief fill efficiency plots when the corresponding trajectory is not
-  /// recontructed
-  /// @param effPlotCache cache object for efficiency plots
-  /// @param truthParticle the truth Particle
-  void
-  fill(EffPlotCache&            effPlotCache,
-       const Data::SimParticle& truthParticle) const;
+       bool                     status) const;
 
   /// @brief write the efficiency plots to file
   /// @param effPlotCache cache object for efficiency plots

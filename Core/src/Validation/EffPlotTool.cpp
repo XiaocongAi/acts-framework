@@ -57,47 +57,17 @@ FW::EffPlotTool::write(const EffPlotTool::EffPlotCache& effPlotCache) const
 }
 
 void
-FW::EffPlotTool::fill(
-    EffPlotTool::EffPlotCache&                                  effPlotCache,
-    const Data::SimParticle&                                    truthParticle,
-    const std::pair<size_t, Acts::MultiTrajectory<Identifier>>& trajectory)
-    const
+FW::EffPlotTool::fill(EffPlotTool::EffPlotCache& effPlotCache,
+                      const Data::SimParticle&   truthParticle,
+                      bool                       status) const
 {
-  size_t nTotal              = 0;
-  size_t nSmoothed           = 0;
-  const auto& [trackTip, mj] = trajectory;
-  mj.visitBackwards(trackTip, [&](const auto& state) {
-    nTotal++;
-    if (state.hasSmoothed()) nSmoothed++;
-  });
-
-  ACTS_DEBUG("There are " << nTotal << " states in total and " << nSmoothed
-                          << " of them are processed.");
-
   Acts::Vector3D truthMom = truthParticle.momentum();
 
   double t_phi = phi(truthMom);
   double t_eta = eta(truthMom);
   double t_pT  = perp(truthMom);
-
-  bool status = nSmoothed > 0 ? true : false;
 
   PlotHelpers::fillEff(effPlotCache.trackeff_vs_pT, t_pT, status);
   PlotHelpers::fillEff(effPlotCache.trackeff_vs_eta, t_eta, status);
   PlotHelpers::fillEff(effPlotCache.trackeff_vs_phi, t_phi, status);
-}
-
-void
-FW::EffPlotTool::fill(EffPlotTool::EffPlotCache& effPlotCache,
-                      const Data::SimParticle&   truthParticle) const
-{
-  Acts::Vector3D truthMom = truthParticle.momentum();
-
-  double t_phi = phi(truthMom);
-  double t_eta = eta(truthMom);
-  double t_pT  = perp(truthMom);
-
-  PlotHelpers::fillEff(effPlotCache.trackeff_vs_pT, t_pT, false);
-  PlotHelpers::fillEff(effPlotCache.trackeff_vs_eta, t_eta, false);
-  PlotHelpers::fillEff(effPlotCache.trackeff_vs_phi, t_phi, false);
 }

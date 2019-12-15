@@ -124,6 +124,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                                   std::move(fitOutput.fittedStates),
                                   std::move(params));
       } else {
+        ACTS_DEBUG("No fitted paramemeters for track " << itrack);
         // Construct a truth fit track using truth particle and trajectory
         trajectories.emplace_back(truthParticle,
                                   fitOutput.trackTip,

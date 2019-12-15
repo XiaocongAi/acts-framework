@@ -84,23 +84,17 @@ FW::TrackFitterPerformanceWriter::writeT(
 
   // loop over all trajectories
   for (const auto& traj : trajectories) {
-    // collect number of trackstates with measurements
-    size_t nMeasurements = traj.numMeasurements();
-
     // get the truth particle
     const auto& truthParticle = traj.truthParticle();
 
     // fill the efficiency plots
-    if (traj.hasTrajectory()) {
-      // when the trajectory is reconstructed
-      m_effPlotTool.fill(m_effPlotCache, truthParticle, traj.trajectory());
-    } else {
-      // when the trajectory is NOT reconstructed
-      m_effPlotTool.fill(m_effPlotCache, truthParticle);
-    }
+    // Efficiency is defined as the ratio between number of tracks with fitted
+    // parameter and total truth tracks
+    m_effPlotTool.fill(
+        m_effPlotCache, truthParticle, traj.hasTrackParameters());
 
     // fill the residual plots
-    if (not(nMeasurements > 0)) { continue; }
+    if (not(traj.numMeasurements() > 0)) { continue; }
     m_resPlotTool.fill(m_resPlotCache, ctx.geoContext, traj.trajectory());
   }
 
