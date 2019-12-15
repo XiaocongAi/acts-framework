@@ -14,14 +14,6 @@
 
 namespace FW {
 
-namespace TruthFitTrackStatus {
-  using Status = std::bitset<8>;
-
-  constexpr Status Trajectory{1 << 0};
-  constexpr Status Measurements{1 << 1};
-  constexpr Status TrackParameter{1 << 2};
-}  // namespace TruthFitTrackStatus
-
 /// @brief struct for truth fitting result
 ///
 /// @note A truth particle must be provided regardless of fitting status
@@ -67,7 +59,7 @@ public:
     : m_truthParticle(tParticle)
     , m_trackTip(tTip)
     , m_trajectory(trajectory)
-    , m_trackParameter(parameter)
+    , m_trackParameters(parameter)
   {
   }
 
@@ -91,10 +83,10 @@ public:
 
   /// Get fitted track parameter
   const Acts::BoundParameters
-  parameters() const
+  trackParameters() const
   {
-    if (m_trackParameter) {
-      return *m_trackParameter;
+    if (m_trackParameters) {
+      return *m_trackParameters;
     } else {
       throw std::runtime_error(
           "No fitted track parameter for this trajectory!");
@@ -127,15 +119,18 @@ public:
     return nMeasurements;
   }
 
-  /// Get track status
-  TruthFitTrackStatus::Status
-  status() const
+  /// Indicator for having fitted trajectory or not
+  bool
+  hasTrajectory() const
   {
-    TruthFitTrackStatus::Status status{0};
-    if (m_trajectory) { status |= TruthFitTrackStatus::Trajectory; }
-    if (m_trackParameter) { status |= TruthFitTrackStatus::TrackParameter; }
-    if (numMeasurements() > 0) { status |= TruthFitTrackStatus::Measurements; }
-    return std::move(status);
+    return m_trajectory ? true : false;
+  }
+
+  /// Indicator for having fitted track parameter or not
+  bool
+  hasTrackParameters() const
+  {
+    return m_trackParameters ? true : false;
   }
 
 private:
@@ -150,7 +145,7 @@ private:
   size_t m_trackTip = SIZE_MAX;
 
   // The optional Parameters at the provided surface
-  boost::optional<Acts::BoundParameters> m_trackParameter{boost::none};
+  boost::optional<Acts::BoundParameters> m_trackParameters{boost::none};
 };
 
 }  // namespace FW
