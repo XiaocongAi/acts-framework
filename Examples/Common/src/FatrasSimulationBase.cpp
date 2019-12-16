@@ -205,14 +205,11 @@ setupSimulationAlgorithm(
                       std::move(neutralPropagator));
   simulator.debug = vm["fatras-debug-output"].template as<bool>();
   // set the switch for processes in physics list
-  simulator.chargedInteractor.physicsList.template get<BetheBlochProcess>()
-      .process.betheBloch
+  simulator.physicsList.template get<BetheBlochProcess>().process.betheBloch
       = vm["fatras-em-ionisation"].template as<bool>();
-  simulator.chargedInteractor.physicsList.template get<BetheHeitlerProcess>()
-      .process.betheHeitler
+  simulator.physicsList.template get<BetheHeitlerProcess>().process.betheHeitler
       = vm["fatras-em-radiation"].template as<bool>();
-  simulator.chargedInteractor.physicsList.template get<ScatteringProcess>()
-      .process.scattering
+  simulator.physicsList.template get<ScatteringProcess>().process.scattering
       = vm["fatras-em-scattering"].template as<bool>();
 
   // construct the simulation algorithm
