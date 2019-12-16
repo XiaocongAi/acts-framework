@@ -27,16 +27,14 @@ FW::EffPlotTool::book(EffPlotTool::EffPlotCache& effPlotCache) const
   PlotHelpers::Binning bPt  = m_cfg.varBinning.at("Pt");
   ACTS_DEBUG("Initialize the histograms for efficiency plots");
   // efficiency vs pT
-  effPlotCache.trackeff_vs_pT
-      = PlotHelpers::bookEff("trackeff_vs_pT",
-                             "Fraction of smoothed track;pT [GeV/c];Efficiency",
-                             bPt);
+  effPlotCache.trackeff_vs_pT = PlotHelpers::bookEff(
+      "trackeff_vs_pT", "Tracking efficiency;pT [GeV/c];Efficiency", bPt);
   // efficiency vs eta
   effPlotCache.trackeff_vs_eta = PlotHelpers::bookEff(
-      "trackeff_vs_eta", "Fraction of smoothed track;#eta;Efficiency", bEta);
+      "trackeff_vs_eta", "Tracking efficiency;#eta;Efficiency", bEta);
   // efficiency vs phi
   effPlotCache.trackeff_vs_phi = PlotHelpers::bookEff(
-      "trackeff_vs_phi", "Fraction of smoothed track;#phi;Efficiency", bPhi);
+      "trackeff_vs_phi", "Tracking efficiency;#phi;Efficiency", bPhi);
 }
 
 void

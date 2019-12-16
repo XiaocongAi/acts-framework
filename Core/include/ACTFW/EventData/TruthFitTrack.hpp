@@ -82,7 +82,7 @@ public:
   }
 
   /// Get fitted track parameter
-  const Acts::BoundParameters
+  const Acts::BoundParameters&
   trackParameters() const
   {
     if (m_trackParameters) {
