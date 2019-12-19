@@ -11,16 +11,20 @@
 #include <Acts/EventData/MultiTrajectory.hpp>
 #include <Acts/EventData/TrackParameters.hpp>
 #include "ACTFW/EventData/SimSourceLink.hpp"
+#include "ACTFW/Validation/ProtoTrackClassification.hpp"
 
 namespace FW {
 
 /// @brief struct for truth fitting result
 ///
 /// @Todo Use a track proxy or helper to retrieve the detailed info, such as
-/// number of measurments, holes etc.
+/// number of measurments, holes, truth info etc.
 struct TruthFitTrack
 {
 public:
+  // Default constructor
+  TruthFitTrack() = default;
+
   /// Constructor from fitted trajectory
   ///
   /// @param tTip The fitted multiTrajectory entry point
@@ -104,6 +108,51 @@ public:
   hasTrackParameters() const
   {
     return m_trackParameters ? true : false;
+  }
+
+  /// Get the truth particle counts to help identify majority particle
+  std::vector<ParticleHitCount>
+  identifyMajorityParticle() const
+  {
+    std::vector<ParticleHitCount> particleHitCount;
+
+    if (m_trajectory) {
+      (*m_trajectory).visitBackwards(m_trackTip, [&](const auto& state) {
+        // No truth info with non-measurement state
+        if (not state.hasUncalibrated()) { return true; }
+        // Find the truth particle associated with this state
+        const auto& particle = state.uncalibrated().truthHit().particle;
+
+        // Get the barcode
+        auto particleId = particle.barcode();
+
+        // Find if the particle already exists
+        auto it = std::find_if(particleHitCount.begin(),
+                               particleHitCount.end(),
+                               [=](const ParticleHitCount& phc) {
+                                 return phc.particleId == particleId;
+                               });
+
+        // Either increase count if we saw the particle before or add it
+        if (it != particleHitCount.end()) {
+          it->hitCount += 1;
+        } else {
+          particleHitCount.push_back({particleId, 1u});
+        }
+        return true;
+      });
+    }
+
+    if (not particleHitCount.empty()) {
+      // sort by hit count, i.e. majority particle first
+      std::sort(particleHitCount.begin(),
+                particleHitCount.end(),
+                [](const ParticleHitCount& lhs, const ParticleHitCount& rhs) {
+                  return lhs.hitCount < rhs.hitCount;
+                });
+    }
+
+    return std::move(particleHitCount);
   }
 
 private:
