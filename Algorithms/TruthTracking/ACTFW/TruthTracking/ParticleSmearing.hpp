@@ -33,14 +33,14 @@ public:
     std::string outputTrackParameters;
     /// Constant term of the d0 resolution.
     double sigmaD0 = 30 * Acts::UnitConstants::um;
-    /// Pt-dependent d0 resolution of the form sigma_d0 = A*exp(B*pt).
+    /// Pt-dependent d0 resolution of the form sigma_d0 = A*exp(-1.*abs(B)*pt).
     double sigmaD0PtA = 0 * Acts::UnitConstants::um;
-    double sigmaD0PtB = -1 / Acts::UnitConstants::GeV;
+    double sigmaD0PtB = 1 / Acts::UnitConstants::GeV;
     /// Constant term of the z0 resolution.
     double sigmaZ0 = 30 * Acts::UnitConstants::um;
-    /// Pt-dependent z0 resolution of the form sigma_z0 = A*exp(B*pt).
+    /// Pt-dependent z0 resolution of the form sigma_z0 = A*exp(-1.*abs(B)*pt).
     double sigmaZ0PtA = 0 * Acts::UnitConstants::um;
-    double sigmaZ0PtB = -1 / Acts::UnitConstants::GeV;
+    double sigmaZ0PtB = 1 / Acts::UnitConstants::GeV;
     /// Phi angular resolution.
     double sigmaPhi = 1 * Acts::UnitConstants::degree;
     /// Theta angular resolution.
