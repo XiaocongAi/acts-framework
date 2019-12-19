@@ -33,6 +33,8 @@ class TrackFitterPerformanceWriter final : public WriterT<TrajectoryContainer>
 public:
   struct Config
   {
+    /// Input truth particles collection.
+    std::string inputParticles;
     /// Input (fitted) trajectories collection.
     std::string inputTrajectories;
     /// Output directory.

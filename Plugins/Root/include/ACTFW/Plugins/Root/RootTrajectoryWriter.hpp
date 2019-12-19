@@ -53,6 +53,7 @@ namespace Root {
     /// @brief The nested configuration struct
     struct Config
     {
+      std::string inputParticles;  ///< input truth particles collection.
       std::string
                   inputTrajectories;  ///< input (fitted) trajectories collection
       std::string outputDir;          ///< output directory
@@ -92,18 +93,18 @@ namespace Root {
     int        m_eventNr{0};           ///< the event number
     int        m_trajNr{0};            ///< the trajectory number
 
-    unsigned long m_t_barcode{0};  ///< Truth particle barcode
-    int           m_t_charge{0};   ///< Truth particle charge
-    float         m_t_vx{0.};      ///< Truth particle vertex x
-    float         m_t_vy{0.};      ///< Truth particle vertex y
-    float         m_t_vz{0.};      ///< Truth particle vertex z
-    float         m_t_px{0.};      ///< Truth particle initial momentum px
-    float         m_t_py{0.};      ///< Truth particle initial momentum py
-    float         m_t_pz{0.};      ///< Truth particle initial momentum pz
-    float         m_t_theta{0.};   ///< Truth particle initial momentum theta
-    float         m_t_phi{0.};     ///< Truth particle initial momentum phi
-    float         m_t_pT{0.};      ///< Truth particle initial momentum pT
-    float         m_t_eta{0.};     ///< Truth particle initial momentum eta
+    unsigned long m_t_barcode{0};   ///< Truth particle barcode
+    int           m_t_charge{0};    ///< Truth particle charge
+    float         m_t_vx{-99.};     ///< Truth particle vertex x
+    float         m_t_vy{-99.};     ///< Truth particle vertex y
+    float         m_t_vz{-99.};     ///< Truth particle vertex z
+    float         m_t_px{-99.};     ///< Truth particle initial momentum px
+    float         m_t_py{-99.};     ///< Truth particle initial momentum py
+    float         m_t_pz{-99.};     ///< Truth particle initial momentum pz
+    float         m_t_theta{-99.};  ///< Truth particle initial momentum theta
+    float         m_t_phi{-99.};    ///< Truth particle initial momentum phi
+    float         m_t_pT{-99.};     ///< Truth particle initial momentum pT
+    float         m_t_eta{-99.};    ///< Truth particle initial momentum eta
 
     std::vector<float> m_t_x;  ///< Global truth hit position x
     std::vector<float> m_t_y;  ///< Global truth hit position y

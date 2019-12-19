@@ -64,6 +64,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     if (protoTrack.empty()) {
       trajectories.push_back(TruthFitTrack());
       ACTS_WARNING("Empty track " << itrack << " found.");
+      continue;
     }
 
     // Clear & reserve the right size

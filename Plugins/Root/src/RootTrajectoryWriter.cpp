@@ -29,6 +29,8 @@ FW::Root::RootTrajectoryWriter::RootTrajectoryWriter(
   // An input collection name and tree name must be specified
   if (m_cfg.inputTrajectories.empty()) {
     throw std::invalid_argument("Missing input trajectory collection");
+  } else if (m_cfg.inputParticles.empty()) {
+    throw std::invalid_argument("Missing input particle collection");
   } else if (cfg.outputFilename.empty()) {
     throw std::invalid_argument("Missing output filename");
   } else if (m_cfg.outputTreename.empty()) {
@@ -244,6 +246,10 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
 
   auto& gctx = ctx.geoContext;
 
+  // read truth particles from input collection
+  const auto& particles
+      = ctx.eventStore.get<SimParticles>(m_cfg.inputParticles);
+
   // Exclusive access to the tree while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
@@ -253,34 +259,48 @@ FW::Root::RootTrajectoryWriter::writeT(const AlgorithmContext&    ctx,
   // Loop over the trajectories
   int iTraj = 0;
   for (const auto& traj : trajectories) {
-    /// collect the information
+    /// Collect the information
     m_trajNr = iTraj;
 
-    // collect number of trackstates with measurements
+    // Collect number of trackstates with measurements
     m_nMeasurements = traj.numMeasurements();
 
     // No entry for the track without measurements in the tree
     if (m_nMeasurements == 0) { continue; }
 
-    // collect number of all trackstates
+    // Collect number of all trackstates
     m_nStates = traj.numStates();
 
-    // Get the truth particle info at vertex
-    const auto&    particle = traj.truthParticle();
-    Acts::Vector3D truthPos = particle.position();
-    Acts::Vector3D truthMom = particle.momentum();
-    m_t_barcode             = particle.barcode();
-    m_t_charge              = particle.q();
-    m_t_vx                  = truthPos.x();
-    m_t_vy                  = truthPos.y();
-    m_t_vz                  = truthPos.z();
-    m_t_px                  = truthMom.x();
-    m_t_py                  = truthMom.y();
-    m_t_pz                  = truthMom.z();
-    m_t_theta               = theta(truthMom);
-    m_t_phi                 = phi(truthMom);
-    m_t_pT                  = perp(truthMom);
-    m_t_eta                 = eta(truthMom);
+    // Get the majority truth particle to this track
+    std::vector<ParticleHitCount> particleHitCount
+        = traj.identifyMajorityParticle();
+    if (not particleHitCount.empty()) {
+      // Get the barcode of the majority truth particle
+      m_t_barcode = particleHitCount.front().particleId;
+      // Find the truth particle via the barcode
+      auto ip = particles.find(m_t_barcode);
+      if (ip != particles.end()) {
+        const auto& particle = *ip;
+        ACTS_DEBUG("Find the truth particle with barcode = " << m_t_barcode);
+        // Get the truth particle info at vertex
+        Acts::Vector3D truthPos = particle.position();
+        Acts::Vector3D truthMom = particle.momentum();
+        m_t_charge              = particle.q();
+        m_t_vx                  = truthPos.x();
+        m_t_vy                  = truthPos.y();
+        m_t_vz                  = truthPos.z();
+        m_t_px                  = truthMom.x();
+        m_t_py                  = truthMom.y();
+        m_t_pz                  = truthMom.z();
+        m_t_theta               = theta(truthMom);
+        m_t_phi                 = phi(truthMom);
+        m_t_pT                  = perp(truthMom);
+        m_t_eta                 = eta(truthMom);
+      } else {
+        ACTS_WARNING("Truth particle with barcode = " << m_t_barcode
+                                                      << " not found!");
+      }
+    }
 
     // Get the fitted track parameter
     m_hasFittedParams = false;

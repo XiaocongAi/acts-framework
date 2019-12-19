@@ -52,10 +52,10 @@ FW::ParticleSmearing::execute(const AlgorithmContext& ctx) const
     const auto phi   = vh::phi(particle.momentum());
 
     // compute momentum-dependent resolutions
-    const auto sigmaD0
-        = m_cfg.sigmaD0 + m_cfg.sigmaD0PtA * std::exp(-m_cfg.sigmaD0PtB * pt);
-    const auto sigmaZ0
-        = m_cfg.sigmaZ0 + m_cfg.sigmaZ0PtA * std::exp(-m_cfg.sigmaZ0PtB * pt);
+    const auto sigmaD0 = m_cfg.sigmaD0
+        + m_cfg.sigmaD0PtA * std::exp(-1.0 * std::abs(m_cfg.sigmaD0PtB) * pt);
+    const auto sigmaZ0 = m_cfg.sigmaZ0
+        + m_cfg.sigmaZ0PtA * std::exp(-1.0 * std::abs(m_cfg.sigmaZ0PtB) * pt);
     const auto sigmaP = m_cfg.sigmaPRel * p;
     // var(q/p) = (d(1/p)/dp)² * var(p) = (-1/p²)² * var(p)
     const auto sigmaQOverP = sigmaP / (p * p);

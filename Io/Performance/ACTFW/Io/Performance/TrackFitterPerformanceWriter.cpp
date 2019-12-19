@@ -34,6 +34,9 @@ FW::TrackFitterPerformanceWriter::TrackFitterPerformanceWriter(
   if (m_cfg.inputTrajectories.empty()) {
     throw std::invalid_argument("Missing input trajectories collection");
   }
+  if (m_cfg.inputParticles.empty()) {
+    throw std::invalid_argument("Missing input particles collection");
+  }
   if (cfg.outputFilename.empty()) {
     throw std::invalid_argument("Missing output filename");
   }
@@ -79,23 +82,53 @@ FW::TrackFitterPerformanceWriter::writeT(
     const AlgorithmContext&    ctx,
     const TrajectoryContainer& trajectories)
 {
-  // exclusive access to the tree while writing
+  // Read truth particles from input collection
+  const auto& particles
+      = ctx.eventStore.get<SimParticles>(m_cfg.inputParticles);
+
+  // Exclusive access to the tree while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
-  // loop over all trajectories
-  for (const auto& traj : trajectories) {
-    // get the truth particle
-    const auto& truthParticle = traj.truthParticle();
+  // All reconstructed trajectories with truth info
+  std::map<barcode_type, TruthFitTrack> reconTrajectories;
 
-    // fill the efficiency plots
-    // Efficiency is defined as the ratio between number of tracks with fitted
-    // parameter and total truth tracks
-    m_effPlotTool.fill(
-        m_effPlotCache, truthParticle, traj.hasTrackParameters());
+  // Loop over all trajectories
+  for (const auto& traj : trajectories) {
+
+    // get the majority truth particle to this track
+    std::vector<ParticleHitCount> particleHitCount
+        = traj.identifyMajorityParticle();
+    if (not particleHitCount.empty()) {
+      // get the barcode of the majority truth particle
+      auto barcode = particleHitCount.front().particleId;
+      // find the truth particle via the barcode
+      auto ip = particles.find(barcode);
+      if (ip != particles.end()) {
+        // record this trajectory with its truth info
+        reconTrajectories.emplace(ip->barcode(), traj);
+      }
+    }
 
     // fill the residual plots
     if (not(traj.numMeasurements() > 0)) { continue; }
     m_resPlotTool.fill(m_resPlotCache, ctx.geoContext, traj.trajectory());
+  }
+
+  // Fill the efficiency, defined as the ratio between number of tracks with
+  // fitted parameter and total truth tracks (assumes one truth partilce means
+  // one truth track)
+  // @Todo: add fake rate plots
+  for (const auto& particle : particles) {
+    auto barcode = particle.barcode();
+    auto it      = reconTrajectories.find(barcode);
+    if (it != reconTrajectories.end()) {
+      // when the trajectory is reconstructed
+      m_effPlotTool.fill(
+          m_effPlotCache, particle, it->second.hasTrackParameters());
+    } else {
+      // when the trajectory is NOT reconstructed
+      m_effPlotTool.fill(m_effPlotCache, particle, false);
+    }
   }
 
   return ProcessCode::SUCCESS;
