@@ -16,58 +16,31 @@ namespace FW {
 
 /// @brief struct for truth fitting result
 ///
-/// @note A truth particle must be provided regardless of fitting status
-/// for investigation of track efficiency etc.
-///
 /// @Todo Use a track proxy or helper to retrieve the detailed info, such as
 /// number of measurments, holes etc.
 struct TruthFitTrack
 {
 public:
-  /// Deleted default constructor
-  TruthFitTrack() = delete;
-
-  /// Constructor from only truth particle
+  /// Constructor from fitted trajectory
   ///
-  /// @param tParticle The truth particle associated to this trajectory
-  TruthFitTrack(const Data::SimParticle& tParticle) : m_truthParticle(tParticle)
-  {
-  }
-
-  /// Constructor from truth particle and fitted states
-  ///
-  /// @param tParticle The truth particle associated to this trajectory
   /// @param tTip The fitted multiTrajectory entry point
   /// @param trajectory The fitted multiTrajectory
-  TruthFitTrack(const Data::SimParticle&                          tParticle,
-                size_t                                            tTip,
+  TruthFitTrack(size_t                                            tTip,
                 const Acts::MultiTrajectory<Data::SimSourceLink>& trajectory)
-    : m_truthParticle(tParticle), m_trackTip(tTip), m_trajectory(trajectory)
+    : m_trackTip(tTip), m_trajectory(trajectory)
   {
   }
 
-  /// Constructor from truth particle, fitted states and fitted track parameter
+  /// Constructor from fitted trajectory and fitted track parameter
   ///
-  /// @param tParticle The truth particle associated to this trajectory
   /// @param tTip The fitted multiTrajectory entry point
   /// @param trajectory The fitted multiTrajectory
   /// @param parameter The fitted track parameter
-  TruthFitTrack(const Data::SimParticle&                          tParticle,
-                size_t                                            tTip,
+  TruthFitTrack(size_t                                            tTip,
                 const Acts::MultiTrajectory<Data::SimSourceLink>& trajectory,
                 const Acts::BoundParameters&                      parameter)
-    : m_truthParticle(tParticle)
-    , m_trackTip(tTip)
-    , m_trajectory(trajectory)
-    , m_trackParameters(parameter)
+    : m_trackTip(tTip), m_trajectory(trajectory), m_trackParameters(parameter)
   {
-  }
-
-  /// Get truth particle
-  const Data::SimParticle&
-  truthParticle() const
-  {
-    return m_truthParticle;
   }
 
   /// Get trajectory along with the entry point
@@ -134,9 +107,6 @@ public:
   }
 
 private:
-  // Truth particle associated to the trajectory
-  const Data::SimParticle m_truthParticle;
-
   // The optional fitted multitrajectory
   boost::optional<Acts::MultiTrajectory<Data::SimSourceLink>> m_trajectory{
       boost::none};
