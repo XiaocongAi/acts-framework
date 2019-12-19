@@ -49,8 +49,6 @@ public:
 
   struct Config
   {
-    /// Input truth particles collection.
-    std::string inputParticles;
     /// Input source links collection.
     std::string inputSourceLinks;
     /// Input proto tracks collection, i.e. groups of hit indices.
