@@ -35,6 +35,14 @@ public:
   {
   }
 
+  /// Constructor from fitted track parameter
+  ///
+  /// @param parameter The fitted track parameter
+  TruthFitTrack(const Acts::BoundParameters& parameter)
+    : m_trackParameters(parameter)
+  {
+  }
+
   /// Constructor from fitted trajectory and fitted track parameter
   ///
   /// @param tTip The fitted multiTrajectory entry point
