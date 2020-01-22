@@ -9,7 +9,7 @@
 #include "ACTFW/Fitting/FittingAlgorithm.hpp"
 
 #include <stdexcept>
-
+#include <tbb/tbb.h>
 #include "ACTFW/EventData/ProtoTrack.hpp"
 #include "ACTFW/EventData/Track.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
@@ -54,6 +54,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Prepare the output data with MultiTrajectory
   TrajectoryContainer trajectories;
   trajectories.reserve(protoTracks.size());
+    
+  // Synchronize the access to the fitting results (trajectories)
+  tbb::queuing_mutex trajectoriesMutex;
 
   // Construct a perigee surface as the target surface
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
