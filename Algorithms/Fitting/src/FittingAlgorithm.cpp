@@ -58,6 +58,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Prepare the output data with MultiTrajectory
   TrajectoryContainer trajectories;
   trajectories.reserve(protoTracks.size());
+    
+  // Synchronize the access to the fitting results (trajectories)
+  tbb::queuing_mutex trajectoriesMutex;
 
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
