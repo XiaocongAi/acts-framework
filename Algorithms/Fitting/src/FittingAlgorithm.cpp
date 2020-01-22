@@ -63,8 +63,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
       Acts::Vector3D{0., 0., 0.});
 
 
-  //tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads());   
+  //tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads());
 
+  //tbb::task_scheduler_init init(4);   
   // Perform the fit for each input track
   tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
         [&](const tbb::blocked_range<size_t>& r) {
@@ -73,6 +74,11 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                   << " works on tracks [" << r.begin() << ", "
                                           << r.end() << ")");
       */
+
+        ACTS_INFO("Thread " << std::this_thread::get_id()
+                  << " works on tracks [" << r.begin() << ", "
+                                          << r.end() << ")");
+      
         for (auto itrack = r.begin(); itrack != r.end(); ++itrack) {
         
            // ACTS_WARNING("itrack=" << itrack);
@@ -108,7 +114,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
             // Set the KalmanFitter options
             Acts::KalmanFitterOptions kfOptions(
                                                 ctx.geoContext, ctx.magFieldContext, ctx.calibContext, &(*pSurface));
-
             ACTS_DEBUG("Invoke fitter");
             auto result = m_cfg.fit(trackSourceLinks, initialParams, kfOptions);
             if (result.ok()) {
