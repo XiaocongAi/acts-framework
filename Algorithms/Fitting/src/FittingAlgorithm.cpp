@@ -62,9 +62,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
 
-  // Synchronize the access to the fitting results (trajectories)
-  tbb::queuing_mutex trajectoriesMutex;
-
   // Construct a perigee surface as the target surface
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
