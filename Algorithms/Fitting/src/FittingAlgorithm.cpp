@@ -62,10 +62,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
 
-
-  //tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads());
-
-  //tbb::task_scheduler_init init(4);   
   // Perform the fit for each input track
   tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
         [&](const tbb::blocked_range<size_t>& r) {
@@ -145,6 +141,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
               trajectories.push_back(TruthFitTrack());
             }
         } //end for
+      return FW::ProcessCode::SUCCESS;
     } //end parallel_for
   );
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
