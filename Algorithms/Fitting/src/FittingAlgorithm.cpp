@@ -123,7 +123,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
       trajectories.push_back(TruthFitTrack());
     }
   }
-
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
