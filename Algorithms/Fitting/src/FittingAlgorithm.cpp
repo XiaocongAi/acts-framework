@@ -154,7 +154,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                             t2.identifyMajorityParticle().front().particleId;
         });
     }
-
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
