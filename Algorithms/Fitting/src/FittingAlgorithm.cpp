@@ -61,7 +61,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
-<<<<<<< HEAD
 
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
