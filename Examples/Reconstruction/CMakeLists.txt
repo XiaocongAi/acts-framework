@@ -13,6 +13,22 @@ target_link_libraries(
       ActsFrameworkIoCsv
       ActsFrameworkIoPerformance)
 
+add_executable(
+    ActsRecCKFTracks
+    RecCKFTracks.cpp)
+target_link_libraries(
+    ActsRecCKFTracks
+    PRIVATE
+      ACTFramework
+      ACTFWFinding
+      ACTFWFitting
+      ACTFWGenericDetector
+      ACTFWExamplesCommon
+      ACTFWBFieldPlugin
+      ActsFrameworkTruthTracking
+      ActsFrameworkIoCsv
+      ActsFrameworkIoPerformance)
+
 install(
   TARGETS
     ActsRecTruthTracks
