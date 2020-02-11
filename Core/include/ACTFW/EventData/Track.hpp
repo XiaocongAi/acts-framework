@@ -17,6 +17,7 @@
 #include <Acts/EventData/TrackParameters.hpp>
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/EventData/TruthFitTrack.hpp"
+#include "ACTFW/EventData/CKFTrack.hpp"
 
 namespace FW {
 
@@ -30,4 +31,7 @@ using Trajectory = Acts::MultiTrajectory<Data::SimSourceLink>;
 
 /// Container for the truth fitting track
 using TrajectoryContainer = std::vector<TruthFitTrack>;
+
+// Container for CKF Tracks
+using CKFTrajectoryContainer = std::vector<CKFTrack>;
 }  // namespace FW
