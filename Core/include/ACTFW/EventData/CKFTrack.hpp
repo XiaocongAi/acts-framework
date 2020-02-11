@@ -105,7 +105,7 @@ public:
       } else {
         throw std::runtime_error(
             "No fitted track parameter for trajectory with entry index = "
-            + entryIndex);
+            + std::to_string(entryIndex));
       }
     } else {
       throw std::runtime_error(
