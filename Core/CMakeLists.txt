@@ -3,6 +3,7 @@ add_library(ACTFramework SHARED
   src/Framework/BareService.cpp
   src/Framework/RandomNumbers.cpp
   src/Framework/Sequencer.cpp
+  src/Framework/CalibrationDecorator.cpp
   src/Utilities/Paths.cpp
   src/Utilities/Helpers.cpp
   src/Validation/EffPlotTool.cpp
