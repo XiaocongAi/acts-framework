@@ -13,6 +13,7 @@
 #include "ACTFW/EventData/DataContainers.hpp"
 #include "ACTFW/EventData/SimHit.hpp"
 #include "ACTFW/EventData/SimSourceLink.hpp"
+#include "ACTFW/Framework/CalibrationDecorator.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
 
 FW::HitSmearing::HitSmearing(const Config& cfg, Acts::Logging::Level lvl)
@@ -61,6 +62,28 @@ FW::HitSmearing::execute(const AlgorithmContext& ctx) const
     Acts::BoundVector loc = Acts::BoundVector::Zero();
     loc[Acts::eLOC_0]     = pos[0] + m_cfg.sigmaLoc0 * stdNormal(rng);
     loc[Acts::eLOC_1]     = pos[1] + m_cfg.sigmaLoc1 * stdNormal(rng);
+
+    // add mis-calibration to the local
+    auto calibCtx = std::any_cast<FW::Contextual::CalibrationContextType>(
+        ctx.calibContext);
+    if (not calibCtx.calibrationMap.empty()) {
+      ACTS_VERBOSE(
+          "Retrieve emulated miscalibration data from calibration context");
+      auto calibData_it = calibCtx.calibrationMap.find(hit.surface);
+      if (calibData_it != calibCtx.calibrationMap.end()) {
+        auto calibData = calibData_it->second;
+        if (calibData.size() == 1) {
+          // Todo: consider eLOC_1
+          loc[Acts::eLOC_0] -= calibData[0].second;
+        } else if (calibData.size() == 2) {
+          loc[Acts::eLOC_0] -= calibData[0].second;
+          loc[Acts::eLOC_1] -= calibData[1].second;
+        } else {
+          throw std::runtime_error("Dim " + std::to_string(calibData.size())
+                                   + " is unknown");
+        }
+      }
+    }
 
     // create source link at the end of the container
     auto it = sourceLinks.emplace_hint(sourceLinks.end(),
