@@ -134,7 +134,9 @@ public:
           });
       if (it != m_trackTips.end()) {
         (*m_trajectory).visitBackwards(entryIndex, [&](const auto& state) {
-          if (state.hasUncalibrated()) { nMeasurements++; }
+          if (state.typeFlags().test(Acts::TrackStateFlag::MeasurementFlag)) {
+            nMeasurements++;
+          }
         });
       }
     }
@@ -150,7 +152,9 @@ public:
     if (m_trajectory) {
       (*m_trajectory).visitBackwards(entryIndex, [&](const auto& state) {
         // No truth info with non-measurement state
-        if (not state.hasUncalibrated()) { return true; }
+        if (not state.typeFlags().test(Acts::TrackStateFlag::MeasurementFlag)) {
+          return true;
+        }
         // Find the truth particle associated with this state
         const auto& particle = state.uncalibrated().truthHit().particle;
 
