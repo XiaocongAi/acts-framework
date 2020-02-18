@@ -9,7 +9,6 @@
 #include "ACTFW/Fitting/FittingAlgorithm.hpp"
 
 #include <stdexcept>
-#include <tbb/tbb.h>
 #include "ACTFW/EventData/ProtoTrack.hpp"
 #include "ACTFW/EventData/Track.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
@@ -55,27 +54,15 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   TrajectoryContainer trajectories;
   trajectories.reserve(protoTracks.size());
     
-  // Synchronize the access to the fitting results (trajectories)
-  tbb::queuing_mutex trajectoriesMutex;
-
-  // Construct a perigee surface as the target surface
+   // Construct a perigee surface as the target surface
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
 
 
-  //tbb::task_scheduler_init init(tbb::task_scheduler_init::default_num_threads());   
-
   // Perform the fit for each input track
-  tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
-        [&](const tbb::blocked_range<size_t>& r) {
-      
-    /*    ACTS_INFO("Thread " << std::this_thread::get_id()
-                  << " works on tracks [" << r.begin() << ", "
-                                          << r.end() << ")");
-      */
-        for (auto itrack = r.begin(); itrack != r.end(); ++itrack) {
+   for (auto itrack = 0; itrack != protoTracks.size(); ++itrack) {
         
-           // ACTS_WARNING("itrack=" << itrack);
+            // ACTS_WARNING("itrack=" << itrack);
          
             // The list of hits and the initial start parameters
             const auto& protoTrack    = protoTracks[itrack];
@@ -83,7 +70,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 
             // We can have empty tracks which must give empty fit results
             if (protoTrack.empty()) {
-              tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
               trajectories.push_back(TruthFitTrack());
               ACTS_WARNING("Empty track " << itrack << " found.");
               continue;
@@ -108,7 +94,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
             // Set the KalmanFitter options
             Acts::KalmanFitterOptions kfOptions(
                                                 ctx.geoContext, ctx.magFieldContext, ctx.calibContext, &(*pSurface));
-
             ACTS_DEBUG("Invoke fitter");
             auto result = m_cfg.fit(trackSourceLinks, initialParams, kfOptions);
             if (result.ok()) {
@@ -121,14 +106,12 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                 ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
                 // Construct a truth fit track using trajectory and
                 // track parameter
-                tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
                 trajectories.emplace_back(fitOutput.trackTip,
                                           std::move(fitOutput.fittedStates),
                                           std::move(params));
               } else {
                 ACTS_DEBUG("No fitted paramemeters for track " << itrack);
                 // Construct a truth fit track using trajectory
-                tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
                 trajectories.emplace_back(fitOutput.trackTip,
                                           std::move(fitOutput.fittedStates));
               }
@@ -136,12 +119,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
               ACTS_WARNING("Fit failed for track " << itrack << " with error"
                                                    << result.error());
               // Fit failed, but still create a empty truth fit track
-              tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
               trajectories.push_back(TruthFitTrack());
             }
-        } //end for
-    } //end parallel_for
-  );
+   }
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
