@@ -16,7 +16,8 @@
 #include <TROOT.h>
 #include <dfe/dfe_io_dsv.hpp>
 #include <dfe/dfe_namedtuple.hpp>
-#include <tbb/tbb.h>
+//#include <tbb/tbb.h>
+
 
 #include "ACTFW/Framework/ProcessCode.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
@@ -26,10 +27,10 @@ FW::Sequencer::Sequencer(const Sequencer::Config& cfg)
   : m_cfg(cfg), m_logger(Acts::getDefaultLogger("Sequencer", m_cfg.logLevel))
 {
   // automatically determine the number of concurrent threads to use
-  if (m_cfg.numThreads < 0) {
-    m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
-  }
-  ROOT::EnableThreadSafety();
+//  if (m_cfg.numThreads < 0) {
+ //   m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
+ // }
+ // ROOT::EnableThreadSafety(); 
 }
 
 void
@@ -255,7 +256,7 @@ FW::Sequencer::run()
   // per-algorithm time measures
   std::vector<std::string> names = listAlgorithmNames();
   std::vector<Duration>    clocksAlgorithms(names.size(), Duration::zero());
-  tbb::queuing_mutex       clocksAlgorithmsMutex;
+ // tbb::queuing_mutex       clocksAlgorithmsMutex;
 
   // processing only works w/ a well-known number of events
   // error message is already handled by the helper function
@@ -282,14 +283,14 @@ FW::Sequencer::run()
   }
 
   // execute the parallel event loop
-  tbb::task_scheduler_init init(m_cfg.numThreads);
-  tbb::parallel_for(
-      tbb::blocked_range<size_t>(eventsRange.first, eventsRange.second),
-      [&](const tbb::blocked_range<size_t>& r) {
+//  tbb::task_scheduler_init init(m_cfg.numThreads);
+//  tbb::parallel_for(
+ //     tbb::blocked_range<size_t>(eventsRange.first, eventsRange.second),
+  //    [&](const tbb::blocked_range<size_t>& r) {
         std::vector<Duration> localClocksAlgorithms(names.size(),
                                                     Duration::zero());
 
-        for (size_t event = r.begin(); event != r.end(); ++event) {
+        for (size_t event = eventsRange.first; event != eventsRange.second; ++event) {
           // Use per-event store
           WhiteBoard eventStore(Acts::getDefaultLogger(
               "EventStore#" + std::to_string(event), m_cfg.logLevel));
@@ -335,13 +336,13 @@ FW::Sequencer::run()
         }
 
         // add timing info to global information
-        {
-          tbb::queuing_mutex::scoped_lock lock(clocksAlgorithmsMutex);
+      //  {
+        //  tbb::queuing_mutex::scoped_lock lock(clocksAlgorithmsMutex);
           for (size_t i = 0; i < clocksAlgorithms.size(); ++i) {
             clocksAlgorithms[i] += localClocksAlgorithms[i];
           }
-        }
-      });
+       // }
+     // });
 
   // run end-of-run hooks
   for (auto& wrt : m_writers) {
