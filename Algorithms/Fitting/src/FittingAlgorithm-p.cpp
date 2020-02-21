@@ -140,6 +140,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
               trajectories.push_back(TruthFitTrack());
             }
         } //end for
+      return  FW::ProcessCode::SUCCESS;
     } //end parallel_for
   );
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
