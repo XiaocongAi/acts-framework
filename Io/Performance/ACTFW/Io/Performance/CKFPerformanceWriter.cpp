@@ -149,8 +149,13 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
 
       // fill the residual plots
       if (traj.numMeasurements(tip) <= 0) { continue; }
-      m_resPlotTool.fill(
-          m_resPlotCache, ctx.geoContext, std::make_pair(tip, track));
+      auto truth_particle = particles.find(barcode_maj_truth_part);
+      if (truth_particle != particles.end()) {
+        m_resPlotTool.fill(m_resPlotCache,
+                           ctx.geoContext,
+                           *truth_particle,
+                           traj.trackParameters(tip));
+      }
 
     }  // <- loop over sub-trajectories in CKFTrack
 
