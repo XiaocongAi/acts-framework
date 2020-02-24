@@ -18,7 +18,7 @@
 
 #include <Acts/Geometry/TrackingGeometry.hpp>
 #include <Acts/TrackFinder/CKFSourceLinkSelector.hpp>
-#include <Acts/TrackFinder/TrackFinder.hpp>
+#include <Acts/TrackFinder/CombinatorialKalmanFilter.hpp>
 
 #include "ACTFW/EventData/CKFTrack.hpp"
 #include "ACTFW/EventData/SimSourceLink.hpp"
@@ -32,13 +32,13 @@ class FindingAlgorithm final : public BareAlgorithm
 {
 public:
   using FinderResult
-      = Acts::Result<Acts::TrackFinderResult<Data::SimSourceLink>>;
+      = Acts::Result<Acts::CombinatorialKalmanFilterResult<Data::SimSourceLink>>;
   /// Fit function that takes input measurements, initial track state and fitter
   /// options and returns some fit-specific result.
   using FinderFunction = std::function<FinderResult(
       const std::vector<Data::SimSourceLink>&,
       const TrackParameters&,
-      const Acts::TrackFinderOptions<Acts::CKFSourceLinkSelector>&)>;
+      const Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>&)>;
 
   /// Create the fitter function implementation.
   ///

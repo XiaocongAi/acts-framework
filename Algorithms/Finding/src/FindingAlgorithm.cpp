@@ -62,7 +62,7 @@ FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     using SourceLinkSelectorConfigType =
         typename SourceLinkSelectorType::Config;
 
-    Acts::TrackFinderOptions<SourceLinkSelectorType> tfOptions(
+    Acts::CombinatorialKalmanFilterOptions<SourceLinkSelectorType> tfOptions(
         ctx.geoContext,
         ctx.magFieldContext,
         ctx.calibContext,

@@ -33,7 +33,7 @@ struct FinderFunctionImpl
   FW::FindingAlgorithm::FinderResult
   operator()(const std::vector<FW::Data::SimSourceLink>& sourceLinks,
              const FW::TrackParameters&                  initialParameters,
-             const Acts::TrackFinderOptions<Acts::CKFSourceLinkSelector>&
+             const Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>&
                  options) const
   {
     return finder.findTracks(sourceLinks, initialParameters, options);
@@ -62,7 +62,7 @@ FW::FindingAlgorithm::makeFinderFunction(
         using Navigator     = Acts::Navigator;
         using Propagator    = Acts::Propagator<Stepper, Navigator>;
         using SLS           = Acts::CKFSourceLinkSelector;
-        using Finder = Acts::TrackFinder<Propagator, Updater, Smoother, SLS>;
+        using Finder = Acts::CombinatorialKalmanFilter<Propagator, Updater, Smoother, SLS>;
 
         // construct all components for the finder
         MagneticField field(std::move(inputField));
