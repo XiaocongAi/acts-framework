@@ -83,7 +83,9 @@ FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 
         // Construct a track using trajectory and
         // track parameter
-        trajectories.emplace_back(fitOutput.fittedParameters);
+        trajectories.emplace_back(fitOutput.trackTips,
+                                  fitOutput.fittedStates,
+                                  fitOutput.fittedParameters);
       } else {
         ACTS_DEBUG("No fitted parameters for track " << itrack);
         // Construct a track using trajectory
