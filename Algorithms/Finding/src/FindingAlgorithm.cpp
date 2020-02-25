@@ -45,14 +45,12 @@ FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 
   // Prepare input measurements for the CKF
   std::vector<Data::SimSourceLink> trackSourceLinks;
+  trackSourceLinks.reserve(initialParameters.size());
+  for (const auto& sl : sourceLinks) { trackSourceLinks.push_back(sl); }
+
+  // Perform the track finding for each starting parameter
   for (std::size_t itrack = 0; itrack < initialParameters.size(); ++itrack) {
     const auto& initialParams = initialParameters[itrack];
-
-    // Clear & reserve the right size
-    trackSourceLinks.clear();
-    trackSourceLinks.reserve(initialParameters.size());
-
-    for (const auto& sl : sourceLinks) { trackSourceLinks.push_back(sl); }
 
     // Set the target surface
     const Acts::Surface* rSurface = &initialParams.referenceSurface();
