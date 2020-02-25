@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2020 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,10 +31,11 @@ struct FinderFunctionImpl
   FinderFunctionImpl(Finder&& f) : finder(std::move(f)) {}
 
   FW::FindingAlgorithm::FinderResult
-  operator()(const std::vector<FW::Data::SimSourceLink>& sourceLinks,
-             const FW::TrackParameters&                  initialParameters,
-             const Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>&
-                 options) const
+  operator()(
+      const std::vector<FW::Data::SimSourceLink>& sourceLinks,
+      const FW::TrackParameters&                  initialParameters,
+      const Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>&
+          options) const
   {
     return finder.findTracks(sourceLinks, initialParameters, options);
   };
@@ -62,7 +63,8 @@ FW::FindingAlgorithm::makeFinderFunction(
         using Navigator     = Acts::Navigator;
         using Propagator    = Acts::Propagator<Stepper, Navigator>;
         using SLS           = Acts::CKFSourceLinkSelector;
-        using Finder = Acts::CombinatorialKalmanFilter<Propagator, Updater, Smoother, SLS>;
+        using Finder        = Acts::
+            CombinatorialKalmanFilter<Propagator, Updater, Smoother, SLS>;
 
         // construct all components for the finder
         MagneticField field(std::move(inputField));

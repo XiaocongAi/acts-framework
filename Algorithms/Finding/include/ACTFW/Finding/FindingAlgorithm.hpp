@@ -12,10 +12,6 @@
 #include <memory>
 #include <vector>
 
-// this include is a work-around. its missing in the KalmanFitter header
-// @TODO: include map in KalmanFitter
-#include <map>
-
 #include <Acts/Geometry/TrackingGeometry.hpp>
 #include <Acts/TrackFinder/CKFSourceLinkSelector.hpp>
 #include <Acts/TrackFinder/CombinatorialKalmanFilter.hpp>
@@ -31,16 +27,16 @@ namespace FW {
 class FindingAlgorithm final : public BareAlgorithm
 {
 public:
-  using FinderResult
-      = Acts::Result<Acts::CombinatorialKalmanFilterResult<Data::SimSourceLink>>;
-  /// Fit function that takes input measurements, initial track state and fitter
-  /// options and returns some fit-specific result.
-  using FinderFunction = std::function<FinderResult(
-      const std::vector<Data::SimSourceLink>&,
-      const TrackParameters&,
-      const Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>&)>;
+  using FinderResult = Acts::Result<
+      Acts::CombinatorialKalmanFilterResult<Data::SimSourceLink>>;
+  using CKFOptions
+      = Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>;
+  using FinderFunction
+      = std::function<FinderResult(const std::vector<Data::SimSourceLink>&,
+                                   const TrackParameters&,
+                                   const CKFOptions&)>;
 
-  /// Create the fitter function implementation.
+  /// Create the finder function implementation.
   ///
   /// The magnetic field is intentionally given by-value since the variant
   /// contains shared_ptr anyways.
@@ -60,7 +56,7 @@ public:
     std::string outputTrajectories;
     /// Type erased fitter function.
     FinderFunction find;
-
+    // ResPlotTool::Config resPlotToolConfig; // ?
     Acts::CKFSourceLinkSelector::Config slsCfg;
   };
 

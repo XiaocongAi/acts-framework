@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2020 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,11 +39,11 @@ FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   const auto initialParameters = ctx.eventStore.get<TrackParametersContainer>(
       m_cfg.inputInitialTrackParameters);
 
-  // Prepare the output data with MultiTrajectory
+  // Prepare the output data
   CKFTrajectoryContainer trajectories;
   trajectories.reserve(initialParameters.size());
 
-  // Perform the fit for each input track
+  // Prepare input measurements for the CKF
   std::vector<Data::SimSourceLink> trackSourceLinks;
   for (std::size_t itrack = 0; itrack < initialParameters.size(); ++itrack) {
     const auto& initialParams = initialParameters[itrack];
@@ -57,45 +57,36 @@ FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     // Set the target surface
     const Acts::Surface* rSurface = &initialParams.referenceSurface();
 
-    // Set the KalmanFitter options
-    using SourceLinkSelectorType = typename Acts::CKFSourceLinkSelector;
-    using SourceLinkSelectorConfigType =
-        typename SourceLinkSelectorType::Config;
-
-    Acts::CombinatorialKalmanFilterOptions<SourceLinkSelectorType> tfOptions(
-        ctx.geoContext,
-        ctx.magFieldContext,
-        ctx.calibContext,
-        m_cfg.slsCfg,
-        rSurface);
+    // Set the CombinatorialKalmanFilter options
+    FW::FindingAlgorithm::CKFOptions ckfOptions(ctx.geoContext,
+                                                ctx.magFieldContext,
+                                                ctx.calibContext,
+                                                m_cfg.slsCfg,
+                                                rSurface);
 
     ACTS_DEBUG("Invoke FindingAlgorithm");
-    auto result = m_cfg.find(trackSourceLinks, initialParams, tfOptions);
+    auto result = m_cfg.find(trackSourceLinks, initialParams, ckfOptions);
+    // -> calls the FinderFunction, which calls Acts::CombinatorialKalmanFilter
+    // result should be Result<CombinatorialKalmanFilterResult<source_link_t>>>
     if (result.ok()) {
-      // Get the actual TrackFinderResult object
+      // Get the actual CombinatorialKalmanFilterResult object
       const auto& fitOutput = result.value();
 
       if (!fitOutput.fittedParameters.empty()) {
-        // const auto& params = fitOutput.fittedParameters.get();
-        // ACTS_VERBOSE("Fitted parameters for track " << itrack);
-        // ACTS_VERBOSE("  position: " << params.position().transpose());
-        // ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
-
-        // Construct a track using trajectory and
-        // track parameter
+        // Construct a track using trajectory and track parameters
         trajectories.emplace_back(fitOutput.trackTips,
                                   fitOutput.fittedStates,
                                   fitOutput.fittedParameters);
       } else {
+        // Construct a track using trajectory only
         ACTS_DEBUG("No fitted parameters for track " << itrack);
-        // Construct a track using trajectory
 
         trajectories.emplace_back(fitOutput.trackTips, fitOutput.fittedStates);
       }
     } else {
+      // CKF failed, but still create a empty CKF track
       ACTS_WARNING("Fit failed for track " << itrack << " with error"
                                            << result.error());
-      // Fit failed, but still create a empty truth fit track
       trajectories.push_back(CKFTrack());
     }
   }

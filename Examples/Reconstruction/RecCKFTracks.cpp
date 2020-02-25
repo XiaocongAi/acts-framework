@@ -1,6 +1,6 @@
 // This file is part of the Acts project.
 //
-// Copyright (C) 2019 CERN for the benefit of the Acts project
+// Copyright (C) 2020 CERN for the benefit of the Acts project
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -120,7 +120,6 @@ main(int argc, char* argv[])
   findCfg.outputTrajectories = "trajectories";
   findCfg.find               = FindingAlgorithm::makeFinderFunction(
       trackingGeometry, magneticField, logLevel);
-  // findCfg.slsCfg = Acts::CKFSourceLinkSelector::Config(...);
   sequencer.addAlgorithm(std::make_shared<FindingAlgorithm>(findCfg, logLevel));
 
   // write tracks

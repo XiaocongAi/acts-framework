@@ -6,8 +6,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#include "ACTFW/Io/Performance/CKFPerformanceWriter.hpp"
-
 #include <numeric>
 #include <stdexcept>
 
@@ -15,6 +13,7 @@
 #include <TTree.h>
 
 #include "ACTFW/EventData/SimParticle.hpp"
+#include "ACTFW/Io/Performance/CKFPerformanceWriter.hpp"
 #include "ACTFW/Utilities/Paths.hpp"
 
 using Acts::VectorHelpers::eta;
@@ -88,7 +87,6 @@ FW::CKFPerformanceWriter::endRun()
 FW::ProcessCode
 FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
                                  const CKFTrajectoryContainer& trajectories)
-// R TODO: is this read from the event store?
 {
   // Read truth particles from input collection
   const auto& particles
@@ -100,6 +98,7 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
   // All reconstructed trajectories with truth info
   std::map<Barcode, CKFTrack> reconTrajectories;
 
+  // Containers holding the (non)reconstructed truth particles w/ count
   std::map<Barcode, size_t> matched{};
   std::map<Barcode, size_t> unmatched{};
 
@@ -136,7 +135,7 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
         target     = &matched;
       }
 
-      // count how often the particle was reconstructed
+      // count how often the truth particle was reconstructed
       if (target->count(barcode_maj_truth_part) == 0) {
         target->emplace(barcode_maj_truth_part, 0);
       }
