@@ -16,8 +16,6 @@
 #include "ACTFW/Io/Performance/CKFPerformanceWriter.hpp"
 #include "ACTFW/Utilities/Paths.hpp"
 
-using Acts::VectorHelpers::eta;
-
 FW::CKFPerformanceWriter::CKFPerformanceWriter(
     const FW::CKFPerformanceWriter::Config& cfg,
     Acts::Logging::Level                    lvl)
@@ -95,9 +93,6 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
   // Exclusive access to the tree while writing
   std::lock_guard<std::mutex> lock(m_writeMutex);
 
-  // All reconstructed trajectories with truth info
-  std::map<Barcode, CKFTrack> reconTrajectories;
-
   // Containers holding the (non)reconstructed truth particles w/ count
   std::map<Barcode, size_t> matched{};
   std::map<Barcode, size_t> unmatched{};
@@ -115,8 +110,9 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
           = traj.identifyMajorityParticle(tip);
       if (particleHitCount.empty()) { continue; }
 
-      auto barcode_maj_truth_part = particleHitCount.front().particleId;
-      auto truth_part             = particles.find(barcode_maj_truth_part);
+      Barcode barcode_maj_truth_part = particleHitCount.front().particleId;
+      auto    truth_part             = particles.find(barcode_maj_truth_part);
+      // boost::container::vec_iterator<FW::Data::SimParticle *, true>
 
       // if (truth_part != particles.end()) {...
 
@@ -141,18 +137,15 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
       }
       (*target)[barcode_maj_truth_part] += 1;
 
-      reconTrajectories.emplace(truth_part->barcode(), traj);
-
-      // fill fake rate plot; fake rate = N_{reco, matched} / N_reco
+      // fill fakerate_vs_{pT,eta,phi} plots
+      // fake rate = N_{reco, matched} / N_reco
       m_fakeRatePlotTool.fill(m_fakeRatePlotCache, *truth_part, !is_matched);
 
       // fill the residual plots
-      if (traj.numMeasurements(tip) <= 0) { continue; }
-      auto truth_particle = particles.find(barcode_maj_truth_part);
-      if (truth_particle != particles.end()) {
+      if (traj.hasTrackParameters(tip)) {
         m_resPlotTool.fill(m_resPlotCache,
                            ctx.geoContext,
-                           *truth_particle,
+                           *truth_part,
                            traj.trackParameters(tip));
       }
 
@@ -167,13 +160,11 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
     size_t fake_nFakeTracks         = 0;
 
     auto it = matched.find(barcode);
-    if (it != matched.end()) {
-      // when we found a reconstructed trajectory for the truth particle
+    if (it != matched.end()) {  // check if reconstructed
+      // efficiency = N_{truth matched, reco} / N_truth
       m_effPlotTool.fill(m_effPlotCache, truth_particle, true);
       fake_nTruthMatchedTracks = it->second;
-
     } else {
-      // when the trajectory is NOT reconstructed
       m_effPlotTool.fill(m_effPlotCache, truth_particle, false);
     }
 
@@ -184,6 +175,7 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
                             truth_particle,
                             fake_nTruthMatchedTracks,
                             fake_nFakeTracks);
+    // fills n{Reco,TruthMatched,Fake}Tracks and duplicationNum_vs_{pT,eta,phi}
 
     // TODO: track summary plot
     m_trackSummaryPlotTool.fill(
