@@ -144,7 +144,7 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
       reconTrajectories.emplace(truth_part->barcode(), traj);
 
       // fill fake rate plot; fake rate = N_{reco, matched} / N_reco
-      m_fakeRatePlotTool.fill(m_fakeRatePlotCache, *truth_part, is_matched);
+      m_fakeRatePlotTool.fill(m_fakeRatePlotCache, *truth_part, !is_matched);
 
       // fill the residual plots
       if (traj.numMeasurements(tip) <= 0) { continue; }
