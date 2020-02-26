@@ -116,17 +116,26 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
 
       // if (truth_part != particles.end()) {...
 
-      size_t total_hits
-          = std::accumulate(particleHitCount.begin(),
-                            particleHitCount.end(),
-                            0,
-                            [](int sum, const ParticleHitCount& curr) {
-                              return sum + curr.hitCount;
-                            });
+      size_t nStates       = 0;
+      size_t nMeasurements = 0;
+      size_t nOutliers     = 0;
+      size_t nHoles        = 0;
+
+      track.visitBackwards(tip, [&](const auto& state) {
+        nStates++;
+        auto typeFlags = state.typeFlags();
+        if (typeFlags.test(Acts::TrackStateFlag::MeasurementFlag)) {
+          nMeasurements++;
+        } else if (typeFlags.test(Acts::TrackStateFlag::OutlierFlag)) {
+          nOutliers++;
+        } else if (typeFlags.test(Acts::TrackStateFlag::HoleFlag)) {
+          nHoles++;
+        }
+      });
 
       bool  is_matched = false;
       auto* target     = &unmatched;
-      if (particleHitCount.front().hitCount * 1. / total_hits > 0.8) {
+      if (particleHitCount.front().hitCount * 1. / nMeasurements > .8) {
         is_matched = true;
         target     = &matched;
       }
@@ -136,6 +145,15 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
         target->emplace(barcode_maj_truth_part, 0);
       }
       (*target)[barcode_maj_truth_part] += 1;
+
+      // fill track summary plot
+      // n{States,Measurements,Outliers,Holes}_vs_{pT,eta}
+      m_trackSummaryPlotTool.fill(m_trackSummaryPlotCache,
+                                  *truth_part,
+                                  nStates,
+                                  nMeasurements,
+                                  nOutliers,
+                                  nHoles);
 
       // fill fakerate_vs_{pT,eta,phi} plots
       // fake rate = N_{reco, matched} / N_reco
@@ -176,16 +194,6 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
                             fake_nTruthMatchedTracks,
                             fake_nFakeTracks);
     // fills n{Reco,TruthMatched,Fake}Tracks and duplicationNum_vs_{pT,eta,phi}
-
-    // TODO: track summary plot
-    m_trackSummaryPlotTool.fill(
-        m_trackSummaryPlotCache, truth_particle, 0, 0, 0, 0);
-    // fill(RecoTrackPlotCache&      recoTrackPlotCache,
-    //      const Data::SimParticle& truthParticle,
-    //      const size_t&            nStates,
-    //      const size_t&            nMeasurments,
-    //      const size_t&            Outliers,
-    //      const size_t&            nHoles
 
   }  // <- loop over truth particles
 
