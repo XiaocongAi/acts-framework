@@ -48,6 +48,9 @@ public:
     EffPlotTool::Config          effPlotToolConfig;
     TrackSummaryPlotTool::Config trackSummaryPlotToolConfig;
     FakeRatePlotTool::Config     fakeRatePlotToolConfig;
+    /// Min percentage of the majority particle in a trajectory for it to be
+    /// considered a 'match'
+    double match_majority_thresh = 0.8;
   };
 
   /// Construct from configuration and log level.

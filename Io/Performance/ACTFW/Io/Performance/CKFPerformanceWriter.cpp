@@ -135,7 +135,8 @@ FW::CKFPerformanceWriter::writeT(const AlgorithmContext&       ctx,
 
       bool  is_matched = false;
       auto* target     = &unmatched;
-      if (particleHitCount.front().hitCount * 1. / nMeasurements > .8) {
+      if (particleHitCount.front().hitCount * 1. / nMeasurements
+          > m_cfg.match_majority_thresh) {
         is_matched = true;
         target     = &matched;
       }
