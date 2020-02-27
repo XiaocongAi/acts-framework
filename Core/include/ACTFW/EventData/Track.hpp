@@ -15,9 +15,9 @@
 
 #include <Acts/EventData/MultiTrajectory.hpp>
 #include <Acts/EventData/TrackParameters.hpp>
+#include "ACTFW/EventData/CKFTrack.hpp"
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/EventData/TruthFitTrack.hpp"
-#include "ACTFW/EventData/CKFTrack.hpp"
 
 namespace FW {
 
