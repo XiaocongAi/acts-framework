@@ -143,6 +143,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
         } //end parallel_for
       );
   }); //end task arena
+
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
