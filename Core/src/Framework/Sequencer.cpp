@@ -282,8 +282,7 @@ FW::Sequencer::run()
   }
 
   // execute the parallel event loop
-  //tbb::task_scheduler_init init(m_cfg.numThreads);
-  tbb::task_scheduler_init init(4);
+  tbb::task_scheduler_init init(m_cfg.numThreads);
   tbb::parallel_for(
       tbb::blocked_range<size_t>(eventsRange.first, eventsRange.second),
       [&](const tbb::blocked_range<size_t>& r) {
