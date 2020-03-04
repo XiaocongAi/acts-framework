@@ -169,13 +169,4 @@ selectModule(const GeometryIdMultiset<T>& container,
           module));
 }
 
-/// Iterate over groups of elements belonging to each module/ sensitive surface.
-template <typename T>
-inline GroupBy<detail::GeometryIdGetter,
-               typename GeometryIdMultiset<T>::const_iterator>
-groupByModule(const GeometryIdMultiset<T>& container)
-{
-  return makeGroupBy(detail::GeometryIdGetter(), container);
-}
-
 }  // namespace FW
