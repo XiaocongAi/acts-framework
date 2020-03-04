@@ -24,6 +24,9 @@ FW::TrackFitterPerformanceWriter::TrackFitterPerformanceWriter(
     Acts::Logging::Level                     lvl)
   : WriterT(cfg.inputTrajectories, "TrackFitterPerformanceWriter", lvl)
   , m_cfg(std::move(cfg))
+  , m_outputFile(
+        TFile::Open(joinPaths(cfg.outputDir, cfg.outputFilename).c_str(),
+                    "RECREATE"))
   , m_resPlotTool(m_cfg.resPlotToolConfig, lvl)
   , m_effPlotTool(m_cfg.effPlotToolConfig, lvl)
   , m_trackSummaryPlotTool(m_cfg.trackSummaryPlotToolConfig, lvl)
