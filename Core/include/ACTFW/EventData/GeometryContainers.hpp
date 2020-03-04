@@ -43,10 +43,10 @@ namespace detail {
     {
       return mapItem.first;
     }
-    // support elements that implement `.geometryId()`.
+    // support comparison for items that implement `.geometryId()` directly
     template <typename T>
     inline auto
-    operator()(const T& thing) const
+    key(const T& thing) const
         -> decltype(thing.geometryId(), Acts::GeometryID())
     {
       return thing.geometryId();
