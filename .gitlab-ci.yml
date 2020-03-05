@@ -148,4 +148,4 @@ reproducibility_generic_propagation:
   extends: .run
   script:
     - cd scripts
-    - ./testReproducibility.sh GenericPropagation events ${EVENTS} propagation-steps
+    - ./testReproducibility.sh ACTFWGenericPropagationExample '-n ${EVENTS}' propagation-steps
