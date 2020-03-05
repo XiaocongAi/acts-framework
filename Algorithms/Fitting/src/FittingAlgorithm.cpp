@@ -71,7 +71,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // (b) lower memory footprint
   tbb::task_arena arena(m_cfg.numThreads);
   ACTS_INFO("Start fitting with an arena of " << m_cfg.numThreads << " threads");
-  
   arena.execute ([&] () {
       // Perform the fit for each input track
       tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
@@ -148,7 +147,8 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
           return  FW::ProcessCode::SUCCESS;
         } //end parallel_for
       );
-    }); //end task arena
+  }); //end task arena
+
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
