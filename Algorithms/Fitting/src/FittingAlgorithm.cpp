@@ -58,7 +58,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Prepare the output data with MultiTrajectory
   TrajectoryContainer trajectories;
   trajectories.reserve(protoTracks.size());
-    
+
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
 
@@ -66,9 +66,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
 
-  // Setup a task arena for the the parallel loop (because this loop is imbricated
-  // in the Sequencer parallel loop) to ensure: (a) better execution time and
-  // (b) lower memory footprint
+  // Setup a task arena for the the parallel loop (because this loop is
+  // imbricated in the Sequencer parallel loop) to ensure: (a) better execution
+  // time and (b) lower memory footprint
   tbb::task_arena arena(m_cfg.numThreads);
   ACTS_INFO("Starting tracks loop with " << m_cfg.numThreads << " threads" );
 
