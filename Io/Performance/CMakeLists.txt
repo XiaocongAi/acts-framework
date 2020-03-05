@@ -9,3 +9,7 @@ target_link_libraries(
   ActsFrameworkIoPerformance
   PUBLIC ACTFramework
   PRIVATE ActsCore ROOT::Core ROOT::Tree)
+
+install(
+  TARGETS ActsFrameworkIoPerformance
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})

@@ -346,6 +346,10 @@ struct BranchComparisonHarness
     case kULong_t:
       return BranchComparisonHarness::create<unsigned long>(treeMetadata,
                                                             branchName);
+    case kULong64_t:
+      return BranchComparisonHarness::create<unsigned long long>(treeMetadata,
+                                                                 branchName);
+
     case kFloat_t:
       return BranchComparisonHarness::create<float>(treeMetadata, branchName);
     case kDouble_t:
@@ -508,8 +512,8 @@ private:
   else CREATE_VECTOR__HANDLE_TYPE(unsigned integer_type_name)
 
         // Handle vectors of all standard integer types
-        else CREATE_VECTOR__HANDLE_INTEGER_TYPE(char) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(
-            short) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(int) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(long)
+        else CREATE_VECTOR__HANDLE_INTEGER_TYPE(char) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(short) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(
+            int) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(long) else CREATE_VECTOR__HANDLE_INTEGER_TYPE(long long)
 
         // Throw an exception if the vector element type is not recognized
         else throw UnsupportedBranchType();
