@@ -31,6 +31,13 @@ FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
   if (m_cfg.outputTrajectories.empty()) {
     throw std::invalid_argument("Missing output trajectories collection");
   }
+<<<<<<< HEAD
+=======
+  // automatically determine the number of concurrent threads to use
+  if (m_cfg.numThreads < 0) {
+    m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
+  }
+>>>>>>> e0ed1d56... fix format test
 }
 
 FW::ProcessCode
@@ -54,13 +61,14 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Prepare the output data with MultiTrajectory
   TrajectoryContainer trajectories;
   trajectories.reserve(protoTracks.size());
-    
+
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
 
   // Construct a perigee surface as the target surface
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
+
   // Setup a task arena for the the parallel loop (because this loop is imbricated
   // in the Sequencer parallel loop) to ensure: (a) better execution time and
   // (b) lower memory footprint
@@ -70,10 +78,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
       tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
             [&](const tbb::blocked_range<size_t>& r) {
           
-          /*  ACTS_INFO("Thread " << std::this_thread::get_id()
-                      << " works on tracks [" << r.begin() << ", "
-                                              << r.end() << ")");
-           */
             for (auto itrack = r.begin(); itrack != r.end(); ++itrack) {
             
                 // The list of hits and the initial start parameters
