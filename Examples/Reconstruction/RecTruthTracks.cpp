@@ -51,7 +51,8 @@ main(int argc, char* argv[])
   auto vm = Options::parse(desc, argc, argv);
   if (vm.empty()) { return EXIT_FAILURE; }
 
-  Sequencer sequencer(Options::readSequencerConfig(vm));
+  Sequencer::Config seqCfg = Options::readSequencerConfig(vm);
+  Sequencer         sequencer(seqCfg);
 
   // Read some standard options
   auto logLevel  = Options::readLogLevel(vm);
@@ -133,8 +134,9 @@ main(int argc, char* argv[])
   fitter.inputProtoTracks = trackFinderCfg.outputProtoTracks;
   fitter.inputInitialTrackParameters
       = particleSmearingCfg.outputTrackParameters;
-  fitter.outputTrajectories = "trajectories";
-  fitter.fit                = FittingAlgorithm::makeFitterFunction(
+  fitCfg.outputTrajectories = "trajectories";
+  fitCfg.numThreads         = seqCfg.numThreads;
+  fitCfg.fit                = FittingAlgorithm::makeFitterFunction(
       trackingGeometry, magneticField, logLevel);
   sequencer.addAlgorithm(std::make_shared<FittingAlgorithm>(fitter, logLevel));
 
