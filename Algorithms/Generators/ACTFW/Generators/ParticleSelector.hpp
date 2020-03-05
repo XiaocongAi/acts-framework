@@ -29,34 +29,24 @@ public:
     std::string inputEvent;
     /// The output event collection.
     std::string outputEvent;
-    // Minimum/maximum distance from the origin in the tranverse plane.
+    /// Minimum distance from the origin in the tranverse plane.
     double rhoMin = 0;
-    double rhoMax = std::numeric_limits<double>::infinity();
-    // Minimum/maximum absolute distance from the origin along z.
-    double absZMin = 0;
-    double absZMax = std::numeric_limits<double>::infinity();
-    // Direction cuts.
-    double phiMin    = -std::numeric_limits<double>::infinity();
-    double phiMax    = std::numeric_limits<double>::infinity();
-    double etaMin    = -std::numeric_limits<double>::infinity();
-    double etaMax    = std::numeric_limits<double>::infinity();
-    double absEtaMin = 0;
-    double absEtaMax = std::numeric_limits<double>::infinity();
-    // Momentum cuts.
-    double ptMin = 0.0;
-    double ptMax = std::numeric_limits<double>::infinity();
-    /// Remove charged particles.
-    bool removeCharged = false;
-    /// Remove neutral particles.
-    bool removeNeutral = false;
+    /// Maximum distance from the origin in the transverse plane.
+    double rhoMax = std::numeric_limits<double>::max();
+    /// Maximum absolute distance from the origin along z.
+    double absZMax = std::numeric_limits<double>::max();
+    // Particle cuts.
+    double phiMin    = std::numeric_limits<double>::lowest();
+    double phiMax    = std::numeric_limits<double>::max();
+    double etaMin    = std::numeric_limits<double>::lowest();
+    double etaMax    = std::numeric_limits<double>::max();
+    double absEtaMin = std::numeric_limits<double>::lowest();
+    double absEtaMax = std::numeric_limits<double>::max();
+    double ptMin     = 0.0;
+    double ptMax     = std::numeric_limits<double>::max();
+    /// Keep neutral particles.
+    bool keepNeutral = true;
   };
-
-  /// Add options for the particle selector.
-  static void
-  addOptions(Options::Description& desc);
-  /// Construct particle selector config from user variables.
-  static Config
-  readConfig(const Options::Variables& vars);
 
   ParticleSelector(const Config& cfg, Acts::Logging::Level lvl);
 
