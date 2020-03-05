@@ -74,7 +74,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // (b) lower memory footprint
   tbb::task_arena arena(m_cfg.numThreads);
   ACTS_INFO("Starting tracks loop with " << m_cfg.numThreads << " threads" );
-    
+
   arena.execute ([&] () {
       // Perform the fit for each input track
       tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),

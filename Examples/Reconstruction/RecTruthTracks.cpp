@@ -50,7 +50,6 @@ main(int argc, char* argv[])
 
   auto vm = Options::parse(desc, argc, argv);
   if (vm.empty()) { return EXIT_FAILURE; }
-
   Sequencer::Config seqCfg = Options::readSequencerConfig(vm);
   Sequencer         sequencer(seqCfg);
 
