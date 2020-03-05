@@ -33,7 +33,7 @@ FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
   }
   // automatically determine the number of concurrent threads to use
   if (m_cfg.numThreads < 0) {
-     m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
+    m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
   }
 }
 
@@ -58,7 +58,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Prepare the output data with MultiTrajectory
   TrajectoryContainer trajectories;
   trajectories.reserve(protoTracks.size());
-    
+
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
 
@@ -66,88 +66,92 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
 
-  // Setup a task arena for the the parallel loop (because this loop is imbricated
-  // in the Sequencer parallel loop) to ensure: (a) better execution time and
-  // (b) lower memory footprint
+  // Setup a task arena for the the parallel loop (because this loop is
+  // imbricated in the Sequencer parallel loop) to ensure: (a) better execution
+  // time and (b) lower memory footprint
   tbb::task_arena arena(m_cfg.numThreads);
-  ACTS_INFO("Start fitting with an arena of " << m_cfg.numThreads << " threads");
-  arena.execute ([&] () {
-      // Perform the fit for each input track
-      tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
-            [&](const tbb::blocked_range<size_t>& r) {
-          
+  ACTS_INFO("Start fitting with an arena of " << m_cfg.numThreads
+                                              << " threads");
+  arena.execute([&]() {
+    // Perform the fit for each input track
+    tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, protoTracks.size()),
+        [&](const tbb::blocked_range<size_t>& r) {
           /*  ACTS_INFO("Thread " << std::this_thread::get_id()
                       << " works on tracks [" << r.begin() << ", "
                                               << r.end() << ")");
            */
-            for (auto itrack = r.begin(); itrack != r.end(); ++itrack) {
-            
-                // The list of hits and the initial start parameters
-                const auto& protoTrack    = protoTracks[itrack];
-                const auto& initialParams = initialParameters[itrack];
+          for (auto itrack = r.begin(); itrack != r.end(); ++itrack) {
 
-                // We can have empty tracks which must give empty fit results
-                if (protoTrack.empty()) {
-                  tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-                  trajectories.push_back(TruthFitTrack());
-                  ACTS_WARNING("Empty track " << itrack << " found.");
-                  continue;
-                }
+            // The list of hits and the initial start parameters
+            const auto& protoTrack    = protoTracks[itrack];
+            const auto& initialParams = initialParameters[itrack];
 
-                // Clear & reserve the right size
-                std::vector<Data::SimSourceLink> trackSourceLinks;
-                trackSourceLinks.clear();
-                trackSourceLinks.reserve(protoTrack.size());
+            // We can have empty tracks which must give empty fit results
+            if (protoTrack.empty()) {
+              tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+              trajectories.push_back(TruthFitTrack());
+              ACTS_WARNING("Empty track " << itrack << " found.");
+              continue;
+            }
 
-                // Fill the source links via their indices from the container
-                for (auto hitIndex : protoTrack) {
-                  auto sourceLink = sourceLinks.nth(hitIndex);
-                  if (sourceLink == sourceLinks.end()) {
-                    ACTS_FATAL("Proto track " << itrack << " contains invalid hit index"
-                                              << hitIndex);
-                    return ProcessCode::ABORT;
-                  }
-                  trackSourceLinks.push_back(*sourceLink);
-                }
+            // Clear & reserve the right size
+            std::vector<Data::SimSourceLink> trackSourceLinks;
+            trackSourceLinks.clear();
+            trackSourceLinks.reserve(protoTrack.size());
 
-                // Set the KalmanFitter options
-                Acts::KalmanFitterOptions kfOptions(
-                                                    ctx.geoContext, ctx.magFieldContext, ctx.calibContext, &(*pSurface));
-                ACTS_DEBUG("Invoke fitter");
-                auto result = m_cfg.fit(trackSourceLinks, initialParams, kfOptions);
-                if (result.ok()) {
-                  // Get the fit output object
-                  const auto& fitOutput = result.value();
-                  if (fitOutput.fittedParameters) {
-                    const auto& params = fitOutput.fittedParameters.value();
-                    ACTS_VERBOSE("Fitted paramemeters for track " << itrack);
-                    ACTS_VERBOSE("  position: " << params.position().transpose());
-                    ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
-                    // Construct a truth fit track using trajectory and
-                    // track parameter
-                    tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-                    trajectories.emplace_back(fitOutput.trackTip,
-                                              std::move(fitOutput.fittedStates),
-                                              std::move(params));
-                  } else {
-                    ACTS_DEBUG("No fitted paramemeters for track " << itrack);
-                    // Construct a truth fit track using trajectory
-                    tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-                    trajectories.emplace_back(fitOutput.trackTip,
-                                              std::move(fitOutput.fittedStates));
-                  }
-                } else {
-                  ACTS_WARNING("Fit failed for track " << itrack << " with error"
-                                                       << result.error());
-                  // Fit failed, but still create a empty truth fit track
-                  tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-                  trajectories.push_back(TruthFitTrack());
-                }
-            } //end for
-          return  FW::ProcessCode::SUCCESS;
-        } //end parallel_for
-      );
-  }); //end task arena
+            // Fill the source links via their indices from the container
+            for (auto hitIndex : protoTrack) {
+              auto sourceLink = sourceLinks.nth(hitIndex);
+              if (sourceLink == sourceLinks.end()) {
+                ACTS_FATAL("Proto track " << itrack
+                                          << " contains invalid hit index"
+                                          << hitIndex);
+                return ProcessCode::ABORT;
+              }
+              trackSourceLinks.push_back(*sourceLink);
+            }
+
+            // Set the KalmanFitter options
+            Acts::KalmanFitterOptions kfOptions(ctx.geoContext,
+                                                ctx.magFieldContext,
+                                                ctx.calibContext,
+                                                &(*pSurface));
+            ACTS_DEBUG("Invoke fitter");
+            auto result = m_cfg.fit(trackSourceLinks, initialParams, kfOptions);
+            if (result.ok()) {
+              // Get the fit output object
+              const auto& fitOutput = result.value();
+              if (fitOutput.fittedParameters) {
+                const auto& params = fitOutput.fittedParameters.value();
+                ACTS_VERBOSE("Fitted paramemeters for track " << itrack);
+                ACTS_VERBOSE("  position: " << params.position().transpose());
+                ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
+                // Construct a truth fit track using trajectory and
+                // track parameter
+                tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+                trajectories.emplace_back(fitOutput.trackTip,
+                                          std::move(fitOutput.fittedStates),
+                                          std::move(params));
+              } else {
+                ACTS_DEBUG("No fitted paramemeters for track " << itrack);
+                // Construct a truth fit track using trajectory
+                tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+                trajectories.emplace_back(fitOutput.trackTip,
+                                          std::move(fitOutput.fittedStates));
+              }
+            } else {
+              ACTS_WARNING("Fit failed for track " << itrack << " with error"
+                                                   << result.error());
+              // Fit failed, but still create a empty truth fit track
+              tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+              trajectories.push_back(TruthFitTrack());
+            }
+          }  // end for
+          return FW::ProcessCode::SUCCESS;
+        }  // end parallel_for
+    );
+  });  // end task arena
 
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
