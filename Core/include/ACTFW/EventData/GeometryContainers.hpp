@@ -43,10 +43,10 @@ namespace detail {
     {
       return mapItem.first;
     }
-    // support comparison for items that implement `.geometryId()` directly
+    // support elements that implement `.geometryId()`.
     template <typename T>
     inline auto
-    key(const T& thing) const
+    operator()(const T& thing) const
         -> decltype(thing.geometryId(), Acts::GeometryID())
     {
       return thing.geometryId();
@@ -167,6 +167,15 @@ selectModule(const GeometryIdMultiset<T>& container,
       container,
       Acts::GeometryID().setVolume(volume).setLayer(layer).setSensitive(
           module));
+}
+
+/// Iterate over groups of elements belonging to each module/ sensitive surface.
+template <typename T>
+inline GroupBy<detail::GeometryIdGetter,
+               typename GeometryIdMultiset<T>::const_iterator>
+groupByModule(const GeometryIdMultiset<T>& container)
+{
+  return makeGroupBy(detail::GeometryIdGetter(), container);
 }
 
 }  // namespace FW
