@@ -103,35 +103,38 @@ hello_world:
   script:
     - ACTFWHelloWorldExample -n ${EVENTS}
 
-geo-generic:
-  extends: .run
-  script:
-    - ACTFWGenericGeometryExample -n ${EVENTS}
-
-geo-dd4hep:
-  extends: .run
-  script:
-    - ACTFWDD4hepGeometryExample -n ${EVENTS}
-
-prop-generic:
-  extends: .run
-  script:
-    - ACTFWGenericPropagationExample -n ${EVENTS}
-
-prop-dd4hep:
-  extends: .run
-  script:
-    - ACTFWDD4hepPropagationExample -n ${EVENTS}
-
-reproducibility_generic_propagation:
-  extends: .run
-  script:
-    - cd scripts
-    - ./testReproducibility.sh ACTFWGenericPropagationExample '-n ${EVENTS}' propagation-steps
-
 # event generation jobs
 
-.run-gen:
+gen-particlegun:
+  extends: .run
+  script:
+    - ActsGenParticleGun -n ${EVENTS} --output-root 1 --output-csv 1
+
+gen-pythia8:
+  extends: .run
+  script:
+    - ActsGenPythia8 -n ${EVENTS} --output-root 1 --output-csv 1
+
+# event simulation jobs
+
+sim-fatras-generic:
+  extends: .run
+  script:
+    - ActsSimFatrasGeneric -n ${EVENTS}
+
+sim-fatras-tgeo:
+  extends: .run
+  script:
+    - ActsSimFatrasTGeo -n ${EVENTS}
+
+sim-fatras-dd4hep:
+  extends: .run
+  script:
+    - ActsSimFatrasDD4hep -n ${EVENTS}
+
+# geometry jobs
+
+geo-generic:
   extends: .run
   stage: test-gen
   artifacts:
@@ -144,14 +147,14 @@ particlegun:
   script:
     - ActsGenParticleGun -n ${EVENTS} --output-dir output/gen/particlegun --output-csv=1 --output-root=1
 
-pythia8:
-  extends: .run-gen
+geo-dd4hep:
+  extends: .run
   script:
-    - ActsGenPythia8 -n ${EVENTS} --output-dir output/gen/pythia8 --output-csv=1 --output-root=1
+    - ACTFWDD4hepGeometryExample -n ${EVENTS}
 
-# event simulation jobs
+# propagation jobs
 
-.run-sim:
+prop-generic:
   extends: .run
   stage: test-sim
   artifacts:
@@ -162,16 +165,16 @@ pythia8:
 fatras-generic:
   extends: .run-sim
   script:
-    - ActsSimFatrasGeneric -n ${EVENTS} --output-dir output/sim/generic --output-csv=1 --output-root=1
+    - ACTFWGenericPropagationExample -n ${EVENTS}
 
-fatras-dd4hep:
-  extends: .run-sim
+prop-dd4hep:
+  extends: .run
   script:
     - ActsSimFatrasDD4hep -n ${EVENTS} --output-dir output/sim/dd4hep --output-csv=1 --output-root=1
 
-# event reconstruction jobs
+# reproducibility
 
-.run-rec:
+reproducibility_generic_propagation:
   extends: .run
   stage: test-rec
   artifacts:
