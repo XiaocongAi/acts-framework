@@ -52,12 +52,6 @@ public:
   FatrasAlgorithm(Config cfg, Acts::Logging::Level lvl)
     : FW::BareAlgorithm("FatrasAlgorithm", lvl), m_cfg(std::move(cfg))
   {
-    ACTS_DEBUG("hits on sensitive surfaces: "
-               << m_cfg.simulator.charged.selectHitSurface.sensitive);
-    ACTS_DEBUG("hits on material surfaces: "
-               << m_cfg.simulator.charged.selectHitSurface.material);
-    ACTS_DEBUG("hits on passive surfaces: "
-               << m_cfg.simulator.charged.selectHitSurface.passive);
   }
 
   /// Run the simulation for a single event.
@@ -105,13 +99,6 @@ public:
     // TODO is there a point where too many failed particles or failed particles
     //      of a particular type (e.g. from hard interaction or any primary
     //      particle) should also lead to a panic?
-
-    ACTS_DEBUG(inputParticles.size() << " input particles");
-    ACTS_DEBUG(particlesInitialUnordered.size()
-               << " simulated particles (initial state)");
-    ACTS_DEBUG(particlesFinalUnordered.size()
-               << " simulated particles (final state)");
-    ACTS_DEBUG(hitsUnordered.size() << " hits");
 
     // restore ordering for output containers
     SimParticleContainer particlesInitial;
