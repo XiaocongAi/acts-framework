@@ -14,6 +14,7 @@
 
 #include "ACTFW/Fatras/FatrasAlgorithm.hpp"
 #include "ACTFW/Utilities/OptionsFwd.hpp"
+#include "Acts/Utilities/Logger.hpp"
 #include "Acts/Utilities/Units.hpp"
 #include "ActsFatras/Kernel/Process.hpp"
 #include "ActsFatras/Physics/StandardPhysicsLists.hpp"
@@ -40,6 +41,10 @@ namespace Options {
     using Config = typename FatrasAlgorithm<simulator_t>::Config;
     using PMin   = ActsFatras::Min<ActsFatras::Casts::P>;
 
+    using Acts::Logger;
+    ACTS_LOCAL_LOGGER(
+        Acts::getDefaultLogger("FatrasOptions", Acts::Logging::INFO))
+
     Config cfg(std::forward<simulator_t>(simulator));
 
     // simulation particle cuts both for input and physics lists output
@@ -64,25 +69,29 @@ namespace Options {
     }
 
     // select hit surfaces for charged particles
-    const auto hits = variables["fatras-hits"].as<std::string>();
+    const std::string hits = variables["fatras-hits"].as<std::string>();
     if (hits == "sensitive") {
-      simulator.charged.selectHitSurface.sensitive == true;
-      simulator.charged.selectHitSurface.material == false;
-      simulator.charged.selectHitSurface.passive == false;
+      ACTS_DEBUG("Configure hits on sensitive surfaces");
+      cfg.simulator.charged.selectHitSurface.sensitive = true;
+      cfg.simulator.charged.selectHitSurface.material  = false;
+      cfg.simulator.charged.selectHitSurface.passive   = false;
     } else if (hits == "material") {
-      simulator.charged.selectHitSurface.sensitive == false;
-      simulator.charged.selectHitSurface.material == true;
-      simulator.charged.selectHitSurface.passive == false;
+      ACTS_DEBUG("Configure hits on material surfaces");
+      cfg.simulator.charged.selectHitSurface.sensitive = false;
+      cfg.simulator.charged.selectHitSurface.material  = true;
+      cfg.simulator.charged.selectHitSurface.passive   = false;
     } else if (hits == "all") {
-      simulator.charged.selectHitSurface.sensitive == false;
-      simulator.charged.selectHitSurface.material == false;
+      ACTS_DEBUG("Configure hits on all surfaces");
+      cfg.simulator.charged.selectHitSurface.sensitive = false;
+      cfg.simulator.charged.selectHitSurface.material  = false;
       // this includes sensitive and material surfaces
-      simulator.charged.selectHitSurface.passive == true;
+      cfg.simulator.charged.selectHitSurface.passive = true;
     } else {
+      ACTS_WARNING("Invalid hits configuration '" << hits << "'");
       // none or unknown type -> record nothing
-      simulator.charged.selectHitSurface.sensitive == false;
-      simulator.charged.selectHitSurface.material == false;
-      simulator.charged.selectHitSurface.passive == false;
+      cfg.simulator.charged.selectHitSurface.sensitive = false;
+      cfg.simulator.charged.selectHitSurface.material  = false;
+      cfg.simulator.charged.selectHitSurface.passive   = false;
     }
 
     return cfg;
