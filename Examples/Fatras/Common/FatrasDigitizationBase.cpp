@@ -29,16 +29,21 @@ FW::setupDigitization(
   // Read the standard options
   auto logLevel = FW::Options::readLogLevel(vars);
 
-  // Configure the digitizer
-  FW::DigitizationAlgorithm::Config digi;
-  digi.inputSimulatedHits  = "hits";
-  digi.outputClusters      = "clusters";
-  digi.planarModuleStepper = std::make_shared<Acts::PlanarModuleStepper>(
+  // Set the module stepper
+  auto pmStepper = std::make_shared<Acts::PlanarModuleStepper>(
       Acts::getDefaultLogger("PlanarModuleStepper", logLevel));
-  digi.randomNumbers    = randomNumbers;
-  digi.trackingGeometry = trackingGeometry;
+
+  // Read the digitization configuration
+  FW::DigitizationAlgorithm::Config digiConfig;
+  digiConfig.inputSimulatedHits  = "hits";
+  digiConfig.outputClusters      = "clusters";
+  digiConfig.planarModuleStepper = pmStepper;
+  digiConfig.randomNumbers       = randomNumbers;
+  digiConfig.trackingGeometry    = trackingGeometry;
+
+  // Create the algorithm and add it to the sequencer
   sequencer.addAlgorithm(
-      std::make_shared<FW::DigitizationAlgorithm>(digi, logLevel));
+      std::make_shared<FW::DigitizationAlgorithm>(digiConfig, logLevel));
 
   // Output directory
   std::string outputDir = vars["output-dir"].template as<std::string>();
@@ -46,23 +51,28 @@ FW::setupDigitization(
   // Write digitisation output as Csv files
   if (vars["output-csv"].template as<bool>()) {
     // clusters as root
-    FW::CsvPlanarClusterWriter::Config clusterWriterCsv;
-    clusterWriterCsv.inputClusters      = digi.outputClusters;
-    clusterWriterCsv.inputSimulatedHits = digi.inputSimulatedHits;
-    clusterWriterCsv.outputDir          = outputDir;
-    sequencer.addWriter(std::make_shared<FW::CsvPlanarClusterWriter>(
-        clusterWriterCsv, logLevel));
+    FW::CsvPlanarClusterWriter::Config clusterWriterCsvConfig;
+    clusterWriterCsvConfig.inputClusters      = digiConfig.outputClusters;
+    clusterWriterCsvConfig.inputSimulatedHits = digiConfig.inputSimulatedHits;
+    clusterWriterCsvConfig.outputDir          = outputDir;
+    auto clusteWriterCsv = std::make_shared<FW::CsvPlanarClusterWriter>(
+        clusterWriterCsvConfig, logLevel);
+    // Add to the sequencer
+    sequencer.addWriter(clusteWriterCsv);
   }
 
   // Write digitsation output as ROOT files
   if (vars["output-root"].template as<bool>()) {
     // clusters as root
-    FW::RootPlanarClusterWriter::Config clusterWriterRoot;
-    clusterWriterRoot.inputClusters      = digi.outputClusters;
-    clusterWriterRoot.inputSimulatedHits = digi.inputSimulatedHits;
-    clusterWriterRoot.filePath
-        = FW::joinPaths(outputDir, digi.outputClusters + ".root");
-    sequencer.addWriter(std::make_shared<FW::RootPlanarClusterWriter>(
-        clusterWriterRoot, logLevel));
+    FW::RootPlanarClusterWriter::Config clusterWriterRootConfig;
+    clusterWriterRootConfig.inputClusters      = digiConfig.outputClusters;
+    clusterWriterRootConfig.inputSimulatedHits = digiConfig.inputSimulatedHits;
+    clusterWriterRootConfig.filePath
+        = FW::joinPaths(outputDir, digiConfig.outputClusters + ".root");
+    clusterWriterRootConfig.treeName = digiConfig.outputClusters;
+    auto clusteWriterRoot = std::make_shared<FW::RootPlanarClusterWriter>(
+        clusterWriterRootConfig, logLevel);
+    // Add to the sequencer
+    sequencer.addWriter(clusteWriterRoot);
   }
 }

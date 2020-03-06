@@ -12,6 +12,7 @@
 #include "ACTFW/Framework/Sequencer.hpp"
 #include "ACTFW/Generators/EventGenerator.hpp"
 #include "ACTFW/Generators/FlattenEvent.hpp"
+#include "ACTFW/Generators/ParticleSelector.hpp"
 #include "ACTFW/Io/Csv/CsvParticleWriter.hpp"
 #include "ACTFW/Io/Root/RootParticleWriter.hpp"
 #include "ACTFW/Options/CommonOptions.hpp"
@@ -31,13 +32,13 @@ FW::setupEvgenInput(const FW::Options::Variables&            vm,
   auto evgenInput = vm["evg-input-type"].template as<std::string>();
   if (evgenInput == "gun") {
     auto evgCfg          = FW::Options::readParticleGunOptions(vm);
-    evgCfg.output        = "event_generated";
+    evgCfg.output        = "event";
     evgCfg.randomNumbers = randomNumberSvc;
     sequencer.addReader(std::make_shared<FW::EventGenerator>(evgCfg, logLevel));
 
   } else if (evgenInput == "pythia8") {
     auto evgCfg          = FW::Options::readPythia8Options(vm, logLevel);
-    evgCfg.output        = "event_generated";
+    evgCfg.output        = "event";
     evgCfg.randomNumbers = randomNumberSvc;
     sequencer.addReader(std::make_shared<FW::EventGenerator>(evgCfg, logLevel));
 
@@ -45,10 +46,15 @@ FW::setupEvgenInput(const FW::Options::Variables&            vm,
     throw std::runtime_error("unknown event generator input: " + evgenInput);
   }
 
-  // Convert to particles for the writers and subsequent algorithms
+  auto select        = FW::ParticleSelector::readConfig(vm);
+  select.inputEvent  = "event";
+  select.outputEvent = "event_selected";
+  sequencer.addAlgorithm(
+      std::make_shared<FW::ParticleSelector>(select, logLevel));
+
   FW::FlattenEvent::Config flatten;
-  flatten.inputEvent      = "event_generated";
-  flatten.outputParticles = "particles_generated";
+  flatten.inputEvent      = "event_selected";
+  flatten.outputParticles = "particles";
   sequencer.addAlgorithm(std::make_shared<FW::FlattenEvent>(flatten, logLevel));
 
   // Output directory
@@ -59,7 +65,7 @@ FW::setupEvgenInput(const FW::Options::Variables&            vm,
     FW::CsvParticleWriter::Config pWriterCsvConfig;
     pWriterCsvConfig.inputParticles = flatten.outputParticles;
     pWriterCsvConfig.outputDir      = outputDir;
-    pWriterCsvConfig.outputStem     = "particles_generated";
+    pWriterCsvConfig.outputStem     = "particles";
     sequencer.addWriter(
         std::make_shared<FW::CsvParticleWriter>(pWriterCsvConfig, logLevel));
   }
@@ -70,6 +76,7 @@ FW::setupEvgenInput(const FW::Options::Variables&            vm,
     FW::RootParticleWriter::Config pWriterRootConfig;
     pWriterRootConfig.inputParticles = flatten.outputParticles;
     pWriterRootConfig.filePath = FW::joinPaths(outputDir, "particles.root");
+    pWriterRootConfig.treeName = "particles";
     sequencer.addWriter(
         std::make_shared<FW::RootParticleWriter>(pWriterRootConfig, logLevel));
   }
