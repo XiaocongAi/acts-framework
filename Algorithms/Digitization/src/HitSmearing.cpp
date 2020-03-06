@@ -12,7 +12,6 @@
 #include "ACTFW/EventData/SimHit.hpp"
 #include "ACTFW/EventData/SimSourceLink.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
-#include "Acts/Geometry/TrackingGeometry.hpp"
 #include "Acts/Utilities/Definitions.hpp"
 
 FW::HitSmearing::HitSmearing(const Config& cfg, Acts::Logging::Level lvl)
@@ -33,12 +32,6 @@ FW::HitSmearing::HitSmearing(const Config& cfg, Acts::Logging::Level lvl)
   if (!m_cfg.randomNumbers) {
     throw std::invalid_argument("Missing random numbers tool");
   }
-  // fill the surface map to allow lookup by geometry id only
-  m_cfg.trackingGeometry->visitSurfaces([this](const Acts::Surface* surface) {
-    // for now we just require a valid surface
-    if (not surface) { return; }
-    this->m_surfaces.insert_or_assign(surface->geoID(), surface);
-  });
 }
 
 FW::ProcessCode
@@ -80,8 +73,8 @@ FW::HitSmearing::execute(const AlgorithmContext& ctx) const
       loc[Acts::eLOC_1]     = pos[1] + m_cfg.sigmaLoc1 * stdNormal(rng);
 
       // create source link at the end of the container
-      auto it = sourceLinks.emplace_hint(
-          sourceLinks.end(), *surface, hit, 2, loc, cov);
+      auto it = sourceLinks.emplace_hint(sourceLinks.end(),
+                                         SimSourceLink(&hit, 2, loc, cov));
       // ensure hits and links share the same order to prevent ugly surprises
       if (std::next(it) != sourceLinks.end()) {
         ACTS_FATAL("The hit ordering broke. Run for your life.");

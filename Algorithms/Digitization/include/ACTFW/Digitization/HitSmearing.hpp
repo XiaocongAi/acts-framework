@@ -51,7 +51,7 @@ public:
 
 private:
   Config m_cfg;
-  /// Lookup container for hit surfaces that generate smeared hits
+  /// Lookup container for hit surfaces
   std::unordered_map<Acts::GeometryID, const Acts::Surface*> m_surfaces;
 };
 
