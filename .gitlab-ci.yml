@@ -187,4 +187,5 @@ truthtracks-generic:
       artifacts: true
     - job: fatras-generic
   script:
-    - ActsRecTruthTracks --input-dir output/sim/generic --output-dir output/rec/generic --output-csv=1 --output-root=1
+    - cd scripts
+    - ./testReproducibility.sh ACTFWGenericPropagationExample '-n ${EVENTS}' propagation-steps
