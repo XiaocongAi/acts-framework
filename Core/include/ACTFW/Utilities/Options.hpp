@@ -9,7 +9,6 @@
 #pragma once
 
 #include <iosfwd>
-#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
