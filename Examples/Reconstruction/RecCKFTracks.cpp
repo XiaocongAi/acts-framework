@@ -12,7 +12,6 @@
 #include <Acts/Utilities/Units.hpp>
 
 #include "ACTFW/Digitization/HitSmearing.hpp"
-#include "ACTFW/TrackFinding/TrackFindingAlgorithm.hpp"
 #include "ACTFW/Framework/Sequencer.hpp"
 #include "ACTFW/GenericDetector/GenericDetector.hpp"
 #include "ACTFW/Geometry/CommonGeometry.hpp"
@@ -22,6 +21,7 @@
 #include "ACTFW/Io/Performance/CKFPerformanceWriter.hpp"
 #include "ACTFW/Options/CommonOptions.hpp"
 #include "ACTFW/Plugins/BField/BFieldOptions.hpp"
+#include "ACTFW/TrackFinding/TrackFindingAlgorithm.hpp"
 #include "ACTFW/TruthTracking/ParticleSmearing.hpp"
 #include "ACTFW/Utilities/Paths.hpp"
 
@@ -120,7 +120,8 @@ main(int argc, char* argv[])
   findCfg.outputTrajectories = "trajectories";
   findCfg.find               = TrackFindingAlgorithm::makeTrackFinderFunction(
       trackingGeometry, magneticField, logLevel);
-  sequencer.addAlgorithm(std::make_shared<TrackFindingAlgorithm>(findCfg, logLevel));
+  sequencer.addAlgorithm(
+      std::make_shared<TrackFindingAlgorithm>(findCfg, logLevel));
 
   // write tracks
   // TODO: RootTrajectoryWriter does not like CKFTrajectoryContainers
