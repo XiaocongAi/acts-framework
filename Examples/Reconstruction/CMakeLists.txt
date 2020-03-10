@@ -20,7 +20,7 @@ target_link_libraries(
     ActsRecCKFTracks
     PRIVATE
       ACTFramework
-      ACTFWFinding
+      ACTFWTrackFinding
       ACTFWFitting
       ACTFWGenericDetector
       ACTFWExamplesCommon

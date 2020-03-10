@@ -11,11 +11,12 @@
 #include "ACTFW/EventData/CKFTrack.hpp"
 #include "ACTFW/EventData/ProtoTrack.hpp"
 #include "ACTFW/EventData/Track.hpp"
-#include "ACTFW/Finding/FindingAlgorithm.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
+#include "ACTFW/TrackFinding/TrackFindingAlgorithm.hpp"
 
-FW::FindingAlgorithm::FindingAlgorithm(Config cfg, Acts::Logging::Level level)
-  : FW::BareAlgorithm("FindingAlgorithm", level), m_cfg(std::move(cfg))
+FW::TrackFindingAlgorithm::TrackFindingAlgorithm(Config               cfg,
+                                                 Acts::Logging::Level level)
+  : FW::BareAlgorithm("TrackFindingAlgorithm", level), m_cfg(std::move(cfg))
 {
   if (m_cfg.inputSourceLinks.empty()) {
     throw std::invalid_argument("Missing input source links collection");
@@ -30,7 +31,7 @@ FW::FindingAlgorithm::FindingAlgorithm(Config cfg, Acts::Logging::Level level)
 }
 
 FW::ProcessCode
-FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
+FW::TrackFindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 {
 
   // Read input data
@@ -56,13 +57,13 @@ FW::FindingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     const Acts::Surface* rSurface = &initialParams.referenceSurface();
 
     // Set the CombinatorialKalmanFilter options
-    FW::FindingAlgorithm::CKFOptions ckfOptions(ctx.geoContext,
-                                                ctx.magFieldContext,
-                                                ctx.calibContext,
-                                                m_cfg.slsCfg,
-                                                rSurface);
+    FW::TrackFindingAlgorithm::CKFOptions ckfOptions(ctx.geoContext,
+                                                     ctx.magFieldContext,
+                                                     ctx.calibContext,
+                                                     m_cfg.slsCfg,
+                                                     rSurface);
 
-    ACTS_DEBUG("Invoke FindingAlgorithm");
+    ACTS_DEBUG("Invoke TrackFindingAlgorithm");
     auto result = m_cfg.find(trackSourceLinks, initialParams, ckfOptions);
     // -> calls the FinderFunction, which calls Acts::CombinatorialKalmanFilter
     // result should be Result<CombinatorialKalmanFilterResult<source_link_t>>>

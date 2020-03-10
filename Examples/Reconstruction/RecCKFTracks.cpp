@@ -12,7 +12,7 @@
 #include <Acts/Utilities/Units.hpp>
 
 #include "ACTFW/Digitization/HitSmearing.hpp"
-#include "ACTFW/Finding/FindingAlgorithm.hpp"
+#include "ACTFW/TrackFinding/TrackFindingAlgorithm.hpp"
 #include "ACTFW/Framework/Sequencer.hpp"
 #include "ACTFW/GenericDetector/GenericDetector.hpp"
 #include "ACTFW/Geometry/CommonGeometry.hpp"
@@ -113,14 +113,14 @@ main(int argc, char* argv[])
       std::make_shared<ParticleSmearing>(particleSmearingCfg, logLevel));
 
   // setup finding algorithm
-  FindingAlgorithm::Config findCfg;
+  TrackFindingAlgorithm::Config findCfg;
   findCfg.inputSourceLinks = hitSmearingCfg.outputSourceLinks;
   findCfg.inputInitialTrackParameters
       = particleSmearingCfg.outputTrackParameters;
   findCfg.outputTrajectories = "trajectories";
-  findCfg.find               = FindingAlgorithm::makeFinderFunction(
+  findCfg.find               = TrackFindingAlgorithm::makeTrackFinderFunction(
       trackingGeometry, magneticField, logLevel);
-  sequencer.addAlgorithm(std::make_shared<FindingAlgorithm>(findCfg, logLevel));
+  sequencer.addAlgorithm(std::make_shared<TrackFindingAlgorithm>(findCfg, logLevel));
 
   // write tracks
   // TODO: RootTrajectoryWriter does not like CKFTrajectoryContainers

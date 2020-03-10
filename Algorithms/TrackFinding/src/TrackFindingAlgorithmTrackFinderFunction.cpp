@@ -6,7 +6,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#include "ACTFW/Finding/FindingAlgorithm.hpp"
+#include "ACTFW/TrackFinding/TrackFindingAlgorithm.hpp"
 
 #include <random>
 #include <stdexcept>
@@ -23,14 +23,14 @@
 #include "ACTFW/Plugins/BField/ScalableBField.hpp"
 
 namespace {
-template <typename Finder>
-struct FinderFunctionImpl
+template <typename TrackFinder>
+struct TrackFinderFunctionImpl
 {
-  Finder finder;
+  TrackFinder finder;
 
-  FinderFunctionImpl(Finder&& f) : finder(std::move(f)) {}
+  TrackFinderFunctionImpl(TrackFinder&& f) : finder(std::move(f)) {}
 
-  FW::FindingAlgorithm::FinderResult
+  FW::TrackFindingAlgorithm::TrackFinderResult
   operator()(
       const std::vector<FW::Data::SimSourceLink>& sourceLinks,
       const FW::TrackParameters&                  initialParameters,
@@ -42,8 +42,8 @@ struct FinderFunctionImpl
 };
 }  // namespace
 
-FW::FindingAlgorithm::FinderFunction
-FW::FindingAlgorithm::makeFinderFunction(
+FW::TrackFindingAlgorithm::TrackFinderFunction
+FW::TrackFindingAlgorithm::makeTrackFinderFunction(
     std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
     Options::BFieldVariant                        magneticField,
     Acts::Logging::Level                          lvl)
@@ -53,7 +53,7 @@ FW::FindingAlgorithm::makeFinderFunction(
 
   // unpack the magnetic field variant and instantiate the corresponding finder.
   return std::visit(
-      [trackingGeometry, lvl](auto&& inputField) -> FinderFunction {
+      [trackingGeometry, lvl](auto&& inputField) -> TrackFinderFunction {
         // each entry in the variant is already a shared_ptr
         // need ::element_type to get the real magnetic field type
         using InputMagneticField =
@@ -63,7 +63,7 @@ FW::FindingAlgorithm::makeFinderFunction(
         using Navigator     = Acts::Navigator;
         using Propagator    = Acts::Propagator<Stepper, Navigator>;
         using SLS           = Acts::CKFSourceLinkSelector;
-        using Finder        = Acts::
+        using CKF           = Acts::
             CombinatorialKalmanFilter<Propagator, Updater, Smoother, SLS>;
 
         // construct all components for the finder
@@ -74,11 +74,11 @@ FW::FindingAlgorithm::makeFinderFunction(
         navigator.resolveMaterial  = true;
         navigator.resolveSensitive = true;
         Propagator propagator(std::move(stepper), std::move(navigator));
-        Finder     finder(std::move(propagator),
-                      Acts::getDefaultLogger("TrackFinder", lvl));
+        CKF        finder(std::move(propagator),
+                   Acts::getDefaultLogger("TrackFinder", lvl));
 
         // build the finder functions. owns the finder object.
-        return FinderFunctionImpl<Finder>(std::move(finder));
+        return TrackFinderFunctionImpl<CKF>(std::move(finder));
       },
       std::move(magneticField));
 }

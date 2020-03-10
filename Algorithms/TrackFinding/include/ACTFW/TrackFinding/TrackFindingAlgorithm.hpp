@@ -24,24 +24,24 @@
 
 namespace FW {
 
-class FindingAlgorithm final : public BareAlgorithm
+class TrackFindingAlgorithm final : public BareAlgorithm
 {
 public:
-  using FinderResult = Acts::Result<
+  using TrackFinderResult = Acts::Result<
       Acts::CombinatorialKalmanFilterResult<Data::SimSourceLink>>;
   using CKFOptions
       = Acts::CombinatorialKalmanFilterOptions<Acts::CKFSourceLinkSelector>;
-  using FinderFunction
-      = std::function<FinderResult(const std::vector<Data::SimSourceLink>&,
-                                   const TrackParameters&,
-                                   const CKFOptions&)>;
+  using TrackFinderFunction
+      = std::function<TrackFinderResult(const std::vector<Data::SimSourceLink>&,
+                                        const TrackParameters&,
+                                        const CKFOptions&)>;
 
   /// Create the finder function implementation.
   ///
   /// The magnetic field is intentionally given by-value since the variant
   /// contains shared_ptr anyways.
-  static FinderFunction
-  makeFinderFunction(
+  static TrackFinderFunction
+  makeTrackFinderFunction(
       std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
       Options::BFieldVariant                        magneticField,
       Acts::Logging::Level                          lvl);
@@ -55,16 +55,16 @@ public:
     /// Output fitted trajectories collection.
     std::string outputTrajectories;
     /// Type erased fitter function.
-    FinderFunction find;
+    TrackFinderFunction find;
     // ResPlotTool::Config resPlotToolConfig; // ?
     Acts::CKFSourceLinkSelector::Config slsCfg;
   };
 
-  /// Constructor of the Finding algorithm
+  /// Constructor of the TrackFinding algorithm
   ///
   /// @param cfg is the config struct to configure the algorithm
   /// @param level is the logging level
-  FindingAlgorithm(Config cfg, Acts::Logging::Level lvl);
+  TrackFindingAlgorithm(Config cfg, Acts::Logging::Level lvl);
 
   /// Framework execute method of the finding algorithm
   ///
