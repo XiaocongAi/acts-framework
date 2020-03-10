@@ -55,17 +55,20 @@ FW::ParticleSelector::execute(const FW::AlgorithmContext& ctx) const
     return (min <= x) and (x < max);
   };
   auto isValidParticle = [&](const ActsFatras::Particle& p) {
-    auto rho = Acts::VectorHelpers::perp(p.position());
-    auto phi = Acts::VectorHelpers::phi(p.unitDirection());
-    auto eta = Acts::VectorHelpers::eta(p.unitDirection());
-    auto pt  = p.transverseMomentum();
-    return within(rho, m_cfg.rhoMin, m_cfg.rhoMax)
-        and within(std::abs(p.position().z()), 0, m_cfg.absZMax)
-        and within(phi, m_cfg.phiMin, m_cfg.phiMax)
+    const auto eta = Acts::VectorHelpers::eta(p.unitDirection());
+    const auto phi = Acts::VectorHelpers::phi(p.unitDirection());
+    const auto rho = Acts::VectorHelpers::perp(p.position());
+    // defined charge selection
+    const bool validNeutral = (p.charge() == 0) and not m_cfg.removeNeutral;
+    const bool validCharged = (p.charge() != 0) and not m_cfg.removeCharged;
+    const bool validCharge  = validNeutral or validCharged;
+    return validCharge
+        and within(p.transverseMomentum(), m_cfg.ptMin, m_cfg.ptMax)
+        and within(std::abs(eta), m_cfg.absEtaMin, m_cfg.absEtaMax)
         and within(eta, m_cfg.etaMin, m_cfg.etaMax)
-        and within(absEta, m_cfg.absEtaMin, m_cfg.absEtaMax)
-        and within(pt, m_cfg.ptMin, m_cfg.ptMax)
-        and (m_cfg.keepNeutral or (p.charge() != 0));
+        and within(phi, m_cfg.phiMin, m_cfg.phiMax)
+        and within(std::abs(p.position().z()), m_cfg.absZMin, m_cfg.absZMax)
+        and within(rho, m_cfg.rhoMin, m_cfg.rhoMax);
   };
 
   std::size_t allParticles      = 0;
