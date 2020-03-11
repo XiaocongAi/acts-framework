@@ -122,11 +122,6 @@ sim-fatras-generic:
   script:
     - ActsSimFatrasGeneric -n ${EVENTS}
 
-sim-fatras-tgeo:
-  extends: .run
-  script:
-    - ActsSimFatrasTGeo -n ${EVENTS}
-
 sim-fatras-dd4hep:
   extends: .run
   script:
