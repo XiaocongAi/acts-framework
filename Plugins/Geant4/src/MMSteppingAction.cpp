@@ -76,6 +76,7 @@ FW::Geant4::MMSteppingAction::UserSteppingAction(const G4Step* step)
        G4cout << "Z: " << Z << G4endl;
        G4cout << "rho: " << rho << G4endl;
        G4cout << "steplength: " << steplength << G4endl;*/
+    
 
     // create the RecordedMaterialProperties
     const auto&               rawPos = step->GetPreStepPoint()->GetPosition();
@@ -86,38 +87,35 @@ FW::Geant4::MMSteppingAction::UserSteppingAction(const G4Step* step)
     m_steps.push_back(mInteraction);
 
     // Get the track associated to the step
-    G4Track*    track   = step->GetTrack();
-    const auto& trkPos  = track->GetPosition();
-    const auto& trkTime = track->GetGlobalTime();
+    G4Track* track         = step->GetTrack();
+    const auto& trkPos     = track->GetPosition();
+    const auto& trkTime    = track->GetGlobalTime();
     // Get the particle from the track
-    const auto& par     = track->GetDynamicParticle();
-    std::string parName = track->GetDefinition()->GetParticleName();
-    const auto& par4Mom = par->Get4Momentum();
+    const auto& par = track->GetDynamicParticle();
+    std::string parName    = track->GetDefinition()->GetParticleName();
+    const auto& par4Mom    = par->Get4Momentum();
+    
+      
+    if(track->GetTrackID() == 1){ //only consider primary tracks
+      /*G4cout << 
+	"px: " << par4Mom.px() << "\t" <<
+	"py: " << par4Mom.py() << "\t" <<
+	"pz: " << par4Mom.pz() << "\t" <<
+	"e: " << par4Mom.e() << G4endl;
 
-    if (track->GetTrackID() == 1) {  // only consider primary tracks
-      /*G4cout <<
-  "px: " << par4Mom.px() << "\t" <<
-  "py: " << par4Mom.py() << "\t" <<
-  "pz: " << par4Mom.pz() << "\t" <<
-  "e: " << par4Mom.e() << G4endl;
-
-      G4cout <<
-  "x: " << trkPos.x() << "\t" <<
-  "y: " << trkPos.y() << "\t" <<
-  "z: " << trkPos.z() << "\t" <<
-  "t: " << trkTime << G4endl;
+      G4cout << 
+	"x: " << trkPos.x() << "\t" <<
+	"y: " << trkPos.y() << "\t" <<
+	"z: " << trkPos.z() << "\t" <<
+	"t: " << trkTime << G4endl;
       */
 
-      m_track_steps.emplace_back(
-          0,
-          0,  // set Acts::GeometryID = 0 and Barcode = 0
-          Acts::ActsVectorD<4>(
-              trkPos.x(), trkPos.y(), trkPos.z(), trkTime),  // pos4
-          Acts::ActsVectorD<4>(par4Mom.px(),
-                               par4Mom.py(),
-                               par4Mom.pz(),
-                               par4Mom.e()),  // before4
-          Acts::ActsVectorD<4>(0, 0, 0, 0));  // after4
+      m_track_steps.emplace_back(0, 0, //set Acts::GeometryID = 0 and Barcode = 0
+			       Acts::ActsVectorD<4>(trkPos.x(), trkPos.y(), trkPos.z(), trkTime), //pos4
+			       Acts::ActsVectorD<4>(par4Mom.px(), par4Mom.py(), par4Mom.pz(), par4Mom.e()), //before4
+			       Acts::ActsVectorD<4>(0,0,0,0)); // after4
+      
+      
     }
   }
 }
