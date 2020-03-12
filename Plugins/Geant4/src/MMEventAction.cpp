@@ -39,7 +39,7 @@ FW::Geant4::MMEventAction::~MMEventAction()
 void
 FW::Geant4::MMEventAction::BeginOfEventAction(const G4Event*)
 {
-  // reset the collection of material steps
+  // reset the collection of material steps and track steps
   MMSteppingAction::Instance()->Reset();
 }
 
@@ -57,9 +57,11 @@ FW::Geant4::MMEventAction::EndOfEventAction(const G4Event* event)
   mtrecord.first.second = Acts::Vector3D(rawDir.x(), rawDir.y(), rawDir.z());
   mtrecord.second.materialInteractions
       = MMSteppingAction::Instance()->materialSteps();
-
   // write out the RecordedMaterialTrack of one event
   m_records.push_back(mtrecord);
+  // write out the steps of one track in an event
+  m_tracksteps.adopt_sequence(std::move(MMSteppingAction::Instance()->trackSteps()));
+
 }
 
 void

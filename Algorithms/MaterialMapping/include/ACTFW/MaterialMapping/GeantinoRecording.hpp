@@ -18,6 +18,9 @@
 #include "ACTFW/Framework/BareAlgorithm.hpp"
 #include "ACTFW/Plugins/DD4hepG4/DD4hepToG4Svc.hpp"
 
+#include "ACTFW/EventData/SimHit.hpp"
+#include "ACTFW/EventData/SimParticle.hpp"
+
 namespace Acts {
 // Using some short hands for Recorded Material
 using RecordedMaterial = MaterialInteractor::result_type;
@@ -46,6 +49,7 @@ public:
   /// @class Config
   struct Config
   {
+    std::string geantTrackStepCollection = "geant-track-steps";
     std::string geantMaterialCollection = "geant-material-tracks";
 
     /// The service possibly providing the Geant4 geometry (optional)

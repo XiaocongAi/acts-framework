@@ -47,7 +47,7 @@ FW::GeantinoRecording::GeantinoRecording(
   /// Now set up the Geant4 simulation
   m_runManager->SetUserInitialization(new FTFP_BERT);
   m_runManager->SetUserAction(new FW::Geant4::MMPrimaryGeneratorAction(
-      "geantino", 1000., m_cfg.seed1, m_cfg.seed2));
+      "mu-", 1000., m_cfg.seed1, m_cfg.seed2));
   FW::Geant4::MMRunAction* runaction = new FW::Geant4::MMRunAction();
   m_runManager->SetUserAction(runaction);
   m_runManager->SetUserAction(new FW::Geant4::MMEventAction());
@@ -70,6 +70,15 @@ FW::GeantinoRecording::execute(const FW::AlgorithmContext& context) const
   // Write the recorded material to the event store
   context.eventStore.add(m_cfg.geantMaterialCollection,
                          std::move(recordedMaterial));
-
+  
+  // Retrieve the sim hit track steps from Geant4
+  auto trackSteps
+    = FW::Geant4::MMEventAction::Instance()->TrackSteps();
+  ACTS_INFO("Received " << trackSteps.size()
+	    << " steps per track. Writing them now into file...");
+	    
+  // Write the sim hit track steps info to the event store
+  context.eventStore.add(m_cfg.geantTrackStepCollection,
+			 std::move(trackSteps));
   return FW::ProcessCode::SUCCESS;
 }

@@ -15,6 +15,7 @@
 #include "ACTFW/Framework/RandomNumbers.hpp"
 #include "ACTFW/Framework/Sequencer.hpp"
 #include "ACTFW/Io/Root/RootMaterialTrackWriter.hpp"
+#include "ACTFW/Io/Root/RootSimHitWriter.hpp"
 #include "ACTFW/MaterialMapping/GeantinoRecording.hpp"
 #include "ACTFW/Options/CommonOptions.hpp"
 #include "ACTFW/Plugins/DD4hepG4/DD4hepToG4Svc.hpp"
@@ -38,7 +39,7 @@ main(int argc, char* argv[])
 
   FW::Sequencer g4sequencer(FW::Options::readSequencerConfig(vm));
 
-  size_t nTracks     = 100;
+  size_t nTracks     = 1;
   int    randomSeed1 = 536235167;
   int    randomSeed2 = 729237523;
 
@@ -81,6 +82,7 @@ main(int argc, char* argv[])
   // Output directory
   std::string outputDir     = vm["output-dir"].template as<std::string>();
   std::string matCollection = g4rConfig.geantMaterialCollection;
+  std::string trkCollection = g4rConfig.geantTrackStepCollection;
 
   if (vm["output-root"].template as<bool>()) {
     // Write the propagation steps as ROOT TTree
@@ -93,6 +95,15 @@ main(int argc, char* argv[])
     auto matTrackWriterRoot = std::make_shared<FW::RootMaterialTrackWriter>(
         matTrackWriterRootConfig);
     g4sequencer.addWriter(matTrackWriterRoot);
+
+    // Write track step info as ROOT TTree
+    FW::RootSimHitWriter::Config stepSimHitWriterRootConfig;
+    stepSimHitWriterRootConfig.inputSimulatedHits = trkCollection;
+    stepSimHitWriterRootConfig.filePath
+      = FW::joinPaths(outputDir, trkCollection + ".root");
+    stepSimHitWriterRootConfig.treeName = "steps";
+    auto stepSimHitWriterRoot = std::make_shared<FW::RootSimHitWriter>(stepSimHitWriterRootConfig,Acts::Logging::INFO);
+    g4sequencer.addWriter(stepSimHitWriterRoot);
   }
 
   // Append the algorithm and run
