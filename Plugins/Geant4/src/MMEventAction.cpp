@@ -60,6 +60,10 @@ FW::Geant4::MMEventAction::EndOfEventAction(const G4Event* event)
 
   // write out the RecordedMaterialTrack of one event
   m_records.push_back(mtrecord);
+
+  // write out the steps of one track in an event
+  m_tracksteps.adopt_sequence(std::move(MMSteppingAction::Instance()->trackSteps()));
+
 }
 
 void

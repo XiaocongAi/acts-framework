@@ -93,6 +93,15 @@ main(int argc, char* argv[])
     auto matTrackWriterRoot = std::make_shared<FW::RootMaterialTrackWriter>(
         matTrackWriterRootConfig);
     g4sequencer.addWriter(matTrackWriterRoot);
+
+    // Write track step info as ROOT TTree
+    FW::RootSimHitWriter::Config stepSimHitWriterRootConfig;
+    stepSimHitWriterRootConfig.inputSimulatedHits = trkCollection;
+    stepSimHitWriterRootConfig.filePath
+      = FW::joinPaths(outputDir, trkCollection + ".root");
+    stepSimHitWriterRootConfig.treeName = "steps";
+    auto stepSimHitWriterRoot = std::make_shared<FW::RootSimHitWriter>(stepSimHitWriterRootConfig,Acts::Logging::INFO);
+    g4sequencer.addWriter(stepSimHitWriterRoot);
   }
 
   // Append the algorithm and run

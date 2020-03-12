@@ -46,6 +46,8 @@ public:
   /// @class Config
   struct Config
   {
+
+    std::string geantTrackStepCollection = "geant-track-steps";
     std::string geantMaterialCollection = "geant-material-tracks";
 
     /// The service possibly providing the Geant4 geometry (optional)
