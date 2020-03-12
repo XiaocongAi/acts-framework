@@ -13,8 +13,8 @@
 #pragma once
 
 #include <vector>
-#include "Acts/Propagator/MaterialInteractor.hpp"
 #include "ACTFW/EventData/SimHit.hpp"
+#include "Acts/Propagator/MaterialInteractor.hpp"
 #include "G4UserSteppingAction.hh"
 #include "globals.hh"
 
@@ -60,7 +60,7 @@ namespace Geant4 {
     }
 
     /// Access to the collected FW::SimHitContainer entities
-    FW::SimHitContainer::sequence_type 
+    FW::SimHitContainer::sequence_type
     trackSteps()
     {
       return m_track_steps;

@@ -70,15 +70,13 @@ FW::GeantinoRecording::execute(const FW::AlgorithmContext& context) const
   // Write the recorded material to the event store
   context.eventStore.add(m_cfg.geantMaterialCollection,
                          std::move(recordedMaterial));
-  
+
   // Retrieve the sim hit track steps from Geant4
-  auto trackSteps
-    = FW::Geant4::MMEventAction::Instance()->TrackSteps();
+  auto trackSteps = FW::Geant4::MMEventAction::Instance()->TrackSteps();
   ACTS_INFO("Received " << trackSteps.size()
-	    << " steps per track. Writing them now into file...");
-	    
+                        << " steps per track. Writing them now into file...");
+
   // Write the sim hit track steps info to the event store
-  context.eventStore.add(m_cfg.geantTrackStepCollection,
-			 std::move(trackSteps));
+  context.eventStore.add(m_cfg.geantTrackStepCollection, std::move(trackSteps));
   return FW::ProcessCode::SUCCESS;
 }
