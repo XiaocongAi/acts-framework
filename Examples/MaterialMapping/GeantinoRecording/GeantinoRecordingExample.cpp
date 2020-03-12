@@ -98,9 +98,10 @@ main(int argc, char* argv[])
     FW::RootSimHitWriter::Config stepSimHitWriterRootConfig;
     stepSimHitWriterRootConfig.inputSimulatedHits = trkCollection;
     stepSimHitWriterRootConfig.filePath
-      = FW::joinPaths(outputDir, trkCollection + ".root");
+        = FW::joinPaths(outputDir, trkCollection + ".root");
     stepSimHitWriterRootConfig.treeName = "steps";
-    auto stepSimHitWriterRoot = std::make_shared<FW::RootSimHitWriter>(stepSimHitWriterRootConfig,Acts::Logging::INFO);
+    auto stepSimHitWriterRoot = std::make_shared<FW::RootSimHitWriter>(
+        stepSimHitWriterRootConfig, Acts::Logging::INFO);
     g4sequencer.addWriter(stepSimHitWriterRoot);
   }
 

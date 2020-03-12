@@ -48,7 +48,7 @@ public:
   {
 
     std::string geantTrackStepCollection = "geant-track-steps";
-    std::string geantMaterialCollection = "geant-material-tracks";
+    std::string geantMaterialCollection  = "geant-material-tracks";
 
     /// The service possibly providing the Geant4 geometry (optional)
     /// @note If this is not set, the geometry should be given by gdml file
