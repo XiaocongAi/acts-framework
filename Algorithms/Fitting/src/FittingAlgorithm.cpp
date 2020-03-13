@@ -31,13 +31,10 @@ FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
   if (m_cfg.outputTrajectories.empty()) {
     throw std::invalid_argument("Missing output trajectories collection");
   }
-<<<<<<< HEAD
-=======
   // automatically determine the number of concurrent threads to use
   if (m_cfg.numThreads < 0) {
     m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
   }
->>>>>>> e0ed1d56... fix format test
 }
 
 FW::ProcessCode
@@ -72,12 +69,13 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Setup a task arena for the the parallel loop (because this loop is imbricated
   // in the Sequencer parallel loop) to ensure: (a) better execution time and
   // (b) lower memory footprint
-  tbb::task_arena arena(tbb::task_scheduler_init::default_num_threads());
+  tbb::task_arena arena(m_cfg.numThreads);
+  ACTS_INFO("Starting tracks loop with " << m_cfg.numThreads << " threads" );
+    
   arena.execute ([&] () {
       // Perform the fit for each input track
       tbb::parallel_for(tbb::blocked_range<size_t> (0, protoTracks.size()),
             [&](const tbb::blocked_range<size_t>& r) {
-          
             for (auto itrack = r.begin(); itrack != r.end(); ++itrack) {
             
                 // The list of hits and the initial start parameters
@@ -126,7 +124,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                     trajectories.emplace_back(fitOutput.trackTip,
                                               std::move(fitOutput.fittedStates),
                                               std::move(params));
-                  } else {
+                } else {
                     ACTS_DEBUG("No fitted paramemeters for track " << itrack);
                     // Construct a truth fit track using trajectory
                     tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
@@ -144,7 +142,19 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
           return  FW::ProcessCode::SUCCESS;
         } //end parallel_for
       );
-    }); //end task arena
+  }); //end task arena
+    
+    
+    // Make sure that the trajectories are in the right order
+    {
+        tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+        std::sort(trajectories.begin(), trajectories.end(),
+                  [](const TruthFitTrack& t1, const TruthFitTrack& t2) -> bool {
+                     return t1.identifyMajorityParticle().front().particleId <
+                            t2.identifyMajorityParticle().front().particleId;
+        });
+    }
+
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
