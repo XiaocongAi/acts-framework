@@ -26,15 +26,17 @@ namespace FW {
 class SimSourceLink
 {
 public:
-  SimSourceLink(const ActsFatras::Hit* truthHit,
+  SimSourceLink(const Acts::Surface&   surface,
+                const ActsFatras::Hit& truthHit,
                 size_t                 dim,
                 Acts::BoundVector      values,
                 Acts::BoundMatrix      cov)
     : m_values(values)
     , m_cov(cov)
     , m_dim(dim)
-    , m_geometryId(truthHit->geometryId())
-    , m_truthHit(truthHit)
+    , m_geometryId(truthHit.geometryId())
+    , m_surface(&surface)
+    , m_truthHit(&truthHit)
   {
   }
   /// Must be default_constructible to satisfy SourceLinkConcept.
@@ -93,10 +95,11 @@ private:
   Acts::BoundVector m_values;
   Acts::BoundMatrix m_cov;
   size_t            m_dim = 0u;
-  // store geo id copy to avoid indirection via truth hit.
-  Acts::GeometryID       m_geometryId;
-  const Acts::Surface*   m_surface  = nullptr;
-  const ActsFatras::Hit* m_truthHit = nullptr;
+  // store geo id copy to avoid indirection via truth hit
+  Acts::GeometryID m_geometryId;
+  // need to store pointers to make the object copyable
+  const Acts::Surface*   m_surface;
+  const ActsFatras::Hit* m_truthHit;
 
   friend constexpr bool
   operator==(const SimSourceLink& lhs, const SimSourceLink& rhs)
