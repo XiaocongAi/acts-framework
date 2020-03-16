@@ -96,6 +96,5 @@ namespace Geant4 {
     return rtracksteps;
   }
 
-
 }  // namespace Geant4
 }  // namespace FW
