@@ -16,11 +16,6 @@
 #include "ACTFW/Fatras/FatrasOptions.hpp"
 #include "ACTFW/Framework/RandomNumbers.hpp"
 #include "ACTFW/Framework/Sequencer.hpp"
-<<<<<<< HEAD
-#include "ACTFW/Generators/FlattenEvent.hpp"
-#include "ACTFW/Generators/ParticleSelector.hpp"
-=======
->>>>>>> concentrate Fatras-only files and clean up
 #include "ACTFW/Io/Csv/CsvParticleWriter.hpp"
 #include "ACTFW/Io/Root/RootParticleWriter.hpp"
 #include "ACTFW/Io/Root/RootSimHitWriter.hpp"
@@ -88,21 +83,7 @@ setupSimulationAlgorithms(
     std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
     magnetic_field_t&&                            magneticField)
 {
-<<<<<<< HEAD
-  // Read the log level
-  Acts::Logging::Level logLevel = FW::Options::readLogLevel(variables);
 
-  // Convert generated events to selected particles
-  auto select        = FW::ParticleSelector::readConfig(variables);
-  select.inputEvent  = "event_generated";
-  select.outputEvent = "event_selected";
-  sequencer.addAlgorithm(
-      std::make_shared<FW::ParticleSelector>(select, logLevel));
-  FW::FlattenEvent::Config flatten;
-  flatten.inputEvent      = select.outputEvent;
-  flatten.outputParticles = "particles_selected";
-  sequencer.addAlgorithm(std::make_shared<FW::FlattenEvent>(flatten, logLevel));
-=======
   using namespace ActsFatras;
 
   // Read the log level
@@ -110,7 +91,6 @@ setupSimulationAlgorithms(
 
   /// Read the evgen particle collection
   std::string particlesCollection = "particles";
->>>>>>> concentrate Fatras-only files and clean up
 
   // setup propagator-related types
   // use the default navigation
@@ -123,28 +103,7 @@ setupSimulationAlgorithms(
   using NeutralPropagator = Acts::Propagator<NeutralStepper, Navigator>;
 
   // setup simulator-related types
-<<<<<<< HEAD
-  using MinP = ActsFatras::Min<ActsFatras::Casts::P>;
-  // charged particles w/ standard em physics list and selectable hits
-  using ChargedSelector
-      = ActsFatras::CombineAnd<ActsFatras::ChargedSelector, MinP>;
-  using ChargedSimulator = ActsFatras::ParticleSimulator<
-      ChargedPropagator,
-      ActsFatras::ChargedElectroMagneticPhysicsList,
-      HitSurfaceSelector>;
-  // neutral particles w/o physics and no hits
-  using NeutralSelector
-      = ActsFatras::CombineAnd<ActsFatras::NeutralSelector, MinP>;
-  using NeutralSimulator
-      = ActsFatras::ParticleSimulator<NeutralPropagator,
-                                      ActsFatras::PhysicsList<>,
-                                      ActsFatras::NoSurface>;
-  // full simulator type for charged and neutrals
-  using Simulator = ActsFatras::Simulator<ChargedSelector,
-                                          ChargedSimulator,
-                                          NeutralSelector,
-                                          NeutralSimulator>;
-=======
+
   // charged particles w/ standard em physics list and selectable hits
   using ChargedSelector
       = CombineAnd<ActsFatras::ChargedSelector, Min<Casts::P>>;
@@ -160,7 +119,7 @@ setupSimulationAlgorithms(
                               ChargedSimulator,
                               NeutralSelector,
                               NeutralSimulator>;
->>>>>>> concentrate Fatras-only files and clean up
+
   // final algorihm type
   using SimulationAlgorithm = FW::FatrasAlgorithm<Simulator>;
 
@@ -171,23 +130,14 @@ setupSimulationAlgorithms(
   ChargedPropagator chargedPropagator(std::move(chargedStepper), navigator);
   ChargedSimulator  chargedSimulator(std::move(chargedPropagator), logLevel);
   // construct the neutral simulator
-<<<<<<< HEAD
-  NeutralStepper    neutralStepper;
-  NeutralPropagator neutralPropagator(std::move(neutralStepper), navigator);
-=======
   NeutralPropagator neutralPropagator(NeutralStepper(), navigator);
->>>>>>> concentrate Fatras-only files and clean up
   NeutralSimulator  neutralSimulator(std::move(neutralPropagator), logLevel);
   // construct the combined simulator
   Simulator simulator(std::move(chargedSimulator), std::move(neutralSimulator));
 
   // construct/add the simulation algorithm
   auto fatras = FW::Options::readFatrasConfig(variables, std::move(simulator));
-<<<<<<< HEAD
-  fatras.inputParticles         = flatten.outputParticles;
-=======
   fatras.inputParticles         = particlesCollection;
->>>>>>> concentrate Fatras-only files and clean up
   fatras.outputParticlesInitial = "particles_initial";
   fatras.outputParticlesFinal   = "particles_final";
   fatras.outputHits             = "hits";
@@ -222,10 +172,7 @@ setupSimulationAlgorithms(
     writeInitial.inputParticles = fatras.outputParticlesInitial;
     writeInitial.filePath
         = FW::joinPaths(outputDir, fatras.outputParticlesInitial + ".root");
-<<<<<<< HEAD
-=======
     writeInitial.treeName = "particles";
->>>>>>> concentrate Fatras-only files and clean up
     sequencer.addWriter(
         std::make_shared<FW::RootParticleWriter>(writeInitial, logLevel));
 
@@ -234,10 +181,7 @@ setupSimulationAlgorithms(
     writeFinal.inputParticles = fatras.outputParticlesFinal;
     writeFinal.filePath
         = FW::joinPaths(outputDir, fatras.outputParticlesFinal + ".root");
-<<<<<<< HEAD
-=======
     writeFinal.treeName = "particles";
->>>>>>> concentrate Fatras-only files and clean up
     sequencer.addWriter(
         std::make_shared<FW::RootParticleWriter>(writeFinal, logLevel));
 
@@ -245,10 +189,7 @@ setupSimulationAlgorithms(
     FW::RootSimHitWriter::Config writeHits;
     writeHits.inputSimulatedHits = fatras.outputHits;
     writeHits.filePath = FW::joinPaths(outputDir, fatras.outputHits + ".root");
-<<<<<<< HEAD
-=======
     writeHits.treeName = "hits";
->>>>>>> concentrate Fatras-only files and clean up
     sequencer.addWriter(
         std::make_shared<FW::RootSimHitWriter>(writeHits, logLevel));
   }
