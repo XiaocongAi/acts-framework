@@ -85,6 +85,7 @@ setupSimulationAlgorithms(
     std::shared_ptr<const Acts::TrackingGeometry> trackingGeometry,
     magnetic_field_t&&                            magneticField)
 {
+
   // Read the log level
   Acts::Logging::Level logLevel = FW::Options::readLogLevel(variables);
 
