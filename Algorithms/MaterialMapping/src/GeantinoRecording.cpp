@@ -47,7 +47,7 @@ FW::GeantinoRecording::GeantinoRecording(
   /// Now set up the Geant4 simulation
   m_runManager->SetUserInitialization(new FTFP_BERT);
   m_runManager->SetUserAction(new FW::Geant4::MMPrimaryGeneratorAction(
-      "geantino", 1000., m_cfg.seed1, m_cfg.seed2));
+      "mu-", 1000., m_cfg.seed1, m_cfg.seed2));
   FW::Geant4::MMRunAction* runaction = new FW::Geant4::MMRunAction();
   m_runManager->SetUserAction(runaction);
   m_runManager->SetUserAction(new FW::Geant4::MMEventAction());

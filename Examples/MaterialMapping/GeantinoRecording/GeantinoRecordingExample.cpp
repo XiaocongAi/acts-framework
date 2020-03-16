@@ -14,6 +14,7 @@
 #include "ACTFW/DD4hepDetector/DD4hepGeometryService.hpp"
 #include "ACTFW/Framework/RandomNumbers.hpp"
 #include "ACTFW/Framework/Sequencer.hpp"
+#include "ACTFW/Io/Root/RootSimHitWriter.hpp"
 #include "ACTFW/Io/Root/RootMaterialTrackWriter.hpp"
 #include "ACTFW/MaterialMapping/GeantinoRecording.hpp"
 #include "ACTFW/Options/CommonOptions.hpp"
@@ -81,6 +82,7 @@ main(int argc, char* argv[])
   // Output directory
   std::string outputDir     = vm["output-dir"].template as<std::string>();
   std::string matCollection = g4rConfig.geantMaterialCollection;
+  std::string trkCollection = g4rConfig.geantTrackStepCollection;
 
   if (vm["output-root"].template as<bool>()) {
     // Write the propagation steps as ROOT TTree

@@ -13,6 +13,7 @@
 #pragma once
 
 #include <memory>
+#include "ACTFW/EventData/SimHit.hpp"
 #include "Acts/Propagator/MaterialInteractor.hpp"
 #include "G4UserEventAction.hh"
 #include "globals.hh"
@@ -86,5 +87,15 @@ namespace Geant4 {
     m_records.clear();
     return rrecords;
   }
+
+  inline FW::SimHitContainer const
+  MMEventAction::TrackSteps()
+  {
+    auto rtracksteps = m_tracksteps;
+    m_tracksteps.clear();
+    return rtracksteps;
+  }
+
+
 }  // namespace Geant4
 }  // namespace FW

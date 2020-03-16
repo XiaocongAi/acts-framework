@@ -23,7 +23,7 @@ FW::Geant4::MMSteppingAction::Instance()
 }
 
 FW::Geant4::MMSteppingAction::MMSteppingAction()
-  : G4UserSteppingAction(), m_steps()
+  : G4UserSteppingAction(), m_steps(), m_track_steps()
 // m_volMgr(MaterialRunAction::Instance()->getGeant4VolumeManager())
 {
   if (fgInstance) {
