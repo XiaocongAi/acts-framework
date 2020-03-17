@@ -23,7 +23,7 @@ FW::Geant4::MMSteppingAction::Instance()
 }
 
 FW::Geant4::MMSteppingAction::MMSteppingAction()
-  : G4UserSteppingAction(), m_steps(), m_track_steps()
+  : G4UserSteppingAction(), m_steps(), m_tracksteps()
 // m_volMgr(MaterialRunAction::Instance()->getGeant4VolumeManager())
 {
   if (fgInstance) {
@@ -108,7 +108,7 @@ FW::Geant4::MMSteppingAction::UserSteppingAction(const G4Step* step)
   "t: " << trkTime << G4endl;
       */
 
-      m_track_steps.emplace_back(
+      m_tracksteps.emplace_back(
           0,
           0,  // set Acts::GeometryID = 0 and Barcode = 0
           Acts::ActsVectorD<4>(

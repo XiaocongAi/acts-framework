@@ -63,7 +63,7 @@ namespace Geant4 {
     FW::SimHitContainer::sequence_type
     trackSteps()
     {
-      return m_track_steps;
+      return m_tracksteps;
     }
 
   private:
@@ -73,7 +73,7 @@ namespace Geant4 {
     /// The collected Acts::MaterialInteraction entities
     std::vector<Acts::MaterialInteraction> m_steps = {};
     /// The collected FW::SimHit entities
-    FW::SimHitContainer::sequence_type m_track_steps;
+    FW::SimHitContainer::sequence_type m_tracksteps;
   };
 
 }  // namespace Geant4

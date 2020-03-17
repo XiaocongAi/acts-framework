@@ -91,9 +91,7 @@ namespace Geant4 {
   inline FW::SimHitContainer const
   MMEventAction::TrackSteps()
   {
-    auto rtracksteps = m_tracksteps;
-    m_tracksteps.clear();
-    return rtracksteps;
+    return m_tracksteps;
   }
 
 }  // namespace Geant4
