@@ -37,22 +37,6 @@ FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
   }
 }
 
-template <class... Types>
-void
-addTrajectory(FW::TrajectoryContainer& trajectories,
-              tbb::queuing_mutex&      trajectoriesMutex,
-              Types... args)
-{
-  // Assure sychronized writes
-  tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-
-  if (sizeof...(args) == 0) {
-    trajectories.push_back(FW::TruthFitTrack());
-  } else {
-    trajectories.emplace_back(std::forward<Types>(args)...);
-  }
-}
-
 FW::ProcessCode
 FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 {
@@ -78,6 +62,12 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Synchronize the access to the fitting results (trajectories)
   tbb::queuing_mutex trajectoriesMutex;
 
+  auto addTrajectory = [&](TruthFitTrack&& track) {
+    // Synchronize writes
+    tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+    trajectories.push_back(std::move(track));
+  };
+
   // Construct a perigee surface as the target surface
   auto pSurface = Acts::Surface::makeShared<Acts::PerigeeSurface>(
       Acts::Vector3D{0., 0., 0.});
@@ -102,7 +92,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 
             // We can have empty tracks which must give empty fit results
             if (protoTrack.empty()) {
-              addTrajectory(trajectories, trajectoriesMutex);
+              addTrajectory(TruthFitTrack());
               ACTS_WARNING("Empty track " << itrack << " found.");
               continue;
             }
@@ -141,24 +131,20 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                 ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
                 // Construct a truth fit track using trajectory and
                 // track parameter
-                addTrajectory(trajectories,
-                              trajectoriesMutex,
-                              fitOutput.trackTip,
-                              std::move(fitOutput.fittedStates),
-                              std::move(params));
+                addTrajectory(TruthFitTrack(fitOutput.trackTip,
+                                            std::move(fitOutput.fittedStates),
+                                            std::move(params)));
               } else {
                 ACTS_DEBUG("No fitted paramemeters for track " << itrack);
                 // Construct a truth fit track using trajectory
-                addTrajectory(trajectories,
-                              trajectoriesMutex,
-                              fitOutput.trackTip,
-                              std::move(fitOutput.fittedStates));
+                addTrajectory(TruthFitTrack(fitOutput.trackTip,
+                                            std::move(fitOutput.fittedStates)));
               }
             } else {
               ACTS_WARNING("Fit failed for track " << itrack << " with error"
                                                    << result.error());
               // Fit failed, but still create a empty truth fit track
-              addTrajectory(trajectories, trajectoriesMutex);
+              addTrajectory(TruthFitTrack());
             }
           }  // end for
           return FW::ProcessCode::SUCCESS;
