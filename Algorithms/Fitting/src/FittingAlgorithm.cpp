@@ -37,6 +37,22 @@ FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
   }
 }
 
+template <class... Types>
+void
+addTrajectory(FW::TrajectoryContainer& trajectories,
+              tbb::queuing_mutex&      trajectoriesMutex,
+              Types... args)
+{
+  // Assure sychronized writes
+  tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+
+  if (sizeof...(args) == 0) {
+    trajectories.push_back(FW::TruthFitTrack());
+  } else {
+    trajectories.emplace_back(std::forward<Types>(args)...);
+  }
+}
+
 FW::ProcessCode
 FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 {
@@ -86,8 +102,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
 
             // We can have empty tracks which must give empty fit results
             if (protoTrack.empty()) {
-              tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-              trajectories.push_back(TruthFitTrack());
+              addTrajectory(trajectories, trajectoriesMutex);
               ACTS_WARNING("Empty track " << itrack << " found.");
               continue;
             }
@@ -126,23 +141,24 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                 ACTS_VERBOSE("  momentum: " << params.momentum().transpose());
                 // Construct a truth fit track using trajectory and
                 // track parameter
-                tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-                trajectories.emplace_back(fitOutput.trackTip,
-                                          std::move(fitOutput.fittedStates),
-                                          std::move(params));
+                addTrajectory(trajectories,
+                              trajectoriesMutex,
+                              fitOutput.trackTip,
+                              std::move(fitOutput.fittedStates),
+                              std::move(params));
               } else {
                 ACTS_DEBUG("No fitted paramemeters for track " << itrack);
                 // Construct a truth fit track using trajectory
-                tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-                trajectories.emplace_back(fitOutput.trackTip,
-                                          std::move(fitOutput.fittedStates));
+                addTrajectory(trajectories,
+                              trajectoriesMutex,
+                              fitOutput.trackTip,
+                              std::move(fitOutput.fittedStates));
               }
             } else {
               ACTS_WARNING("Fit failed for track " << itrack << " with error"
                                                    << result.error());
               // Fit failed, but still create a empty truth fit track
-              tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
-              trajectories.push_back(TruthFitTrack());
+              addTrajectory(trajectories, trajectoriesMutex);
             }
           }  // end for
           return FW::ProcessCode::SUCCESS;
@@ -160,8 +176,6 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
                     < t2.identifyMajorityParticle().front().particleId;
               });
   }
-
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
-
