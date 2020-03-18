@@ -32,8 +32,8 @@ FW::FittingAlgorithm::FittingAlgorithm(Config cfg, Acts::Logging::Level level)
     throw std::invalid_argument("Missing output trajectories collection");
   }
   // automatically determine the number of concurrent threads to use
-  if (m_cfg.numThreads < 0) {
-    m_cfg.numThreads = tbb::task_scheduler_init::default_num_threads();
+  if (m_cfg.numFittingThreads < 0) {
+    m_cfg.numFittingThreads = tbb::task_scheduler_init::default_num_threads();
   }
 }
 
@@ -69,8 +69,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   // Setup a task arena for the the parallel loop (because this loop is
   // imbricated in the Sequencer parallel loop) to ensure: (a) better execution
   // time and (b) lower memory footprint
-  tbb::task_arena arena(m_cfg.numThreads);
-  ACTS_INFO("Starting tracks loop with " << m_cfg.numThreads << " threads");
+  tbb::task_arena arena(m_cfg.numFittingThreads);
+  ACTS_INFO("Starting tracks loop with " << m_cfg.numFittingThreads
+                                         << " threads");
 
   arena.execute([&]() {
     // Perform the fit for each input track
@@ -149,9 +150,9 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
     );
   });  // end task arena
 
-  // Make sure that the trajectories are in the right order
-  {
-    tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
+  if (m_cfg.sortedTracks) {
+    // Make sure that the trajectories are in the same order as provided by the
+    // sequential impl (ie sorted by particle id)
     std::sort(trajectories.begin(),
               trajectories.end(),
               [](const TruthFitTrack& t1, const TruthFitTrack& t2) -> bool {

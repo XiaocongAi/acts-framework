@@ -12,6 +12,7 @@
 
 #include "ACTFW/Digitization/HitSmearing.hpp"
 #include "ACTFW/Fitting/FittingAlgorithm.hpp"
+#include "ACTFW/Fitting/FittingOptions.hpp"
 #include "ACTFW/Framework/Sequencer.hpp"
 #include "ACTFW/Framework/WhiteBoard.hpp"
 #include "ACTFW/GenericDetector/GenericDetector.hpp"
@@ -47,6 +48,7 @@ main(int argc, char* argv[])
   Options::addOutputOptions(desc);
   detector.addOptions(desc);
   Options::addBFieldOptions(desc);
+  Options::addFittingOptions(desc);
 
   auto vm = Options::parse(desc, argc, argv);
   if (vm.empty()) { return EXIT_FAILURE; }
@@ -128,13 +130,12 @@ main(int argc, char* argv[])
       std::make_shared<ParticleSmearing>(particleSmearingCfg, logLevel));
 
   // setup the fitter
-  FittingAlgorithm::Config fitCfg;
+  auto fitCfg             = Options::readFittingConfig(vm);
   fitCfg.inputSourceLinks = hitSmearingCfg.outputSourceLinks;
   fitCfg.inputProtoTracks = trackFinderCfg.outputProtoTracks;
   fitCfg.inputInitialTrackParameters
       = particleSmearingCfg.outputTrackParameters;
   fitCfg.outputTrajectories = "trajectories";
-  fitCfg.numThreads         = seqCfg.numThreads;
   fitCfg.fit                = FittingAlgorithm::makeFitterFunction(
       trackingGeometry, magneticField, logLevel);
   sequencer.addAlgorithm(std::make_shared<FittingAlgorithm>(fitCfg, logLevel));
