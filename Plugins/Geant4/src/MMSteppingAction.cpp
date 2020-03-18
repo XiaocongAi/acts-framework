@@ -114,11 +114,11 @@ FW::Geant4::MMSteppingAction::UserSteppingAction(const G4Step* step)
           Acts::ActsVectorD<4>(trkPos.x() * Acts::UnitConstants::mm,
                                trkPos.y() * Acts::UnitConstants::mm,
                                trkPos.z() * Acts::UnitConstants::mm,
-                               trkTime),  // pos4
-          Acts::ActsVectorD<4>(par4Mom.px(),
-                               par4Mom.py(),
-                               par4Mom.pz(),
-                               par4Mom.e()),  // before4
+                               trkTime * Acts::UnitConstants::ns),  // pos4
+          Acts::ActsVectorD<4>(par4Mom.px() * Acts::UnitConstants::MeV,
+                               par4Mom.py() * Acts::UnitConstants::MeV,
+                               par4Mom.pz() * Acts::UnitConstants::MeV,
+                               par4Mom.e() * Acts::UnitConstants::MeV),  // before4
           Acts::ActsVectorD<4>(0, 0, 0, 0));  // after4
     }
   }
