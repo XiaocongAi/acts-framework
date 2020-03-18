@@ -8,26 +8,25 @@
 
 #pragma once
 
+#include <boost/program_options.hpp>
 #include <iostream>
-#include "ACTFW/Utilities/Options.hpp"
 #include "FittingAlgorithm.hpp"
 
-namespace po = boost::program_options;
+using namespace boost::program_options;
 
 namespace FW {
 
 namespace Options {
 
-  template <typename aopt_t>
   void
-  addFittingOptions(aopt_t& opt)
+  addFittingOptions(boost::program_options::options_description& opt)
   {
     opt.add_options()("num-fitting-threads",
-                      po::value<int>()->default_value(1),
+                      value<int>()->default_value(1),
                       "The number of threads used for fitting; default is 1; "
                       "negative value for automatic.")(
         "sorted-tracks",
-        po::value<bool>()->default_value(0),
+        value<bool>()->default_value(false),
         "Decide if to sort tracks. Deafult is false.");
   }
 
