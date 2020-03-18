@@ -88,6 +88,7 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
             if (protoTrack.empty()) {
               tbb::queuing_mutex::scoped_lock lock(trajectoriesMutex);
               trajectories.push_back(TruthFitTrack());
+
               ACTS_WARNING("Empty track " << itrack << " found.");
               continue;
             }
@@ -164,4 +165,3 @@ FW::FittingAlgorithm::execute(const FW::AlgorithmContext& ctx) const
   ctx.eventStore.add(m_cfg.outputTrajectories, std::move(trajectories));
   return FW::ProcessCode::SUCCESS;
 }
-
