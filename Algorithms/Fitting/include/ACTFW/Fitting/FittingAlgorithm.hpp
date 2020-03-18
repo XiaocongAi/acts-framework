@@ -52,8 +52,12 @@ public:
     std::string inputInitialTrackParameters;
     /// Output fitted trajectories collection.
     std::string outputTrajectories;
-    /// number of parallel threads to run, negative for automatic determination
-    int numThreads = -1;
+    /// Number of parallel threads to run, default is 1; negative for max
+    /// threads
+    int numFittingThreads = 1;
+    /// For parallel run, set sortedTracks to true to have a similar output as
+    /// the serial run
+    bool sortedTracks = false;
     /// Type erased fitter function.
     FitterFunction fit;
   };
